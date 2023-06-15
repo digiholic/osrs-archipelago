@@ -3,7 +3,6 @@ package com.archipelago;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 
-import gg.archipelago.APClient.APWebSocket;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.ChatMessage;
@@ -258,8 +257,8 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	private void ConnectToAPServer(String url, int port, String slotName, String password){
-		URI.createURI(url, port);
-		APWebSocket sock = new APWebSocket(url, null);
+		//URI.createURI(url, port);
+		//APWebSocket sock = new APWebSocket(url, null);
 		try (Socket socket = new Socket(url, port)){
 
 		} catch (UnknownHostException e) {

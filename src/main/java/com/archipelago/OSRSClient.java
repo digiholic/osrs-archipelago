@@ -1,27 +1,44 @@
 package com.archipelago;
 
-import gg.archipelago.APClient.APClient;
-import gg.archipelago.APClient.Print.APPrint;
-import gg.archipelago.APClient.events.ConnectionAttemptEvent;
-import gg.archipelago.APClient.events.ConnectionResultEvent;
-import gg.archipelago.APClient.network.BouncedPacket;
-import gg.archipelago.APClient.parts.NetworkItem;
+import gg.archipelago.client.ArchipelagoClient;
+import gg.archipelago.client.ItemFlags;
+import gg.archipelago.client.Print.APPrint;
+import gg.archipelago.client.parts.NetworkItem;
 
-import java.util.ArrayList;
+import java.net.URISyntaxException;
 
-public class OSRSClient extends APClient {
-    public OSRSClient(String saveID, int slotID) {
-        super(saveID, slotID);
+public class OSRSClient  extends ArchipelagoClient {
+
+    public static final Logger logger = LogManager.getLogger(OSRSClient.class.getName());
+
+    public static OSRSClient apClient;
+
+    public static void newConnection(String address, String slotName, String password) {
+        if (apClient != null) {
+            apClient.close();
+        }
+        apClient = new OSRSClient();
+        apClient.setPassword(password);
+        apClient.setName(slotName);
+        apClient.setItemsHandlingFlags(ItemFlags.SEND_ITEMS + ItemFlags.SEND_OWN_ITEMS + ItemFlags.SEND_STARTING_INVENTORY);
+
+        apClient.getEventManager().registerListener(new ConnectionResult());
+        apClient.getEventManager().registerListener(new LocationInfo());
+        apClient.getEventManager().registerListener(new ReceiveItem());
+        apClient.getEventManager().registerListener(new DataStorageGet());
+        apClient.getEventManager().registerListener(new PlayerManager());
+        apClient.getEventManager().registerListener(new TeamManager());
+        //apClient.getEventManager().registerListener(new TestButton());
+        try {
+            apClient.connect(address);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void onConnectResult(ConnectionResultEvent connectionResultEvent) {
-
-    }
-
-    @Override
-    public void onJoinRoom() {
-
+    private OSRSClient() {
+        super();
+        this.setGame("Old School Runescape");
     }
 
     @Override
@@ -35,37 +52,12 @@ public class OSRSClient extends APClient {
     }
 
     @Override
-    public void onBounced(BouncedPacket bouncedPacket) {
-
-    }
-
-    @Override
     public void onError(Exception e) {
-
+        ConnectionPanel.connectionResultText = "Server Error NL " + e.getMessage();
     }
 
     @Override
-    public void onClose(String s, int i) {
-
-    }
-
-    @Override
-    public void onReceiveItem(NetworkItem networkItem) {
-
-    }
-
-    @Override
-    public void onLocationInfo(ArrayList<NetworkItem> arrayList) {
-
-    }
-
-    @Override
-    public void onLocationChecked(long l) {
-
-    }
-
-    @Override
-    public void onAttemptConnection(ConnectionAttemptEvent connectionAttemptEvent) {
-
+    public void onClose(String message, int i) {
+        ConnectionPanel.connectionResultText = "Connection Closed NL " + message;
     }
 }
