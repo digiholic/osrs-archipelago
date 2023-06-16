@@ -51,7 +51,7 @@ public class ArchipelagoPlugin extends Plugin
 		navButton = NavigationButton.builder()
 				.tooltip("Archipelago Randomizer")
 				.icon(icon)
-				.priority(5)
+				.priority(20)
 				.panel(panel)
 				.build();
 

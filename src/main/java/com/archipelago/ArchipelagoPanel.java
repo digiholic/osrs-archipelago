@@ -65,16 +65,39 @@ public class ArchipelagoPanel extends PluginPanel {
 
     private JPanel buildConnectionPanel(){
         final JPanel connectionPanel = new JPanel();
-        connectionPanel.setLayout(new BorderLayout());
+        connectionPanel.setLayout(new GridLayout(9,1));
         connectionPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-        connectionPanel.setPreferredSize(new Dimension(0, 30));
+        //connectionPanel.setPreferredSize(new Dimension(0, 30));
         connectionPanel.setBorder(new EmptyBorder(5, 5, 5, 10));
         connectionPanel.setVisible(true);
 
         //URL Entry
+        JLabel URLLabel = new JLabel("Server Address");
+        JTextField URLInput = new JTextField("archipelago:gg");
+        connectionPanel.add(URLLabel);
+        connectionPanel.add(URLInput);
+
         //Port
+        JLabel portLabel = new JLabel("Port");
+        JTextField portInput = new JTextField("38281");
+        connectionPanel.add(portLabel);
+        connectionPanel.add(portInput);
+
         //Slot Name
+        JLabel slotLabel = new JLabel("Slot Name");
+        JTextField slotInput = new JTextField();
+        connectionPanel.add(slotLabel);
+        connectionPanel.add(slotInput);
+
         //Password
+        JLabel passwordLabel = new JLabel("Server Password");
+        JTextField passwordInput = new JTextField();
+        connectionPanel.add(passwordLabel);
+        connectionPanel.add(passwordInput);
+
+        //Connect Button
+        JButton connectButton = new JButton("Connect");
+        connectionPanel.add(connectButton);
 
         return connectionPanel;
     }
