@@ -1,5 +1,8 @@
 package com.archipelago;
 
+import com.archipelago.apEvents.ConnectionResult;
+import com.archipelago.apEvents.LocationInfo;
+import com.archipelago.apEvents.ReceiveItem;
 import gg.archipelago.client.ArchipelagoClient;
 import gg.archipelago.client.ItemFlags;
 import gg.archipelago.client.Print.APPrint;
@@ -9,7 +12,7 @@ import java.net.URISyntaxException;
 
 public class OSRSClient  extends ArchipelagoClient {
 
-    public static final Logger logger = LogManager.getLogger(OSRSClient.class.getName());
+    //public static final Logger logger = LogManager.getLogger(OSRSClient.class.getName());
 
     public static OSRSClient apClient;
 
@@ -25,10 +28,6 @@ public class OSRSClient  extends ArchipelagoClient {
         apClient.getEventManager().registerListener(new ConnectionResult());
         apClient.getEventManager().registerListener(new LocationInfo());
         apClient.getEventManager().registerListener(new ReceiveItem());
-        apClient.getEventManager().registerListener(new DataStorageGet());
-        apClient.getEventManager().registerListener(new PlayerManager());
-        apClient.getEventManager().registerListener(new TeamManager());
-        //apClient.getEventManager().registerListener(new TestButton());
         try {
             apClient.connect(address);
         } catch (URISyntaxException e) {
@@ -53,11 +52,12 @@ public class OSRSClient  extends ArchipelagoClient {
 
     @Override
     public void onError(Exception e) {
-        ConnectionPanel.connectionResultText = "Server Error NL " + e.getMessage();
+
+        //ConnectionPanel.connectionResultText = "Server Error NL " + e.getMessage();
     }
 
     @Override
     public void onClose(String message, int i) {
-        ConnectionPanel.connectionResultText = "Connection Closed NL " + message;
+        //ConnectionPanel.connectionResultText = "Connection Closed NL " + message;
     }
 }

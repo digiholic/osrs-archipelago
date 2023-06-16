@@ -12,7 +12,11 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.ClientToolbar;
+import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.util.ImageUtil;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URI;
@@ -24,16 +28,34 @@ import java.net.UnknownHostException;
 )
 public class ArchipelagoPlugin extends Plugin
 {
+	private ArchipelagoPanel panel;
+	private NavigationButton navButton;
+
 	@Inject
 	private Client client;
 
 	@Inject
 	private ArchipelagoConfig config;
 
+	@Inject
+	private ClientToolbar clientToolbar;
+
 	@Override
 	protected void startUp() throws Exception
 	{
 		log.info("Example started!");
+		panel = new ArchipelagoPanel(this, config);
+
+		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
+
+		navButton = NavigationButton.builder()
+				.tooltip("Archipelago Randomizer")
+				.icon(icon)
+				.priority(5)
+				.panel(panel)
+				.build();
+
+		clientToolbar.addNavigation(navButton);
 	}
 
 	@Override
@@ -257,14 +279,6 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	private void ConnectToAPServer(String url, int port, String slotName, String password){
-		//URI.createURI(url, port);
-		//APWebSocket sock = new APWebSocket(url, null);
-		try (Socket socket = new Socket(url, port)){
 
-		} catch (UnknownHostException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 	}
 }
