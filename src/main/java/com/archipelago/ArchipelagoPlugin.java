@@ -278,7 +278,7 @@ public class ArchipelagoPlugin extends Plugin
 			Tetra = true;
 	}
 
-	private void ConnectToAPServer(String url, int port, String slotName, String password){
+	public void ConnectToAPServer(String url, int port, String slotName, String password){
 
 	}
 }

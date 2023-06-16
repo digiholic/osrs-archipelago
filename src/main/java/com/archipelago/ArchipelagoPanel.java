@@ -11,26 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArchipelagoPanel extends PluginPanel {
-    // When there is no loot, display this
-    private final PluginErrorPanel errorPanel = new PluginErrorPanel();
-
-    // Handle loot boxes
-    private final JPanel logsContainer = new JPanel();
-
-    // Handle overall session data
-    //private final JPanel overallPanel;
-    private final JLabel overallKillsLabel = new JLabel();
-    private final JLabel overallGpLabel = new JLabel();
-    private final JLabel overallIcon = new JLabel();
-
-    // Details and navigation
     private final JPanel connectionPanel;
-    private final JLabel detailsTitle = new JLabel();
-    private final JButton backBtn = new JButton();
-    private final JToggleButton viewHiddenBtn = new JToggleButton();
-    private final JRadioButton singleLootBtn = new JRadioButton();
-    private final JRadioButton groupedLootBtn = new JRadioButton();
-    private final JButton collapseBtn = new JButton();
 
     private final ArchipelagoPlugin plugin;
     private final ArchipelagoConfig config;
@@ -63,6 +44,11 @@ public class ArchipelagoPanel extends PluginPanel {
         //add(errorPanel);
     }
 
+    private JTextField URLInput;
+    private JTextField portInput;
+    private JTextField slotInput;
+    private JTextField passwordInput;
+
     private JPanel buildConnectionPanel(){
         final JPanel connectionPanel = new JPanel();
         connectionPanel.setLayout(new GridLayout(9,1));
@@ -73,25 +59,25 @@ public class ArchipelagoPanel extends PluginPanel {
 
         //URL Entry
         JLabel URLLabel = new JLabel("Server Address");
-        JTextField URLInput = new JTextField("archipelago:gg");
+        URLInput = new JTextField("archipelago:gg");
         connectionPanel.add(URLLabel);
         connectionPanel.add(URLInput);
 
         //Port
         JLabel portLabel = new JLabel("Port");
-        JTextField portInput = new JTextField("38281");
+        portInput = new JTextField("38281", 5);
         connectionPanel.add(portLabel);
         connectionPanel.add(portInput);
 
         //Slot Name
         JLabel slotLabel = new JLabel("Slot Name");
-        JTextField slotInput = new JTextField();
+        slotInput = new JTextField();
         connectionPanel.add(slotLabel);
         connectionPanel.add(slotInput);
 
         //Password
         JLabel passwordLabel = new JLabel("Server Password");
-        JTextField passwordInput = new JTextField();
+        passwordInput = new JTextField();
         connectionPanel.add(passwordLabel);
         connectionPanel.add(passwordInput);
 
@@ -102,6 +88,10 @@ public class ArchipelagoPanel extends PluginPanel {
         return connectionPanel;
     }
 
+    private void OnConnectClicked(){
+        plugin.ConnectToAPServer(URLInput.getText(), Integer.parseInt(portInput.getText()), slotInput.getText(), passwordInput.getText());
+    }
+    
     private JPanel buildTaskPanel(){
         final JPanel taskPanel = new JPanel();
         taskPanel.setLayout(new BorderLayout());
