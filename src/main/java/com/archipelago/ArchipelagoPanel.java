@@ -7,10 +7,14 @@ import net.runelite.client.ui.components.PluginErrorPanel;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ArchipelagoPanel extends PluginPanel {
+    public static ArchipelagoPanel apPanel;
+
+
     private final JPanel connectionPanel;
 
     private final ArchipelagoPlugin plugin;
@@ -20,6 +24,7 @@ public class ArchipelagoPanel extends PluginPanel {
     {
         this.plugin = plugin;
         this.config = config;
+        apPanel = this;
 
         setBorder(new EmptyBorder(6, 6, 6, 6));
         setBackground(ColorScheme.DARK_GRAY_COLOR);
@@ -48,10 +53,12 @@ public class ArchipelagoPanel extends PluginPanel {
     private JTextField portInput;
     private JTextField slotInput;
     private JTextField passwordInput;
+    public JLabel statusText;
+
 
     private JPanel buildConnectionPanel(){
         final JPanel connectionPanel = new JPanel();
-        connectionPanel.setLayout(new GridLayout(9,1));
+        connectionPanel.setLayout(new GridLayout(10,1));
         connectionPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
         //connectionPanel.setPreferredSize(new Dimension(0, 30));
         connectionPanel.setBorder(new EmptyBorder(5, 5, 5, 10));
@@ -59,7 +66,7 @@ public class ArchipelagoPanel extends PluginPanel {
 
         //URL Entry
         JLabel URLLabel = new JLabel("Server Address");
-        URLInput = new JTextField("archipelago:gg");
+        URLInput = new JTextField("localhost");
         connectionPanel.add(URLLabel);
         connectionPanel.add(URLInput);
 
@@ -84,12 +91,14 @@ public class ArchipelagoPanel extends PluginPanel {
         //Connect Button
         JButton connectButton = new JButton("Connect");
         connectionPanel.add(connectButton);
+        connectButton.addActionListener(e -> {
+            plugin.ConnectToAPServer(URLInput.getText(), Integer.parseInt(portInput.getText()), slotInput.getText(), passwordInput.getText());
+        });
+
+        statusText = new JLabel("");
+        connectionPanel.add(statusText);
 
         return connectionPanel;
-    }
-
-    private void OnConnectClicked(){
-        plugin.ConnectToAPServer(URLInput.getText(), Integer.parseInt(portInput.getText()), slotInput.getText(), passwordInput.getText());
     }
     
     private JPanel buildTaskPanel(){

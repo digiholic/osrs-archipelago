@@ -1,5 +1,6 @@
 package com.archipelago.apEvents;
 
+import com.archipelago.ArchipelagoPanel;
 import gg.archipelago.client.events.ArchipelagoEventListener;
 import gg.archipelago.client.events.ConnectionResultEvent;
 import gg.archipelago.client.helper.DeathLink;
@@ -28,7 +29,7 @@ public class ConnectionResult {
             default:
                 msg = "Unknown Error";
         }
-        //ConnectionPanel.connectionResultText = msg;
+        ArchipelagoPanel.apPanel.statusText.setText(msg);
 
         if (event.getResult() != gg.archipelago.client.network.ConnectionResult.Success)
             return;

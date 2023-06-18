@@ -1,5 +1,7 @@
 package com.archipelago;
 
+import com.archipelago.data.LocationData;
+import com.archipelago.data.LocationNames;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 
@@ -7,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.NpcLootReceived;
@@ -21,6 +24,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 @Slf4j
 @PluginDescriptor(
@@ -30,6 +35,12 @@ public class ArchipelagoPlugin extends Plugin
 {
 	private ArchipelagoPanel panel;
 	private NavigationButton navButton;
+
+	public Dictionary<LocationData, Boolean> LocationCheckStates = new Hashtable<LocationData, Boolean>(){{
+		for (LocationData loc : LocationData.AllLocations){
+			put(loc, false);
+		}
+	}};
 
 	@Inject
 	private Client client;
@@ -43,7 +54,6 @@ public class ArchipelagoPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		log.info("Example started!");
 		panel = new ArchipelagoPanel(this, config);
 
 		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
@@ -61,16 +71,8 @@ public class ArchipelagoPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		log.info("Example stopped!");
-	}
-
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
-	{
-
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
-		{
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Example says " + config.greeting(), null);
+		if (OSRSClient.apClient.isConnected()){
+			OSRSClient.apClient.disconnect();
 		}
 	}
 
@@ -192,6 +194,10 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	@Subscribe
+	public void onGameTick(GameTick gameTick){
+		checkStatus();
+	}
+	@Subscribe
 	public void onNpcLootReceived(final NpcLootReceived npcLootReceived)
 	{
 		final NPC npc = npcLootReceived.getNpc();
@@ -230,6 +236,7 @@ public class ArchipelagoPlugin extends Plugin
 	final String TETRA_MESSAGE = "You successfully prepare the Tetra.";
 	final String CAVEFISH_MESSAGE = "You successfully prepare the Cavefish.";
 	final String GUPPY_MESSAGE = "You successfully prepare the Guppy.";
+
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
@@ -279,6 +286,11 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	public void ConnectToAPServer(String url, int port, String slotName, String password){
-
+		String protocol = "wss://";
+		if (url.contains("localhost") || url.contains("127.0.0.1"))
+			protocol = "ws://";
+		String uri = protocol+url+":"+port;
+		log.info(uri);
+		OSRSClient.newConnection(uri, slotName, password);
 	}
 }

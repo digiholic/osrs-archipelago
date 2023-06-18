@@ -53,11 +53,11 @@ public class OSRSClient  extends ArchipelagoClient {
     @Override
     public void onError(Exception e) {
 
-        //ConnectionPanel.connectionResultText = "Server Error NL " + e.getMessage();
+        ArchipelagoPanel.apPanel.statusText.setText("Server Error NL " + e.getMessage());
     }
 
     @Override
     public void onClose(String message, int i) {
-        //ConnectionPanel.connectionResultText = "Connection Closed NL " + message;
+        ArchipelagoPanel.apPanel.statusText.setText("Connection Closed NL " + message);
     }
 }

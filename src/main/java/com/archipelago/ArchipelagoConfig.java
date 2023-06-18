@@ -4,9 +4,10 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-@ConfigGroup("example")
+@ConfigGroup("Archipelago")
 public interface ArchipelagoConfig extends Config
 {
+	/**
 	@ConfigItem(
 		keyName = "greeting",
 		name = "Welcome Greeting",
@@ -16,4 +17,5 @@ public interface ArchipelagoConfig extends Config
 	{
 		return "Hello";
 	}
+	*/
 }
