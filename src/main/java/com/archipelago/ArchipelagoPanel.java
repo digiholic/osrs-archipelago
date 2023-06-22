@@ -128,19 +128,15 @@ public class ArchipelagoPanel extends PluginPanel {
         taskPanel.setBorder(new EmptyBorder(5, 5, 5, 10));
         taskPanel.setVisible(false);
 
-        taskPanel.add(buildTaskRow("test", 217, 0, true));
-
         return taskPanel;
     }
 
-    private JPanel buildTaskRow(String text, int spriteID, int spriteFile, boolean completed){
+    private JPanel buildTaskRow(String text, BufferedImage image, boolean completed){
         final JPanel taskRow = new JPanel();
         taskRow.setLayout(new BorderLayout());
-        taskRow.setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.GRAND_EXCHANGE_LIMIT);
+        taskRow.setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARKER_GRAY_COLOR);
         taskRow.setPreferredSize(new Dimension(0, 30));
 
-        BufferedImage image = skillIconManager.getSkillImage(Skill.RUNECRAFT, true);
-        //BufferedImage image = spriteManager.getSprite(spriteID, spriteFile);
         JLabel icon = new JLabel(new ImageIcon(image));
         taskRow.add(icon, BorderLayout.WEST);
         JLabel taskName = new JLabel(text);
@@ -164,9 +160,10 @@ public class ArchipelagoPanel extends PluginPanel {
     public void ConnectionStateChanged() {
         taskListPanel.setVisible(true);
 
-        for (Map.Entry<LocationData,Boolean> data : plugin.LocationCheckStates.entrySet()) {
-            if (data.getKey().display_in_panel){
-                taskListPanel.add(buildTaskRow(data.getKey().name, data.getKey().icon_id, data.getKey().icon_file, data.getValue()));
+        for (LocationData loc : LocationHandler.AllLocations) {
+            if (loc.display_in_panel){
+                BufferedImage image = spriteManager.getSprite(loc.icon_id, loc.icon_file);
+                SwingUtilities.invokeLater(() -> taskListPanel.add(buildTaskRow(loc.name, image, plugin.LocationCheckStates.getOrDefault(loc,false))));
             }
         }
         taskListPanel.revalidate();
