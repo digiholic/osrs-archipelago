@@ -15,6 +15,8 @@ import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.NpcLootReceived;
+import net.runelite.client.game.SkillIconManager;
+import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
@@ -46,6 +48,7 @@ public class ArchipelagoPlugin extends Plugin
 		}
 	}};
 
+
 	private void SendChecks(){
 		Collection<Long> checkedLocations = LocationHandler.AllLocations.stream()
 				.filter(loc -> LocationCheckStates.get(loc))
@@ -66,10 +69,15 @@ public class ArchipelagoPlugin extends Plugin
 	@Inject
 	private ClientToolbar clientToolbar;
 
+	@Inject
+	private SkillIconManager skillIconManager;
+	@Inject
+	private SpriteManager spriteManager;
+
 	@Override
 	protected void startUp() throws Exception
 	{
-		panel = new ArchipelagoPanel(this, config);
+		panel = new ArchipelagoPanel(this, config, skillIconManager, spriteManager);
 
 		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
 

@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 
 public class LocationHandler {
     public static List<LocationData> AllLocations = List.of(
-            new LocationData(0x070000L, LocationNames.Q_Cooks_Assistant),
-            new LocationData(0x070001L, LocationNames.Q_Demon_Slayer),
-            new LocationData(0x070002L, LocationNames.Q_Restless_Ghost),
-            new LocationData(0x070003L, LocationNames.Q_Romeo_Juliet),
-            new LocationData(0x070004L, LocationNames.Q_Sheep_Shearer),
-            new LocationData(0x070005L, LocationNames.Q_Shield_of_Arrav),
+            new LocationData(0x070000L,LocationNames.Q_Cooks_Assistant),
+            new LocationData(0x070001L,LocationNames.Q_Demon_Slayer),
+            new LocationData(0x070002L,LocationNames.Q_Restless_Ghost),
+            new LocationData(0x070003L,LocationNames.Q_Romeo_Juliet),
+            new LocationData(0x070004L,LocationNames.Q_Sheep_Shearer),
+            new LocationData(0x070005L,LocationNames.Q_Shield_of_Arrav),
             new LocationData(0x070006L,LocationNames.Q_Ernest_the_Chicken),
             new LocationData(0x070007L,LocationNames.Q_Vampyre_Slayer),
             new LocationData(0x070008L,LocationNames.Q_Imp_Catcher),
@@ -32,7 +32,7 @@ public class LocationHandler {
             new LocationData(0x070012L,LocationNames.Q_Corsair_Curse),
             new LocationData(0x070013L,LocationNames.Q_X_Marks_the_Spot),
             new LocationData(0x070014L,LocationNames.Q_Below_Ice_Mountain),
-            new LocationData(0x070055L, LocationNames.Q_Dragon_Slayer),
+            new LocationData(0x070055L,LocationNames.Q_Dragon_Slayer),
             new LocationData(0x070040L,LocationNames.QP_Cooks_Assistant),
             new LocationData(0x070041L,LocationNames.QP_Demon_Slayer),
             new LocationData(0x070042L,LocationNames.QP_Restless_Ghost),

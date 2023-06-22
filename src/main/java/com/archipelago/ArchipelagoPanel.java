@@ -1,13 +1,18 @@
 package com.archipelago;
 
+import net.runelite.api.Skill;
+import net.runelite.client.game.SkillIconManager;
+import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.ui.components.PluginErrorPanel;
 
+import javax.inject.Inject;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,14 +21,21 @@ public class ArchipelagoPanel extends PluginPanel {
 
 
     private final JPanel connectionPanel;
+    private final JPanel taskListPanel;
 
     private final ArchipelagoPlugin plugin;
     private final ArchipelagoConfig config;
+    private SkillIconManager skillIconManager;
+    private SpriteManager spriteManager;
 
-    ArchipelagoPanel(final ArchipelagoPlugin plugin, final ArchipelagoConfig config)
+
+    ArchipelagoPanel(final ArchipelagoPlugin plugin, final ArchipelagoConfig config, SkillIconManager skillIconManager, SpriteManager spriteManager)
     {
         this.plugin = plugin;
         this.config = config;
+        this.skillIconManager = skillIconManager;
+        this.spriteManager = spriteManager;
+
         apPanel = this;
 
         setBorder(new EmptyBorder(6, 6, 6, 6));
@@ -37,11 +49,14 @@ public class ArchipelagoPanel extends PluginPanel {
 
         connectionPanel = buildConnectionPanel();
         //overallPanel = buildOverallPanel();
+        taskListPanel = buildTaskPanel();
 
         // Create loot boxes wrapper
         //logsContainer.setLayout(new BoxLayout(logsContainer, BoxLayout.Y_AXIS));
         layoutPanel.add(connectionPanel);
         //layoutPanel.add(overallPanel);
+        layoutPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        layoutPanel.add(taskListPanel);
         //layoutPanel.add(logsContainer);
 
         // Add error pane
@@ -54,7 +69,6 @@ public class ArchipelagoPanel extends PluginPanel {
     private JTextField slotInput;
     private JTextField passwordInput;
     public JLabel statusText;
-
 
     private JPanel buildConnectionPanel(){
         final JPanel connectionPanel = new JPanel();
@@ -103,19 +117,32 @@ public class ArchipelagoPanel extends PluginPanel {
     
     private JPanel buildTaskPanel(){
         final JPanel taskPanel = new JPanel();
-        taskPanel.setLayout(new BorderLayout());
+        taskPanel.setLayout(new BoxLayout(taskPanel, BoxLayout.Y_AXIS));
+
         taskPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-        taskPanel.setPreferredSize(new Dimension(0, 30));
+        taskPanel.setPreferredSize(new Dimension(0, 60));
         taskPanel.setBorder(new EmptyBorder(5, 5, 5, 10));
-        taskPanel.setVisible(false);
+        taskPanel.setVisible(true);
 
         //Task Rows
-
+        taskPanel.add(buildTaskRow("Test Text","", false));
+        taskPanel.add(buildTaskRow("Test Text 2","", true));
         return taskPanel;
     }
 
-    private JPanel buildTaskRow(String text, String icon){
+    private JPanel buildTaskRow(String text, String iconString, boolean completed){
         final JPanel taskRow = new JPanel();
+        taskRow.setLayout(new BorderLayout());
+        taskRow.setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARK_GRAY_COLOR);
+        taskRow.setPreferredSize(new Dimension(0, 300));
+
+        BufferedImage image = skillIconManager.getSkillImage(Skill.RUNECRAFT, true);
+        JLabel icon = new JLabel(new ImageIcon(image));
+        taskRow.add(icon, BorderLayout.WEST);
+        JLabel taskName = new JLabel(text);
+        taskName.setForeground(completed ? Color.BLACK : Color.WHITE);
+        taskRow.add(taskName, BorderLayout.CENTER);
+
 
         return taskRow;
     }
