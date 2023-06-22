@@ -1,6 +1,9 @@
 package com.archipelago;
 
+import com.archipelago.data.LocationData;
+import joptsimple.util.KeyValuePair;
 import net.runelite.api.Skill;
+import net.runelite.api.SpriteID;
 import net.runelite.client.game.SkillIconManager;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.ColorScheme;
@@ -15,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ArchipelagoPanel extends PluginPanel {
     public static ArchipelagoPanel apPanel;
@@ -120,29 +124,29 @@ public class ArchipelagoPanel extends PluginPanel {
         taskPanel.setLayout(new BoxLayout(taskPanel, BoxLayout.Y_AXIS));
 
         taskPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-        taskPanel.setPreferredSize(new Dimension(0, 60));
+        //taskPanel.setPreferredSize(new Dimension(0, 60));
         taskPanel.setBorder(new EmptyBorder(5, 5, 5, 10));
-        taskPanel.setVisible(true);
+        taskPanel.setVisible(false);
 
-        //Task Rows
-        taskPanel.add(buildTaskRow("Test Text","", false));
-        taskPanel.add(buildTaskRow("Test Text 2","", true));
+        taskPanel.add(buildTaskRow("test", 217, 0, true));
+
         return taskPanel;
     }
 
-    private JPanel buildTaskRow(String text, String iconString, boolean completed){
+    private JPanel buildTaskRow(String text, int spriteID, int spriteFile, boolean completed){
         final JPanel taskRow = new JPanel();
         taskRow.setLayout(new BorderLayout());
-        taskRow.setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARK_GRAY_COLOR);
-        taskRow.setPreferredSize(new Dimension(0, 300));
+        taskRow.setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.GRAND_EXCHANGE_LIMIT);
+        taskRow.setPreferredSize(new Dimension(0, 30));
 
         BufferedImage image = skillIconManager.getSkillImage(Skill.RUNECRAFT, true);
+        //BufferedImage image = spriteManager.getSprite(spriteID, spriteFile);
         JLabel icon = new JLabel(new ImageIcon(image));
         taskRow.add(icon, BorderLayout.WEST);
         JLabel taskName = new JLabel(text);
         taskName.setForeground(completed ? Color.BLACK : Color.WHITE);
         taskRow.add(taskName, BorderLayout.CENTER);
-
+        taskRow.setVisible(true);
 
         return taskRow;
     }
@@ -155,5 +159,17 @@ public class ArchipelagoPanel extends PluginPanel {
         statusPanel.setVisible(false);
 
         return statusPanel;
+    }
+
+    public void ConnectionStateChanged() {
+        taskListPanel.setVisible(true);
+
+        for (Map.Entry<LocationData,Boolean> data : plugin.LocationCheckStates.entrySet()) {
+            if (data.getKey().display_in_panel){
+                taskListPanel.add(buildTaskRow(data.getKey().name, data.getKey().icon_id, data.getKey().icon_file, data.getValue()));
+            }
+        }
+        taskListPanel.revalidate();
+        taskListPanel.repaint();
     }
 }

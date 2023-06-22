@@ -13,4 +13,7 @@ import java.util.List;
 public class LocationData {
     public Long id;
     public String name;
+    public int icon_id;
+    public int icon_file;
+    public boolean display_in_panel;
 }

@@ -42,7 +42,7 @@ public class ArchipelagoPlugin extends Plugin
 	private ArchipelagoPanel panel;
 	private NavigationButton navButton;
 
-	public Dictionary<LocationData, Boolean> LocationCheckStates = new Hashtable<LocationData, Boolean>(){{
+	public Hashtable<LocationData, Boolean> LocationCheckStates = new Hashtable<LocationData, Boolean>(){{
 		for (LocationData loc : LocationHandler.AllLocations){
 			put(loc, false);
 		}
@@ -106,19 +106,8 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 
-	boolean Stronghold_Of_Security;
-	boolean Simple_Lockbox;
-	boolean Elaborate_Lockbox;
-	boolean Ornate_Lockbox;
-	boolean Mind_Core;
-	boolean Body_Core;
-	boolean Barronite_Deposit;
-	boolean Beginner_Clue;
-	boolean Edgeville_Altar;
 	boolean Catch_Lobster;
 	boolean Catch_Swordfish;
-	boolean Holy_Symbol;
-
 
 
 	private void SetCheckByName(String name, boolean status){
@@ -174,17 +163,8 @@ public class ArchipelagoPlugin extends Plugin
 		SetCheckByName(LocationNames.QP_X_Marks_the_Spot,      Quest.X_MARKS_THE_SPOT.getState(client) == QuestState.FINISHED);
 		SetCheckByName(LocationNames.QP_Below_Ice_Mountain,    Quest.BELOW_ICE_MOUNTAIN.getState(client) == QuestState.FINISHED);
 
-		//Stronghold_Of_Security = "Stronghold of Security"
-		//Simple_Lockbox = "Open a Simple Lockbox"
-		//Elaborate_Lockbox = "Open an Elaborate Lockbox"
-		//Ornate_Lockbox = "Open an Ornate Lockbox"
-		//Mind_Core = "Craft runes with a Mind Core"
-		//Body_Core = "Craft runes with a Body Core"
-		//Beginner_Clue = "Beginner Clue Completion"
-		//Edgeville_Altar = "Pray at the Edgeville Monastery"
 		//Catch_Lobster = "Catch a Lobster"
 		//Catch_Swordfish = "Catch a Swordfish"
-		//Holy_Symbol = "Make a Holy Symbol"
 
 		SetCheckByName(LocationNames.Total_XP_5000,   client.getOverallExperience() > 5000);
 		SetCheckByName(LocationNames.Total_XP_25000,  client.getOverallExperience() > 25000);
@@ -199,8 +179,28 @@ public class ArchipelagoPlugin extends Plugin
 		SetCheckByName(LocationNames.Q_Dragon_Slayer,Quest.DRAGON_SLAYER_I.getState(client) == QuestState.FINISHED);
 	}
 
+	private boolean connectState = false;
+
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged gameStateChanged)
+	{
+		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
+		{
+			if (!connectState){
+				panel.ConnectionStateChanged();
+				connectState = true;
+			}
+		}
+	}
+
 	@Subscribe
 	public void onClientTick(ClientTick t){
+		/**
+		if (OSRSClient.apClient.isConnected() != connectState){
+			connectState = OSRSClient.apClient.isConnected();
+			panel.ConnectionStateChanged();
+		}*/
+
 		checkStatus();
 		SendChecks();
 	}
