@@ -59,6 +59,7 @@ public class ArchipelagoPlugin extends Plugin
 		if (OSRSClient.apClient != null && OSRSClient.apClient.isConnected()){
 			OSRSClient.apClient.checkLocations(checkedLocations);
 		}
+		SwingUtilities.invokeLater(panel::UpdateTaskStatus);
 	}
 
 	@Inject
@@ -245,6 +246,8 @@ public class ArchipelagoPlugin extends Plugin
 	final String TETRA_MESSAGE = "You successfully prepare the Tetra.";
 	final String CAVEFISH_MESSAGE = "You successfully prepare the Cavefish.";
 	final String GUPPY_MESSAGE = "You successfully prepare the Guppy.";
+	final String LOBSTER_MESSAGE = "You catch a lobster.";
+	final String SWORDFISH_MESSAGE = "You catch a swordfish.";
 
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
@@ -292,6 +295,10 @@ public class ArchipelagoPlugin extends Plugin
 			SetCheckByName(LocationNames.Cavefish, true);
 		else if (TETRA_MESSAGE.equals(message))
 			SetCheckByName(LocationNames.Tetra, true);
+		else if (LOBSTER_MESSAGE.equals(message))
+			SetCheckByName(LocationNames.Catch_Lobster, true);
+		else if (SWORDFISH_MESSAGE.equals(message))
+			SetCheckByName(LocationNames.Catch_Swordfish, true);
 	}
 
 	public void ConnectToAPServer(String url, int port, String slotName, String password){

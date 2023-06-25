@@ -17,6 +17,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class ArchipelagoPanel extends PluginPanel {
     private SkillIconManager skillIconManager;
     private SpriteManager spriteManager;
 
-
+    private HashMap<LocationData, JPanel> locationPanels = new HashMap<LocationData, JPanel>();
     ArchipelagoPanel(final ArchipelagoPlugin plugin, final ArchipelagoConfig config, SkillIconManager skillIconManager, SpriteManager spriteManager)
     {
         this.plugin = plugin;
@@ -73,6 +74,8 @@ public class ArchipelagoPanel extends PluginPanel {
     private JTextField slotInput;
     private JTextField passwordInput;
     public JLabel statusText;
+
+    private JCheckBox displayCompleted;
 
     private JPanel buildConnectionPanel(){
         final JPanel connectionPanel = new JPanel();
@@ -115,7 +118,7 @@ public class ArchipelagoPanel extends PluginPanel {
 
         statusText = new JLabel("");
         connectionPanel.add(statusText);
-
+        connectionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         return connectionPanel;
     }
     
@@ -124,10 +127,15 @@ public class ArchipelagoPanel extends PluginPanel {
         taskPanel.setLayout(new BoxLayout(taskPanel, BoxLayout.Y_AXIS));
 
         taskPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-        //taskPanel.setPreferredSize(new Dimension(0, 60));
         taskPanel.setBorder(new EmptyBorder(5, 5, 5, 10));
         taskPanel.setVisible(false);
 
+        displayCompleted = new JCheckBox("Display Completed Tasks");
+        displayCompleted.setAlignmentX(Component.LEFT_ALIGNMENT);
+        displayCompleted.addActionListener(e -> SwingUtilities.invokeLater(this::UpdateTaskStatus));
+
+        taskPanel.add(displayCompleted);
+        taskPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         return taskPanel;
     }
 
@@ -136,7 +144,7 @@ public class ArchipelagoPanel extends PluginPanel {
         taskRow.setLayout(new BorderLayout());
         taskRow.setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARKER_GRAY_COLOR);
         taskRow.setPreferredSize(new Dimension(0, 30));
-
+        taskRow.setAlignmentX(Component.LEFT_ALIGNMENT);
         JLabel icon = new JLabel(new ImageIcon(image));
         taskRow.add(icon, BorderLayout.WEST);
         JLabel taskName = new JLabel(text);
@@ -157,13 +165,27 @@ public class ArchipelagoPanel extends PluginPanel {
         return statusPanel;
     }
 
+    public void UpdateTaskStatus(){
+        for (LocationData loc : LocationHandler.AllLocations){
+            boolean completed = plugin.LocationCheckStates.getOrDefault(loc, false);
+            JPanel taskPanel = locationPanels.getOrDefault(loc,null);
+            if (taskPanel != null){
+                taskPanel.setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARKER_GRAY_COLOR);
+                taskPanel.setVisible(!completed || displayCompleted.isSelected());
+            }
+        }
+    }
     public void ConnectionStateChanged() {
         taskListPanel.setVisible(true);
 
         for (LocationData loc : LocationHandler.AllLocations) {
             if (loc.display_in_panel){
                 BufferedImage image = spriteManager.getSprite(loc.icon_id, loc.icon_file);
-                SwingUtilities.invokeLater(() -> taskListPanel.add(buildTaskRow(loc.name, image, plugin.LocationCheckStates.getOrDefault(loc,false))));
+                SwingUtilities.invokeLater(() -> {
+                    JPanel taskPanel = buildTaskRow(loc.name, image, plugin.LocationCheckStates.getOrDefault(loc,false));
+                    locationPanels.put(loc, taskPanel);
+                    taskListPanel.add(taskPanel);
+                });
             }
         }
         taskListPanel.revalidate();
