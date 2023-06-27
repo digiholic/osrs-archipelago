@@ -6,21 +6,33 @@ import com.archipelago.apEvents.ReceiveItem;
 import gg.archipelago.client.ArchipelagoClient;
 import gg.archipelago.client.ItemFlags;
 import gg.archipelago.client.Print.APPrint;
+import gg.archipelago.client.Print.APPrintPart;
 import gg.archipelago.client.parts.NetworkItem;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URISyntaxException;
 
+@Slf4j
 public class OSRSClient  extends ArchipelagoClient {
 
     //public static final Logger logger = LogManager.getLogger(OSRSClient.class.getName());
 
+    private ArchipelagoPlugin plugin;
     public static OSRSClient apClient;
 
-    public static void newConnection(String address, String slotName, String password) {
+    public static boolean Connected(){
+        if (apClient == null) return false;
+        return apClient.isConnected();
+    }
+
+    public static void newConnection(ArchipelagoPlugin plugin, String address, String slotName, String password) {
         if (apClient != null) {
             apClient.close();
         }
+
         apClient = new OSRSClient();
+        apClient.plugin = plugin;
+
         apClient.setPassword(password);
         apClient.setName(slotName);
         apClient.setItemsHandlingFlags(ItemFlags.SEND_ITEMS + ItemFlags.SEND_OWN_ITEMS + ItemFlags.SEND_STARTING_INVENTORY);
@@ -47,7 +59,12 @@ public class OSRSClient  extends ArchipelagoClient {
 
     @Override
     public void onPrintJson(APPrint apPrint, String s, int i, NetworkItem networkItem) {
-
+        if ("Join".equals(apPrint.type) || "Tutorial".equals(apPrint.type)) return;
+        StringBuilder msgBuilder = new StringBuilder();
+        for (APPrintPart part : apPrint.parts){
+            msgBuilder.append(part.text);
+        }
+        plugin.DisplayChatMessage(msgBuilder.toString());
     }
 
     @Override

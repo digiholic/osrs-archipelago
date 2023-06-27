@@ -2,12 +2,10 @@ package com.archipelago;
 
 import com.archipelago.data.LocationData;
 import com.archipelago.data.LocationNames;
-import com.google.common.base.Strings;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import javax.swing.*;
 
-import joptsimple.util.KeyValuePair;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
@@ -16,6 +14,7 @@ import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ChatboxInput;
 import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.game.SkillIconManager;
 import net.runelite.client.game.SpriteManager;
@@ -27,10 +26,6 @@ import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.Socket;
-import java.net.URI;
-import java.net.UnknownHostException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,7 +51,7 @@ public class ArchipelagoPlugin extends Plugin
 				.map(loc -> loc.id)
 				.collect(Collectors.toList());
 
-		if (OSRSClient.apClient != null && OSRSClient.apClient.isConnected()){
+		if (OSRSClient.apClient != null && OSRSClient.Connected()){
 			OSRSClient.apClient.checkLocations(checkedLocations);
 		}
 		SwingUtilities.invokeLater(panel::UpdateTaskStatus);
@@ -102,7 +97,7 @@ public class ArchipelagoPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		if (OSRSClient.apClient != null && OSRSClient.apClient.isConnected()){
+		if (OSRSClient.apClient != null && OSRSClient.Connected()){
 			OSRSClient.apClient.disconnect();
 		}
 		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
@@ -183,6 +178,12 @@ public class ArchipelagoPlugin extends Plugin
 			log.error("Null key for "+name);
 	}
 
+	public void DisplayChatMessage(String msg){
+		clientThread.invoke(() ->
+				client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "<img=" + modIconIndex + ">"+msg, null)
+		);
+	}
+
 	private void checkStatus(){
 		SetCheckByName(LocationNames.Q_Cooks_Assistant,        Quest.COOKS_ASSISTANT.getState(client) == QuestState.FINISHED);
 		SetCheckByName(LocationNames.Q_Demon_Slayer,           Quest.DEMON_SLAYER.getState(client) == QuestState.FINISHED);
@@ -260,8 +261,8 @@ public class ArchipelagoPlugin extends Plugin
 	@Subscribe
 	public void onClientTick(ClientTick t){
 		/**
-		if (OSRSClient.apClient.isConnected() != connectState){
-			connectState = OSRSClient.apClient.isConnected();
+		if (OSRSClient.Connected() != connectState){
+			connectState = OSRSClient.Connected();
 			panel.ConnectionStateChanged();
 		}*/
 
@@ -360,7 +361,7 @@ public class ArchipelagoPlugin extends Plugin
 			SetCheckByName(LocationNames.Catch_Swordfish, true);
 
 		if (event.getName() == null || client.getLocalPlayer() == null
-				|| client.getLocalPlayer().getName() == null || !OSRSClient.apClient.isConnected())
+				|| client.getLocalPlayer().getName() == null || !OSRSClient.Connected())
 		{
 			return;
 		}
@@ -375,11 +376,38 @@ public class ArchipelagoPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
+	public void onChatboxInput(ChatboxInput chatboxInput)
+	{
+		final String message = chatboxInput.getValue();
+
+		String command = extractCommand(message);
+		if ("!ap".equals(command)){
+			String cmd = message.substring(3);
+			OSRSClient.apClient.sendChat(cmd);
+			log.info("Sending string to AP: "+cmd);
+			chatboxInput.consume();
+		}
+
+
+	}
+
+	private static String extractCommand(String message)
+	{
+		int idx = message.indexOf(' ');
+		if (idx == -1)
+		{
+			return message;
+		}
+
+		return message.substring(0, idx);
+	}
+
 	private void updateChatbox()
 	{
 		Widget chatboxTypedText = client.getWidget(WidgetInfo.CHATBOX_INPUT);
 
-		if (chatboxTypedText == null || chatboxTypedText.isHidden() || !OSRSClient.apClient.isConnected())
+		if (chatboxTypedText == null || chatboxTypedText.isHidden() || !OSRSClient.Connected())
 		{
 			return;
 		}
@@ -396,6 +424,6 @@ public class ArchipelagoPlugin extends Plugin
 			protocol = "ws://";
 		String uri = protocol+url+":"+port;
 		log.info(uri);
-		OSRSClient.newConnection(uri, slotName, password);
+		OSRSClient.newConnection(this, uri, slotName, password);
 	}
 }
