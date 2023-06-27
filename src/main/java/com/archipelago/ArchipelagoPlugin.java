@@ -2,6 +2,7 @@ package com.archipelago;
 
 import com.archipelago.data.LocationData;
 import com.archipelago.data.LocationNames;
+import com.google.common.base.Strings;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import javax.swing.*;
@@ -9,10 +10,10 @@ import javax.swing.*;
 import joptsimple.util.KeyValuePair;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
-import net.runelite.api.events.ChatMessage;
-import net.runelite.api.events.ClientTick;
-import net.runelite.api.events.GameStateChanged;
-import net.runelite.api.events.GameTick;
+import net.runelite.api.events.*;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.NpcLootReceived;
@@ -23,15 +24,14 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ImageUtil;
+import net.runelite.client.util.Text;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URI;
 import java.net.UnknownHostException;
-import java.util.Collection;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -66,6 +66,8 @@ public class ArchipelagoPlugin extends Plugin
 	private Client client;
 
 	@Inject
+	private ClientThread clientThread;
+	@Inject
 	private ArchipelagoConfig config;
 
 	@Inject
@@ -91,6 +93,10 @@ public class ArchipelagoPlugin extends Plugin
 				.build();
 
 		clientToolbar.addNavigation(navButton);
+
+		loadSprites();
+		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
+
 	}
 
 	@Override
@@ -99,6 +105,7 @@ public class ArchipelagoPlugin extends Plugin
 		if (OSRSClient.apClient != null && OSRSClient.apClient.isConnected()){
 			OSRSClient.apClient.disconnect();
 		}
+		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
 	}
 
 	@Provides
@@ -108,9 +115,62 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 
-	boolean Catch_Lobster;
-	boolean Catch_Swordfish;
+	@Subscribe
+	public void onScriptCallbackEvent(ScriptCallbackEvent event)
+	{
+		if (!event.getEventName().equals("setChatboxInput"))
+		{
+			return;
+		}
 
+		updateChatbox();
+	}
+
+	@Subscribe
+	public void onBeforeRender(BeforeRender event)
+	{
+		updateChatbox(); // this stops flickering when typing
+	}
+
+
+	private int modIconIndex = 393;
+	private void loadSprites()
+	{
+		clientThread.invoke(() ->
+		{
+			IndexedSprite[] modIcons = client.getModIcons();
+			List<IndexedSprite> newList = new ArrayList<>();
+
+			int modIconsStart = modIcons.length - 1;
+
+			final IndexedSprite sprite = getIndexedSpriteEmbedded();
+
+			newList.add(sprite);
+			//modIconIndex = modIcons.length;
+
+			// copy the icons around as a hack to avoid
+			// java.lang.ClassCastException: class [Lnet.runelite.api.IndexedSprite; cannot be cast to class [Lof; ([Lnet.runelite.api.IndexedSprite; is in unnamed module of loader 'app'; [Lof; is in unnamed module of loader net.runelite.client.rs.ClientLoader$1 @2ecb15df)
+			IndexedSprite[] newAry = Arrays.copyOf(modIcons, modIcons.length + newList.size());
+			System.arraycopy(newList.toArray(new IndexedSprite[0]), 0, newAry, modIcons.length, newList.size());
+			client.setModIcons(newAry);
+		});
+	}
+
+	private IndexedSprite getIndexedSpriteEmbedded()
+	{
+		try
+		{
+			log.debug("Loading: {}", "chat_icon.png");
+			BufferedImage image = ImageUtil.loadImageResource(this.getClass(), "chat_icon.png");
+			return ImageUtil.getImageIndexedSprite(image, client);
+		}
+		catch (RuntimeException ex)
+		{
+			log.debug("Unable to load image: ", ex);
+		}
+
+		return null;
+	}
 
 	private void SetCheckByName(String name, boolean status){
 		LocationData locData = LocationHandler.GetLocationByName(name);
@@ -165,9 +225,6 @@ public class ArchipelagoPlugin extends Plugin
 		SetCheckByName(LocationNames.QP_X_Marks_the_Spot,      Quest.X_MARKS_THE_SPOT.getState(client) == QuestState.FINISHED);
 		SetCheckByName(LocationNames.QP_Below_Ice_Mountain,    Quest.BELOW_ICE_MOUNTAIN.getState(client) == QuestState.FINISHED);
 
-		//Catch_Lobster = "Catch a Lobster"
-		//Catch_Swordfish = "Catch a Swordfish"
-
 		SetCheckByName(LocationNames.Total_XP_5000,   client.getOverallExperience() > 5000);
 		SetCheckByName(LocationNames.Total_XP_25000,  client.getOverallExperience() > 25000);
 		SetCheckByName(LocationNames.Total_XP_50000,  client.getOverallExperience() > 50000);
@@ -192,6 +249,8 @@ public class ArchipelagoPlugin extends Plugin
 				panel.ConnectionStateChanged();
 				connectState = true;
 			}
+
+			loadSprites();
 		}
 	}
 
@@ -253,11 +312,8 @@ public class ArchipelagoPlugin extends Plugin
 	public void onChatMessage(ChatMessage event)
 	{
 		var message = event.getMessage();
-		if (event.getType() != ChatMessageType.SPAM)
-		{
-			return;
-		}
-		else if (OAK_MESSAGE.equals(message))
+
+		if (OAK_MESSAGE.equals(message))
 			SetCheckByName(LocationNames.Oak_Log, true);
 		else if (WILLOW_MESSAGE.equals(message))
 			SetCheckByName(LocationNames.Willow_Log, true);
@@ -299,8 +355,37 @@ public class ArchipelagoPlugin extends Plugin
 			SetCheckByName(LocationNames.Catch_Lobster, true);
 		else if (SWORDFISH_MESSAGE.equals(message))
 			SetCheckByName(LocationNames.Catch_Swordfish, true);
+
+		if (event.getName() == null || client.getLocalPlayer() == null || client.getLocalPlayer().getName() == null)
+		{
+			return;
+		}
+
+		boolean isLocalPlayer =
+				Text.standardize(event.getName()).equalsIgnoreCase(Text.standardize(client.getLocalPlayer().getName()));
+
+		if (isLocalPlayer)
+		{
+			String text = "<img=" + modIconIndex + ">"+ Text.removeTags(event.getName());
+			event.getMessageNode().setName(text);
+		}
 	}
 
+	private void updateChatbox()
+	{
+		Widget chatboxTypedText = client.getWidget(WidgetInfo.CHATBOX_INPUT);
+
+		if (chatboxTypedText == null || chatboxTypedText.isHidden())
+		{
+			return;
+		}
+
+		String[] chatbox = chatboxTypedText.getText().split(":", 2);
+		String rsn = Objects.requireNonNull(client.getLocalPlayer()).getName();
+
+		String text = "<img=" + modIconIndex + ">" + Text.removeTags(rsn) + ":" + chatbox[1];
+		chatboxTypedText.setText(text);
+	}
 	public void ConnectToAPServer(String url, int port, String slotName, String password){
 		String protocol = "wss://";
 		if (url.contains("localhost") || url.contains("127.0.0.1"))
