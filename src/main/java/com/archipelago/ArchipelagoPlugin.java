@@ -133,15 +133,18 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 
-	private int modIconIndex = 393;
+	private int modIconIndex = -1;
 	private void loadSprites()
 	{
 		clientThread.invoke(() ->
 		{
+			//If we already have the mod icon, we don't need to do it again
+			if (modIconIndex > -1) return;
+
 			IndexedSprite[] modIcons = client.getModIcons();
 			List<IndexedSprite> newList = new ArrayList<>();
 
-			int modIconsStart = modIcons.length - 1;
+			modIconIndex = modIcons.length;
 
 			final IndexedSprite sprite = getIndexedSpriteEmbedded();
 
@@ -356,7 +359,8 @@ public class ArchipelagoPlugin extends Plugin
 		else if (SWORDFISH_MESSAGE.equals(message))
 			SetCheckByName(LocationNames.Catch_Swordfish, true);
 
-		if (event.getName() == null || client.getLocalPlayer() == null || client.getLocalPlayer().getName() == null)
+		if (event.getName() == null || client.getLocalPlayer() == null
+				|| client.getLocalPlayer().getName() == null || !OSRSClient.apClient.isConnected())
 		{
 			return;
 		}
@@ -375,7 +379,7 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		Widget chatboxTypedText = client.getWidget(WidgetInfo.CHATBOX_INPUT);
 
-		if (chatboxTypedText == null || chatboxTypedText.isHidden())
+		if (chatboxTypedText == null || chatboxTypedText.isHidden() || !OSRSClient.apClient.isConnected())
 		{
 			return;
 		}
