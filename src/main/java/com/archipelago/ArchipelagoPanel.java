@@ -22,9 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ArchipelagoPanel extends PluginPanel {
-    public static ArchipelagoPanel apPanel;
-
-
     private final JPanel connectionPanel;
     private final JPanel taskListPanel;
 
@@ -40,8 +37,6 @@ public class ArchipelagoPanel extends PluginPanel {
         this.config = config;
         this.skillIconManager = skillIconManager;
         this.spriteManager = spriteManager;
-
-        apPanel = this;
 
         setBorder(new EmptyBorder(6, 6, 6, 6));
         setBackground(ColorScheme.DARK_GRAY_COLOR);

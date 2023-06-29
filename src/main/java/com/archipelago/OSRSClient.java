@@ -15,33 +15,22 @@ import java.net.URISyntaxException;
 @Slf4j
 public class OSRSClient  extends ArchipelagoClient {
 
-    //public static final Logger logger = LogManager.getLogger(OSRSClient.class.getName());
-
     private ArchipelagoPlugin plugin;
-    public static OSRSClient apClient;
 
-    public static boolean Connected(){
-        if (apClient == null) return false;
-        return apClient.isConnected();
+    public OSRSClient(ArchipelagoPlugin plugin){
+        this.plugin = plugin;
     }
 
-    public static void newConnection(ArchipelagoPlugin plugin, String address, String slotName, String password) {
-        if (apClient != null) {
-            apClient.close();
-        }
+    public void newConnection(ArchipelagoPlugin plugin, String address, String slotName, String password) {
+        setPassword(password);
+        setName(slotName);
+        setItemsHandlingFlags(ItemFlags.SEND_ITEMS + ItemFlags.SEND_OWN_ITEMS + ItemFlags.SEND_STARTING_INVENTORY);
 
-        apClient = new OSRSClient();
-        apClient.plugin = plugin;
-
-        apClient.setPassword(password);
-        apClient.setName(slotName);
-        apClient.setItemsHandlingFlags(ItemFlags.SEND_ITEMS + ItemFlags.SEND_OWN_ITEMS + ItemFlags.SEND_STARTING_INVENTORY);
-
-        apClient.getEventManager().registerListener(new ConnectionResult());
-        apClient.getEventManager().registerListener(new LocationInfo());
-        apClient.getEventManager().registerListener(new ReceiveItem());
+        getEventManager().registerListener(new ConnectionResult());
+        getEventManager().registerListener(new LocationInfo());
+        getEventManager().registerListener(new ReceiveItem());
         try {
-            apClient.connect(address);
+            connect(address);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -69,12 +58,11 @@ public class OSRSClient  extends ArchipelagoClient {
 
     @Override
     public void onError(Exception e) {
-
-        ArchipelagoPanel.apPanel.statusText.setText("Server Error NL " + e.getMessage());
+        //ArchipelagoPanel.apPanel.statusText.setText("Server Error NL " + e.getMessage());
     }
 
     @Override
     public void onClose(String message, int i) {
-        ArchipelagoPanel.apPanel.statusText.setText("Connection Closed NL " + message);
+        //ArchipelagoPanel.apPanel.statusText.setText("Connection Closed NL " + message);
     }
 }
