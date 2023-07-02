@@ -79,7 +79,7 @@ public class ArchipelagoPanel extends PluginPanel {
         //connectionPanel.setPreferredSize(new Dimension(0, 30));
         connectionPanel.setBorder(new EmptyBorder(5, 5, 5, 10));
         connectionPanel.setVisible(true);
-
+        /**
         //URL Entry
         JLabel URLLabel = new JLabel("Server Address");
         URLInput = new JTextField("localhost");
@@ -103,12 +103,13 @@ public class ArchipelagoPanel extends PluginPanel {
         passwordInput = new JTextField();
         connectionPanel.add(passwordLabel);
         connectionPanel.add(passwordInput);
+        **/
 
         //Connect Button
         JButton connectButton = new JButton("Connect");
         connectionPanel.add(connectButton);
         connectButton.addActionListener(e -> {
-            plugin.ConnectToAPServer(URLInput.getText(), Integer.parseInt(portInput.getText()), slotInput.getText(), passwordInput.getText());
+            plugin.ConnectToAPServer();
         });
 
         statusText = new JLabel("");

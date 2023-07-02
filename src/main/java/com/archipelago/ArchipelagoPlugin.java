@@ -337,14 +337,14 @@ public class ArchipelagoPlugin extends Plugin
 		SetCheckByName(LocationNames.Q_Dragon_Slayer,          Quest.DRAGON_SLAYER_I.getState(client) == QuestState.FINISHED);
 	}
 
-	public void ConnectToAPServer(String url, int port, String slotName, String password)
+	public void ConnectToAPServer()
 	{
 		String protocol = "wss://";
-		if (url.contains("localhost") || url.contains("127.0.0.1"))
+		if (config.address().contains("localhost") || config.address().contains("127.0.0.1"))
 			protocol = "ws://";
-		String uri = protocol+url+":"+port;
+		String uri = protocol+config.address()+":"+config.port();
 		log.info(uri);
-		apClient.newConnection(this, uri, slotName, password);
+		apClient.newConnection(this, uri, config.slotname(), config.password());
 	}
 
 	public Hashtable<LocationData, Boolean> LocationCheckStates = new Hashtable<LocationData, Boolean>(){{

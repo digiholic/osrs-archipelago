@@ -30,7 +30,7 @@ public class ConnectionResult {
                 msg = "Unknown Error";
         }
 
-        ArchipelagoPanel.apPanel.statusText.setText(msg);
+        //ArchipelagoPanel.apPanel.statusText.setText(msg);
         if (event.getResult() != gg.archipelago.client.network.ConnectionResult.Success)
             return;
 
