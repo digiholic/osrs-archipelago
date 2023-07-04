@@ -48,6 +48,38 @@ public class ItemHandler {
             new ItemData(0x07001CL, ItemNames.Wilderness, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET,0)
     );
 
+    public static Map<String, String> RegionNamesToChunkIdString = Map.ofEntries(
+            Map.entry(ItemNames.Lumbridge, "12850"),
+            Map.entry(ItemNames.Lumbridge_Swamp, "12849,12593"),
+            Map.entry(ItemNames.Lumbridge_Farms, "12851,12595"),
+            Map.entry(ItemNames.HAM_Hideout, "12594"),
+            Map.entry(ItemNames.Draynor_Village, "12338,12339"),
+            Map.entry(ItemNames.Draynor_Manor, "12340"),
+            Map.entry(ItemNames.Wizards_Tower, "12337"),
+            Map.entry(ItemNames.Al_Kharid, "13107,13106,13362,13105"),
+            Map.entry(ItemNames.Citharede_Abbey, "13361,13617"),
+            Map.entry(ItemNames.South_Of_Varrock, "13108,12852,12596"),
+            Map.entry(ItemNames.Central_Varrock, "12853"),
+            Map.entry(ItemNames.Varrock_Palace, "12854"),
+            Map.entry(ItemNames.East_Of_Varrock, "13109,13110"),
+            Map.entry(ItemNames.West_Varrock, "12598,12597"),
+            Map.entry(ItemNames.Edgeville, "12342"),
+            Map.entry(ItemNames.Barbarian_Village, "12341"),
+            Map.entry(ItemNames.Monastery, "12086"),
+            Map.entry(ItemNames.Ice_Mountain, "11830"),
+            Map.entry(ItemNames.Dwarven_Mines, "12085,11829"),
+            Map.entry(ItemNames.Falador, "12084,11828"),
+            Map.entry(ItemNames.Falador_Farm, "12083,11827"),
+            Map.entry(ItemNames.Crafting_Guild, "11571"),
+            Map.entry(ItemNames.Rimmington, "11826,11570"),
+            Map.entry(ItemNames.Port_Sarim, "12082,12081"),
+            Map.entry(ItemNames.Mudskipper_Point, "11825,11824"),
+            Map.entry(ItemNames.Karamja, "11569,11313"),
+            Map.entry(ItemNames.Crandor, "11315,11314"),
+            Map.entry(ItemNames.Corsair_Cove, "10284,10028"),
+            Map.entry(ItemNames.Wilderness, "11836,11835,11834,11833,11832,11831,12092,12091,12090,12089,12088,12087,12348,12347,12346,12345,12344,12343,12604,12603,12602,12601,12600,12599,12860,12859,12858,12857,12856,12855,13116,13115,13114,13113,13112,13111,13372,13371,13370,13369,13368,13367")
+    );
+
     public static final Map<ItemData, BufferedImage> loadedSprites = new HashMap<ItemData, BufferedImage>();
 
     public static ItemData GetItemByName(String name){

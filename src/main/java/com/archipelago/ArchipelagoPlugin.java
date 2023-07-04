@@ -443,5 +443,17 @@ public class ArchipelagoPlugin extends Plugin
 		log.info("Received item: "+item.name);
 		collectedItems.add(item);
 		panel.UpdateItems();
+		UpdateAvailableChunks();
+	}
+
+	private void UpdateAvailableChunks(){
+		List<String> unlockedRegions = new ArrayList<>();
+		for (ItemData item : collectedItems){
+			String regions = ItemHandler.RegionNamesToChunkIdString.getOrDefault(item.name, null);
+			if (regions != null) unlockedRegions.add(regions);
+		}
+		String csv = Text.toCSV(unlockedRegions);
+		//TODO replace dependency on regionlocker with custom solution. Good for testing though
+		configManager.setConfiguration("regionlocker", "unlockedRegions", csv);
 	}
 }
