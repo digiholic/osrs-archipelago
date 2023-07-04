@@ -1,5 +1,6 @@
 package com.archipelago;
 
+import com.archipelago.data.ItemData;
 import com.archipelago.data.LocationData;
 import com.archipelago.data.LocationNames;
 import com.google.inject.Provides;
@@ -53,9 +54,11 @@ public class ArchipelagoPlugin extends Plugin
 	private ArchipelagoPanel panel;
 	private OSRSClient apClient;
 	private int modIconIndex = -1;
+	private final List<ItemData> collectedItems = new ArrayList<>();
 
 	public boolean loggedIn;
 	public boolean connected;
+	public long lastItemReceivedIndex = 0;
 
 	@Provides
 	ArchipelagoConfig provideConfig(ConfigManager configManager)
@@ -413,5 +416,14 @@ public class ArchipelagoPlugin extends Plugin
 			apClient.checkLocations(checkedLocations);
 		}
 		SwingUtilities.invokeLater(panel::UpdateTaskStatus);
+	}
+
+	public List<ItemData> getCollectedItems() {
+		return collectedItems;
+	}
+
+	public void addCollectedItem(ItemData item){
+		collectedItems.add(item);
+		panel.UpdateItems();
 	}
 }

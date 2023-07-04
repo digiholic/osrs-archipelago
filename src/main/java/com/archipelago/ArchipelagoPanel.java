@@ -1,5 +1,6 @@
 package com.archipelago;
 
+import com.archipelago.data.ItemData;
 import com.archipelago.data.LocationData;
 import joptsimple.util.KeyValuePair;
 import net.runelite.api.Skill;
@@ -22,11 +23,14 @@ import java.util.List;
 import java.util.Map;
 
 public class ArchipelagoPanel extends PluginPanel {
-    private final TaskPanel taskListPanel;
 
     private final ArchipelagoPlugin plugin;
     private final ArchipelagoConfig config;
     private SpriteManager spriteManager;
+
+    private final TaskPanel taskListPanel;
+    private final ItemPanel itemListPanel;
+
 
     ArchipelagoPanel(final ArchipelagoPlugin plugin, final ArchipelagoConfig config, SpriteManager spriteManager)
     {
@@ -45,11 +49,14 @@ public class ArchipelagoPanel extends PluginPanel {
 
         final JPanel statusPanel = buildStatusPanel();
         layoutPanel.add(statusPanel);
-
         layoutPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
         taskListPanel = new TaskPanel(plugin, spriteManager);
         layoutPanel.add(taskListPanel);
+        layoutPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+
+        itemListPanel = new ItemPanel(plugin, spriteManager);
+        layoutPanel.add(itemListPanel);
     }
 
     private JButton connectButton;
@@ -86,5 +93,9 @@ public class ArchipelagoPanel extends PluginPanel {
 
     public void UpdateTaskStatus(){
         taskListPanel.UpdateTaskStatus();
+    }
+
+    public void UpdateItems(){
+        itemListPanel.UpdateItems();
     }
 }
