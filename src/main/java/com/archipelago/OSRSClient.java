@@ -22,6 +22,7 @@ public class OSRSClient  extends ArchipelagoClient {
     }
 
     public void newConnection(ArchipelagoPlugin plugin, String address, String slotName, String password) {
+        setGame("Old School Runescape");
         setPassword(password);
         setName(slotName);
         setItemsHandlingFlags(ItemFlags.SEND_ITEMS + ItemFlags.SEND_OWN_ITEMS + ItemFlags.SEND_STARTING_INVENTORY);

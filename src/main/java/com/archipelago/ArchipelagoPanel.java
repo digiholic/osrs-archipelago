@@ -1,42 +1,25 @@
 package com.archipelago;
 
-import com.archipelago.data.ItemData;
-import com.archipelago.data.LocationData;
-import joptsimple.util.KeyValuePair;
-import net.runelite.api.Skill;
-import net.runelite.api.SpriteID;
-import net.runelite.client.game.SkillIconManager;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
-import net.runelite.client.ui.components.PluginErrorPanel;
-
-import javax.inject.Inject;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ArchipelagoPanel extends PluginPanel {
 
     private final ArchipelagoPlugin plugin;
     private final ArchipelagoConfig config;
-    private SpriteManager spriteManager;
 
     private final TaskPanel taskListPanel;
     private final ItemPanel itemListPanel;
 
 
-    ArchipelagoPanel(final ArchipelagoPlugin plugin, final ArchipelagoConfig config, SpriteManager spriteManager)
+    ArchipelagoPanel(final ArchipelagoPlugin plugin, final ArchipelagoConfig config)
     {
         this.plugin = plugin;
         this.config = config;
-        this.spriteManager = spriteManager;
 
         setBorder(new EmptyBorder(6, 6, 6, 6));
         setBackground(ColorScheme.DARK_GRAY_COLOR);
@@ -51,11 +34,11 @@ public class ArchipelagoPanel extends PluginPanel {
         layoutPanel.add(statusPanel);
         layoutPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
-        taskListPanel = new TaskPanel(plugin, spriteManager);
+        taskListPanel = new TaskPanel(plugin);
         layoutPanel.add(taskListPanel);
         layoutPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
-        itemListPanel = new ItemPanel(plugin, spriteManager);
+        itemListPanel = new ItemPanel(plugin);
         layoutPanel.add(itemListPanel);
     }
 
@@ -77,18 +60,14 @@ public class ArchipelagoPanel extends PluginPanel {
         connectButton.addActionListener(e -> {
             plugin.ConnectToAPServer();
         });
-
+        statusPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         return statusPanel;
     }
 
     public void ConnectionStateChanged(boolean connectionSuccessful) {
         taskListPanel.ConnectionStateChanged(connectionSuccessful);
-        connectButton.setEnabled(connectionSuccessful);
-        if (connectionSuccessful){
-            connectButton.setText("Connected!");
-        } else {
-            connectButton.setText("Connect");
-        }
+        connectButton.setEnabled(!connectionSuccessful);
+        connectButton.setText(connectionSuccessful ? "Connected!" : "Connect");
     }
 
     public void UpdateTaskStatus(){

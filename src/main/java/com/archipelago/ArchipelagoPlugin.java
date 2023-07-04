@@ -58,7 +58,10 @@ public class ArchipelagoPlugin extends Plugin
 
 	public boolean loggedIn;
 	public boolean connected;
-	public long lastItemReceivedIndex = 0;
+	public long lastItemReceivedIndex = -1;
+	//This boolean will become true when we log in, and will be set back to false in the first game tick.
+	//This lets us check if the logged in player should auto-connect to AP
+	private boolean justLoggedIn = false;
 
 	@Provides
 	ArchipelagoConfig provideConfig(ConfigManager configManager)
@@ -70,7 +73,7 @@ public class ArchipelagoPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		plugin = this;
-		panel = new ArchipelagoPanel(this, config, spriteManager);
+		panel = new ArchipelagoPanel(this, config);
 		apClient = new OSRSClient(this);
 
 		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
@@ -83,6 +86,9 @@ public class ArchipelagoPlugin extends Plugin
 				.build();
 
 		clientToolbar.addNavigation(navButton);
+
+		clientThread.invoke(() -> LocationHandler.LoadImages(spriteManager));
+		clientThread.invoke(() -> ItemHandler.LoadImages(spriteManager));
 
 		loadSprites();
 		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
@@ -122,14 +128,7 @@ public class ArchipelagoPlugin extends Plugin
 		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
 		{
 			loggedIn = true;
-			//If we've just logged in with a character that's stored as our autoreconnect, connect immediately.
-			if (config.autoreconnect().equals(client.getLocalPlayer().getName())){
-				ConnectToAPServer();
-			}
-			//If there is no autoreconnect set, and we're already connected to the AP server, set autoreconnect
-			if (config.autoreconnect().isBlank() && connected){
-				configManager.setConfiguration("Archipelago", "autoreconnect", client.getLocalPlayer().getName());
-			}
+			justLoggedIn = true;
 			loadSprites();
 		}
 		else if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN){
@@ -144,6 +143,19 @@ public class ArchipelagoPlugin extends Plugin
 	@Subscribe
 	public void onClientTick(ClientTick t)
 	{
+		if (justLoggedIn && client.getLocalPlayer().getName() != null){
+			//If we've just logged in with a character that's stored as our autoreconnect, connect immediately.
+			if (config.autoreconnect().equals(client.getLocalPlayer().getName())){
+				ConnectToAPServer();
+				log.info("Detected log in of autoreconnect, connecting to AP server");
+			}
+			//If there is no autoreconnect set, and we're already connected to the AP server, set autoreconnect
+			if (config.autoreconnect().isBlank() && connected){
+				configManager.setConfiguration("Archipelago", "autoreconnect", client.getLocalPlayer().getName());
+				log.info("Detected first log in or connection, setting autoreconnect");
+			}
+			justLoggedIn = false;
+		}
 		checkStatus();
 		SendChecks();
 	}
@@ -247,6 +259,11 @@ public class ArchipelagoPlugin extends Plugin
 		if (connected != newConnectionState)
 			panel.ConnectionStateChanged(newConnectionState);
 		connected = newConnectionState;
+
+		if (config.autoreconnect().isBlank() && connected && loggedIn){
+			configManager.setConfiguration("Archipelago", "autoreconnect", client.getLocalPlayer().getName());
+			log.info("Detected first log in or connection, setting autoreconnect");
+		}
 	}
 
 	private void loadSprites()
@@ -423,6 +440,7 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	public void addCollectedItem(ItemData item){
+		log.info("Received item: "+item.name);
 		collectedItems.add(item);
 		panel.UpdateItems();
 	}

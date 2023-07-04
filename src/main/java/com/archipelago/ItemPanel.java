@@ -2,7 +2,6 @@ package com.archipelago;
 
 import com.archipelago.data.ItemData;
 import com.archipelago.data.ItemNames;
-import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.ColorScheme;
 
 import javax.swing.*;
@@ -12,14 +11,12 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public class ItemPanel extends JPanel {
-    private ArchipelagoPlugin plugin;
-    private SpriteManager spriteManager;
+    private final ArchipelagoPlugin plugin;
 
-    private HashMap<ItemData, JPanel> itemPanels = new HashMap<ItemData, JPanel>();
+    private final HashMap<ItemData, ItemRow> itemPanels = new HashMap<>();
 
-    public ItemPanel(ArchipelagoPlugin plugin, SpriteManager spriteManager){
+    public ItemPanel(ArchipelagoPlugin plugin){
         this.plugin = plugin;
-        this.spriteManager = spriteManager;
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -30,64 +27,81 @@ public class ItemPanel extends JPanel {
         setAlignmentX(Component.LEFT_ALIGNMENT);
     }
 
-    private JPanel buildItemRow(String text, BufferedImage image){
-        final JPanel taskRow = new JPanel();
-        taskRow.setLayout(new BorderLayout());
-        taskRow.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-        taskRow.setPreferredSize(new Dimension(0, 30));
-        taskRow.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        JLabel icon = new JLabel(new ImageIcon(image));
-        taskRow.add(icon, BorderLayout.WEST);
-
-        JLabel taskName = new JLabel(text);
-        taskName.setForeground(Color.WHITE);
-        taskRow.add(taskName, BorderLayout.CENTER);
-        taskRow.setVisible(true);
-
-        return taskRow;
-    }
-
     public void UpdateItems(){
-        //Wipe the panels and remake them
-        itemPanels.clear();
-        this.removeAll();
+        setVisible(true);
 
         for (ItemData item : ItemHandler.AllItems){
             int countInCollection = (int) plugin.getCollectedItems().stream().filter(it -> it.name.equals(item.name)).count();
+            //Progressive items have special name formatting. Everything else uses the item name
             switch(item.name){
                 case ItemNames.Progressive_Armor:
-                    addItemPanel(item, String.format("Armor up to %s", ItemHandler.MetalTierByCount(countInCollection)));
+                    addOrUpdateItemPanel(item, String.format("Armor up to %s", ItemHandler.MetalTierByCount(countInCollection)));
                     break;
                 case ItemNames.Progressive_Weapons:
-                    addItemPanel(item, String.format("Weapons up to %s", ItemHandler.MetalTierByCount(countInCollection)));
+                    addOrUpdateItemPanel(item, String.format("Weapons up to %s", ItemHandler.MetalTierByCount(countInCollection)));
                     break;
                 case ItemNames.Progressive_Tools:
-                    addItemPanel(item, String.format("Tools up to %s", ItemHandler.MetalTierByCount(countInCollection)));
+                    addOrUpdateItemPanel(item, String.format("Tools up to %s", ItemHandler.MetalTierByCount(countInCollection)));
                     break;
                 case ItemNames.Progressive_Range_Armor:
-                    addItemPanel(item, ItemHandler.RangeArmorTierByCount(countInCollection));
+                    addOrUpdateItemPanel(item, ItemHandler.RangeArmorTierByCount(countInCollection));
                     break;
                 case ItemNames.Progressive_Range_Weapon:
-                    addItemPanel(item, ItemHandler.RangeWeaponTierByCount(countInCollection));
+                    addOrUpdateItemPanel(item, ItemHandler.RangeWeaponTierByCount(countInCollection));
                     break;
                 case ItemNames.Progressive_Magic:
-                    addItemPanel(item, ItemHandler.MagicTierByCount(countInCollection));
+                    addOrUpdateItemPanel(item, ItemHandler.MagicTierByCount(countInCollection));
                     break;
                 default:
                     if (countInCollection > 0){
-                        addItemPanel(item, item.name);
+                        addOrUpdateItemPanel(item, item.name);
                     }
             }
         }
+        revalidate();
+        repaint();
     }
 
-    private void addItemPanel(ItemData item, String text){
-        BufferedImage image = spriteManager.getSprite(item.icon_id, item.icon_file);
-        SwingUtilities.invokeLater(() -> {
-            JPanel taskPanel = buildItemRow(text, image);
-            itemPanels.put(item, taskPanel);
-            add(taskPanel);
-        });
+    private void addOrUpdateItemPanel(ItemData item, String text){
+        //The dict can have a null value, but if it does, we don't want to add it again (it's waiting for the ui thread)
+        //So we just check the presence of the key here, then check for null inside the if
+        if (itemPanels.containsKey(item)){
+            if (itemPanels.get(item) != null)
+                itemPanels.get(item).SetText(text);
+        } else {
+            itemPanels.put(item, null);
+            SwingUtilities.invokeLater(() -> {
+                ItemRow itemPanel = new ItemRow(text, ItemHandler.loadedSprites.get(item));
+                itemPanels.put(item, itemPanel);
+                add(itemPanel);
+            });
+        }
+    }
+
+    private static class ItemRow extends JPanel {
+
+        private final JLabel labelText;
+
+        public ItemRow(String text, BufferedImage image){
+            super();
+            setLayout(new BorderLayout());
+            setBackground(ColorScheme.DARKER_GRAY_COLOR);
+            setPreferredSize(new Dimension(0, 30));
+            setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            if (image != null){
+                JLabel icon = new JLabel(new ImageIcon(image));
+                add(icon, BorderLayout.WEST);
+            }
+
+            labelText = new JLabel(text);
+            labelText.setForeground(Color.WHITE);
+            add(labelText, BorderLayout.CENTER);
+            setVisible(true);
+        }
+
+        public void SetText(String text){
+            labelText.setText(text);
+        }
     }
 }

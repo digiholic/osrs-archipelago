@@ -3,11 +3,10 @@ package com.archipelago;
 import com.archipelago.data.LocationData;
 import com.archipelago.data.LocationNames;
 import net.runelite.api.SpriteID;
+import net.runelite.client.game.SpriteManager;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Optional;
+import java.awt.image.BufferedImage;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LocationHandler {
@@ -90,6 +89,8 @@ public class LocationHandler {
             new LocationData(0x07003FL,LocationNames.Combat_Level_50, SpriteID.SKILL_TOTAL, 0, true)
     );
 
+    public static final Map<LocationData, BufferedImage> loadedSprites = new HashMap<LocationData, BufferedImage>();
+
     public static final String OAK_MESSAGE = "You get some oak logs.";
     public static final String WILLOW_MESSAGE = "You get some willow logs.";
     public static final String SAPPHIRE_MESSAGE = "You cut the sapphire.";
@@ -124,4 +125,10 @@ public class LocationHandler {
             put(loc.id, loc);
         }
     }};
+
+    public static void LoadImages(SpriteManager spriteManager){
+        for(LocationData loc : AllLocations){
+            loadedSprites.put(loc, spriteManager.getSprite(loc.icon_id, loc.icon_file));
+        }
+    }
 }

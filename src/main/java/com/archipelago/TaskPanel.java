@@ -12,14 +12,12 @@ import java.util.HashMap;
 
 public class TaskPanel extends JPanel {
     private ArchipelagoPlugin plugin;
-    private SpriteManager spriteManager;
 
     private JCheckBox displayCompleted;
     private HashMap<LocationData, JPanel> locationPanels = new HashMap<LocationData, JPanel>();
 
-    public TaskPanel(ArchipelagoPlugin plugin, SpriteManager spriteManager){
+    public TaskPanel(ArchipelagoPlugin plugin){
         this.plugin = plugin;
-        this.spriteManager = spriteManager;
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -42,8 +40,10 @@ public class TaskPanel extends JPanel {
         taskRow.setPreferredSize(new Dimension(0, 30));
         taskRow.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel icon = new JLabel(new ImageIcon(image));
-        taskRow.add(icon, BorderLayout.WEST);
+        if (image != null){
+            JLabel icon = new JLabel(new ImageIcon(image));
+            taskRow.add(icon, BorderLayout.WEST);
+        }
 
         JLabel taskName = new JLabel(text);
         taskName.setForeground(completed ? Color.BLACK : Color.WHITE);
@@ -70,9 +70,8 @@ public class TaskPanel extends JPanel {
 
             for (LocationData loc : LocationHandler.AllLocations) {
                 if (loc.display_in_panel){
-                    BufferedImage image = spriteManager.getSprite(loc.icon_id, loc.icon_file);
                     SwingUtilities.invokeLater(() -> {
-                        JPanel taskPanel = buildTaskRow(loc.name, image, plugin.LocationCheckStates.getOrDefault(loc,false));
+                        JPanel taskPanel = buildTaskRow(loc.name, LocationHandler.loadedSprites.get(loc), plugin.LocationCheckStates.getOrDefault(loc,false));
                         locationPanels.put(loc, taskPanel);
                         add(taskPanel);
                     });

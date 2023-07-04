@@ -9,7 +9,7 @@ public class ReceiveItem {
 
     @ArchipelagoEventListener
     public void onReceiveItem(ReceiveItemEvent event) {
-        if (event.getIndex() > ArchipelagoPlugin.plugin.lastItemReceivedIndex){
+        if (event.getIndex() >= ArchipelagoPlugin.plugin.lastItemReceivedIndex){
             ArchipelagoPlugin.plugin.addCollectedItem(ItemHandler.ItemsById.get(event.getItemID()));
             ArchipelagoPlugin.plugin.lastItemReceivedIndex = event.getIndex();
         }

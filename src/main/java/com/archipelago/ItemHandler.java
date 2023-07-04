@@ -2,11 +2,12 @@ package com.archipelago;
 
 import com.archipelago.data.ItemData;
 import com.archipelago.data.ItemNames;
+import com.archipelago.data.LocationData;
 import net.runelite.api.SpriteID;
+import net.runelite.client.game.SpriteManager;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
+import java.awt.image.BufferedImage;
+import java.util.*;
 
 public class ItemHandler {
     public static List<ItemData> AllItems = List.of(
@@ -47,6 +48,8 @@ public class ItemHandler {
             new ItemData(0x07001CL, ItemNames.Wilderness, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET,0)
     );
 
+    public static final Map<ItemData, BufferedImage> loadedSprites = new HashMap<ItemData, BufferedImage>();
+
     public static ItemData GetItemByName(String name){
         return AllItems.stream()
                 .filter(item -> name.equals(item.name))
@@ -74,19 +77,19 @@ public class ItemHandler {
 
     public static String RangeArmorTierByCount(int count){
         switch (count){
-            default: return "No Armor";
-            case 1:return "Leather";
-            case 2: return "Studded Leather";
-            case 3: return "Green Dragonhide";
+            default: return "No Ranged Armor";
+            case 1:return "Ranged Armor: Leather";
+            case 2: return "Ranged Armor: Studded Leather";
+            case 3: return "Ranged Armor: Green Dragonhide";
         }
     }
 
     public static String RangeWeaponTierByCount(int count){
         switch (count){
-            default: return "Wooden Bows, Arrows up to Iron";
-            case 1: return "Bows up to Oak, Arrows up to Steel";
-            case 2: return "Bows up to Willow, Arrows up to Mith";
-            case 3: return "Bows up to Maple, Arrows up to Adamant";
+            default: return "Bows: Wooden, Arrows: Iron";
+            case 1: return "Bows: Oak, Arrows: Steel";
+            case 2: return "Bows: Willow, Arrows: Mith";
+            case 3: return "Bows: Maple, Arrows: Adamant";
         }
     }
 
@@ -95,6 +98,12 @@ public class ItemHandler {
             default: return "Strike Spells (Mind Runes)";
             case 1: return "Bolt Spells (Chaos Runes)";
             case 2: return "Blast Spells (Death Runes)";
+        }
+    }
+
+    public static void LoadImages(SpriteManager spriteManager){
+        for(ItemData item : AllItems){
+            loadedSprites.put(item, spriteManager.getSprite(item.icon_id, item.icon_file));
         }
     }
 }
