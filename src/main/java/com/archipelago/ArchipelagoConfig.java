@@ -10,7 +10,8 @@ public interface ArchipelagoConfig extends Config
 	@ConfigItem(
 		keyName = "address",
 		name = "Server Address",
-		description = "The URL of the server to connect to"
+		description = "The URL of the server to connect to",
+			position = 0
 	)
 	default String address()
 	{
@@ -20,7 +21,8 @@ public interface ArchipelagoConfig extends Config
 	@ConfigItem(
 			keyName = "port",
 			name = "Server Port",
-			description = "The Port of the server to connect to"
+			description = "The Port of the server to connect to",
+			position = 1
 	)
 	default String port()
 	{
@@ -30,7 +32,8 @@ public interface ArchipelagoConfig extends Config
 	@ConfigItem(
 			keyName = "slotname",
 			name = "Slot Name",
-			description = "The Player slot to connect to"
+			description = "The Player slot to connect to",
+			position = 2
 	)
 	default String slotname()
 	{
@@ -40,7 +43,8 @@ public interface ArchipelagoConfig extends Config
 	@ConfigItem(
 			keyName = "password",
 			name = "Server Password",
-			description = "The Password of the server to connect to"
+			description = "The Password of the server to connect to",
+			position = 3
 	)
 	default String password()
 	{
@@ -50,7 +54,8 @@ public interface ArchipelagoConfig extends Config
 	@ConfigItem(
 			keyName = "autoreconnect",
 			name = "Auto Reconnect On Login For",
-			description = "Whenever a character with this name logs in, automatically attempt connecting to the server."
+			description = "Whenever a character with this name logs in, automatically attempt connecting to the server.",
+			position = 4
 	)
 	default String autoreconnect()
 	{

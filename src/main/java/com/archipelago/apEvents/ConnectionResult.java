@@ -1,6 +1,7 @@
 package com.archipelago.apEvents;
 
 import com.archipelago.ArchipelagoPanel;
+import com.archipelago.ArchipelagoPlugin;
 import gg.archipelago.client.events.ArchipelagoEventListener;
 import gg.archipelago.client.events.ConnectionResultEvent;
 import gg.archipelago.client.helper.DeathLink;
@@ -9,6 +10,8 @@ public class ConnectionResult {
 
     @ArchipelagoEventListener
     public void onConnectionResult(ConnectionResultEvent event) {
+        if (event.getResult() == null) return;
+
         String msg;
         switch (event.getResult()) {
             case SlotAlreadyTaken:
@@ -30,13 +33,6 @@ public class ConnectionResult {
                 msg = "Unknown Error";
         }
 
-        //ArchipelagoPanel.apPanel.statusText.setText(msg);
-        if (event.getResult() != gg.archipelago.client.network.ConnectionResult.Success)
-            return;
-
-
-        //LocationTracker.reset();
-        //LocationTracker.scoutAllLocations();
-        //DataStorageGet.loadRequestId = APClient.apClient.dataStorageGet(Collections.singleton(SavePatch.AP_SAVE_STRING));
+        ArchipelagoPlugin.plugin.SetConnectionState(event.getResult() == gg.archipelago.client.network.ConnectionResult.Success);
     }
 }

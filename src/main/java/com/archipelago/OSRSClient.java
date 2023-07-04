@@ -65,4 +65,10 @@ public class OSRSClient  extends ArchipelagoClient {
     public void onClose(String message, int i) {
         //ArchipelagoPanel.apPanel.statusText.setText("Connection Closed NL " + message);
     }
+
+    @Override
+    public void disconnect(){
+        super.disconnect();
+        plugin.SetConnectionState(false);
+    }
 }

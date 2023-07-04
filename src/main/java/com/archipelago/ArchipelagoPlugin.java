@@ -35,6 +35,8 @@ import java.util.stream.Collectors;
 )
 public class ArchipelagoPlugin extends Plugin
 {
+	public static ArchipelagoPlugin plugin;
+
 	@Inject
 	private Client client;
 	@Inject
@@ -44,14 +46,16 @@ public class ArchipelagoPlugin extends Plugin
 	@Inject
 	private ClientToolbar clientToolbar;
 	@Inject
-	private SkillIconManager skillIconManager;
-	@Inject
 	private SpriteManager spriteManager;
+	@Inject
+	private ConfigManager configManager;
 
 	private ArchipelagoPanel panel;
 	private OSRSClient apClient;
 	private int modIconIndex = -1;
-	private boolean connectState = false;
+
+	public boolean loggedIn;
+	public boolean connected;
 
 	@Provides
 	ArchipelagoConfig provideConfig(ConfigManager configManager)
@@ -62,7 +66,8 @@ public class ArchipelagoPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		panel = new ArchipelagoPanel(this, config, skillIconManager, spriteManager);
+		plugin = this;
+		panel = new ArchipelagoPanel(this, config, spriteManager);
 		apClient = new OSRSClient(this);
 
 		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
@@ -83,6 +88,7 @@ public class ArchipelagoPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		plugin = null;
 		if (apClient != null && apClient.isConnected())
 		{
 			apClient.disconnect();
@@ -112,13 +118,23 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
 		{
-			if (!connectState)
-			{
-				panel.ConnectionStateChanged();
-				connectState = true;
+			loggedIn = true;
+			//If we've just logged in with a character that's stored as our autoreconnect, connect immediately.
+			if (config.autoreconnect().equals(client.getLocalPlayer().getName())){
+				ConnectToAPServer();
 			}
-
+			//If there is no autoreconnect set, and we're already connected to the AP server, set autoreconnect
+			if (config.autoreconnect().isBlank() && connected){
+				configManager.setConfiguration("Archipelago", "autoreconnect", client.getLocalPlayer().getName());
+			}
 			loadSprites();
+		}
+		else if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN){
+			loggedIn = false;
+			if (connected){
+				connected = false;
+				apClient.disconnect();
+			}
 		}
 	}
 
@@ -222,6 +238,12 @@ public class ArchipelagoPlugin extends Plugin
 			log.info("Sending string to AP: "+cmd);
 			chatboxInput.consume();
 		}
+	}
+
+	public void SetConnectionState(boolean newConnectionState){
+		if (connected != newConnectionState)
+			panel.ConnectionStateChanged(newConnectionState);
+		connected = newConnectionState;
 	}
 
 	private void loadSprites()
