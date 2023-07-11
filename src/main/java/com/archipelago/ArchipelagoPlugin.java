@@ -7,6 +7,8 @@ import com.google.inject.Provides;
 import javax.inject.Inject;
 import javax.swing.*;
 
+import gg.archipelago.client.ClientStatus;
+import gg.archipelago.client.LocationManager;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
@@ -165,16 +167,16 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		final NPC npc = npcLootReceived.getNpc();
 		final String name = npc.getName();
-		if ("Lesser Demon".equals(name)) {
+		if ("Lesser Demon".equalsIgnoreCase(name)) {
 			SetCheckByName(LocationNames.K_Lesser_Demon, true);
 		}
-		if ("Ogress Shaman".equals(name)) {
+		if ("Ogress Shaman".equalsIgnoreCase(name)) {
 			SetCheckByName(LocationNames.K_Ogress_Shaman, true);
 		}
-		if ("Obor".equals(name)) {
+		if ("Obor".equalsIgnoreCase(name)) {
 			SetCheckByName(LocationNames.K_Obor, true);
 		}
-		if ("Bryophyta".equals(name)) {
+		if ("Bryophyta".equalsIgnoreCase(name)) {
 			SetCheckByName(LocationNames.K_Bryo, true);
 		}
 	}
@@ -264,6 +266,7 @@ public class ArchipelagoPlugin extends Plugin
 			configManager.setConfiguration("Archipelago", "autoreconnect", client.getLocalPlayer().getName());
 			log.info("Detected first log in or connection, setting autoreconnect");
 		}
+		UpdateCollectedChecks();
 	}
 
 	private void loadSprites()
@@ -372,11 +375,13 @@ public class ArchipelagoPlugin extends Plugin
 		SetCheckByName(LocationNames.Total_Level_50,           client.getTotalLevel() > 50);
 		SetCheckByName(LocationNames.Total_Level_100,          client.getTotalLevel() > 100);
 		SetCheckByName(LocationNames.Total_Level_200,          client.getTotalLevel() > 200);
-		SetCheckByName(LocationNames.Combat_Level_10,          client.getLocalPlayer().getCombatLevel() >= 10);
-		SetCheckByName(LocationNames.Combat_Level_25,          client.getLocalPlayer().getCombatLevel() >= 25);
-		SetCheckByName(LocationNames.Combat_Level_50,          client.getLocalPlayer().getCombatLevel() >= 50);
+		SetCheckByName(LocationNames.Combat_Level_10,          client.getLocalPlayer().getCombatLevel() >= 5);
+		SetCheckByName(LocationNames.Combat_Level_25,          client.getLocalPlayer().getCombatLevel() >= 15);
+		SetCheckByName(LocationNames.Combat_Level_50,          client.getLocalPlayer().getCombatLevel() >= 25);
 
-		SetCheckByName(LocationNames.Q_Dragon_Slayer,          Quest.DRAGON_SLAYER_I.getState(client) == QuestState.FINISHED);
+		if(Quest.DRAGON_SLAYER_I.getState(client) == QuestState.FINISHED){
+			apClient.setGameState(ClientStatus.CLIENT_GOAL);
+		}
 	}
 
 	public void ConnectToAPServer()
@@ -432,6 +437,7 @@ public class ArchipelagoPlugin extends Plugin
 		if (apClient != null && apClient.isConnected()){
 			apClient.checkLocations(checkedLocations);
 		}
+
 		SwingUtilities.invokeLater(panel::UpdateTaskStatus);
 	}
 
@@ -455,5 +461,12 @@ public class ArchipelagoPlugin extends Plugin
 		String csv = Text.toCSV(unlockedRegions);
 		//TODO replace dependency on regionlocker with custom solution. Good for testing though
 		configManager.setConfiguration("regionlocker", "unlockedRegions", csv);
+	}
+
+	public void UpdateCollectedChecks(){
+		for (Long locId : apClient.getLocationManager().getCheckedLocations()){
+			LocationData loc = LocationHandler.LocationsById.get(locId);
+			LocationCheckStates.put(loc, true);
+		}
 	}
 }

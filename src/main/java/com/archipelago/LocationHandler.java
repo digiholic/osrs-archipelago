@@ -32,7 +32,6 @@ public class LocationHandler {
             new LocationData(0x070012L,LocationNames.Q_Corsair_Curse, SpriteID.TAB_QUESTS, 0, true),
             new LocationData(0x070013L,LocationNames.Q_X_Marks_the_Spot, SpriteID.TAB_QUESTS, 0, true),
             new LocationData(0x070014L,LocationNames.Q_Below_Ice_Mountain, SpriteID.TAB_QUESTS, 0, true),
-            new LocationData(0x070055L,LocationNames.Q_Dragon_Slayer, SpriteID.TAB_QUESTS, 0, true),
             new LocationData(0x070040L,LocationNames.QP_Cooks_Assistant, SpriteID.TAB_QUESTS, 0, false),
             new LocationData(0x070041L,LocationNames.QP_Demon_Slayer, SpriteID.TAB_QUESTS, 0, false),
             new LocationData(0x070042L,LocationNames.QP_Restless_Ghost, SpriteID.TAB_QUESTS, 0, false),

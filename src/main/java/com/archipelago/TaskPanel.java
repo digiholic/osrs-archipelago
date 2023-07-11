@@ -11,10 +11,10 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public class TaskPanel extends JPanel {
-    private ArchipelagoPlugin plugin;
+    private final ArchipelagoPlugin plugin;
 
-    private JCheckBox displayCompleted;
-    private HashMap<LocationData, JPanel> locationPanels = new HashMap<LocationData, JPanel>();
+    private final JCheckBox displayCompleted;
+    private final HashMap<LocationData, TaskRow> locationPanels = new HashMap<LocationData, TaskRow>();
 
     public TaskPanel(ArchipelagoPlugin plugin){
         this.plugin = plugin;
@@ -33,34 +33,60 @@ public class TaskPanel extends JPanel {
         setAlignmentX(Component.LEFT_ALIGNMENT);
     }
 
-    private JPanel buildTaskRow(String text, BufferedImage image, boolean completed){
-        final JPanel taskRow = new JPanel();
-        taskRow.setLayout(new BorderLayout());
-        taskRow.setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARKER_GRAY_COLOR);
-        taskRow.setPreferredSize(new Dimension(0, 30));
-        taskRow.setAlignmentX(Component.LEFT_ALIGNMENT);
+    private class TaskRow extends JPanel{
+        private final JLabel taskName;
 
-        if (image != null){
-            JLabel icon = new JLabel(new ImageIcon(image));
-            taskRow.add(icon, BorderLayout.WEST);
+        private boolean completed;
+        public TaskRow(String text, BufferedImage image, boolean completed){
+            this.completed = completed;
+
+            setLayout(new BorderLayout());
+            setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARKER_GRAY_COLOR);
+            setPreferredSize(new Dimension(0, 30));
+            setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            if (image != null){
+                JLabel icon = new JLabel(new ImageIcon(image));
+                add(icon, BorderLayout.WEST);
+            }
+
+            taskName = new JLabel(text);
+            taskName.setForeground(completed ? Color.BLACK : Color.WHITE);
+            add(taskName, BorderLayout.CENTER);
+            setVisible(!completed || displayCompleted.isSelected());
         }
 
-        JLabel taskName = new JLabel(text);
-        taskName.setForeground(completed ? Color.BLACK : Color.WHITE);
-        taskRow.add(taskName, BorderLayout.CENTER);
-        taskRow.setVisible(true);
+        public void UpdateCompleted(boolean completed){
+            setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARKER_GRAY_COLOR);
+            taskName.setForeground(completed ? Color.BLACK : Color.WHITE);
+            this.completed = completed;
+        }
 
-        return taskRow;
+        public void UpdateDisplay(){
+            setVisible(!completed || displayCompleted.isSelected());
+        }
     }
 
     public void UpdateTaskStatus(){
         for (LocationData loc : LocationHandler.AllLocations){
             boolean completed = plugin.LocationCheckStates.getOrDefault(loc, false);
-            JPanel taskPanel = locationPanels.getOrDefault(loc,null);
+            TaskRow taskPanel = locationPanels.getOrDefault(loc,null);
             if (taskPanel != null){
-                taskPanel.setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARKER_GRAY_COLOR);
-                taskPanel.setVisible(!completed || displayCompleted.isSelected());
+                taskPanel.UpdateCompleted(completed);
+                taskPanel.UpdateDisplay();
             }
+        }
+    }
+
+    private void AddOrUpdateTaskRow(LocationData loc){
+        boolean completed = plugin.LocationCheckStates.getOrDefault(loc,false);
+        if (locationPanels.containsKey(loc)){
+            locationPanels.get(loc).UpdateCompleted(completed);
+            locationPanels.get(loc).UpdateDisplay();
+        } else {
+            TaskRow taskPanel = new TaskRow(loc.name, LocationHandler.loadedSprites.get(loc), completed);
+            locationPanels.put(loc, taskPanel);
+            add(taskPanel);
         }
     }
 
@@ -71,9 +97,7 @@ public class TaskPanel extends JPanel {
             for (LocationData loc : LocationHandler.AllLocations) {
                 if (loc.display_in_panel){
                     SwingUtilities.invokeLater(() -> {
-                        JPanel taskPanel = buildTaskRow(loc.name, LocationHandler.loadedSprites.get(loc), plugin.LocationCheckStates.getOrDefault(loc,false));
-                        locationPanels.put(loc, taskPanel);
-                        add(taskPanel);
+                        AddOrUpdateTaskRow(loc);
                     });
                 }
             }
