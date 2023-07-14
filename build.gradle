@@ -25,7 +25,7 @@ dependencies {
 	implementation files("lib/Archipelago.MultiClient.Java.jar")
 }
 
-group = 'com.example'
+group = 'com.archipelago'
 version = '1.0-SNAPSHOT'
 
 tasks.withType(JavaCompile) {
