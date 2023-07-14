@@ -22,7 +22,7 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 
-	implementation fileTree(dir: "lib", include: "Archipelago.MultiClient.jar")
+	implementation files("lib/Archipelago.MultiClient.Java.jar")
 }
 
 group = 'com.example'
