@@ -25,7 +25,7 @@ in the Multiworld might have installation requirements. Please see the installat
 on the [Archipelago Website](https://archipelago.gg/).
 
 To Generate a game, open the Archipelago directory (default location `C:\ProgramData\Archipelago`) and create a directory named
-`worlds` if it does not already exist. Download the [OSRS APWorld file]() from the beta branch of Archipelago, and place it in the `worlds` directory.
+`worlds` if it does not already exist. Download the [OSRS APWorld file](https://github.com/digiholic/Archipelago/releases/tag/beta-0.2.0) from the beta branch of Archipelago, and place it in the `worlds` directory.
 This will allow you to generate randomized games including OSRS.
 
 To generate a Randomized game, gather the Settings YAMLs from the players who will be participating (see "Creating a Settings YAML" below)
@@ -55,7 +55,7 @@ Open the Config settings for this plugin, and you will see the following options
 - **Auto-Reconnect On Login For**: Whenever you log in with a character with this name, the plugin will automatically
   attempt to connect to the server. If this field is blank, it will be populated with the first character name that is logged in while connected.
 
-If you want to automatically track your unlocked chunks, installing the [Region Locker]() plugin is recommended.
+If you want to automatically track your unlocked chunks, installing the [Region Locker](https://github.com/slaytostay/region-locker) plugin is recommended.
 This plugin will only adjust the chunks that are unlocked, all other options in the Region Locker plugin are maintained.
 
 **Note:** This plugin will overwrite your unlocked chunk settings on the Region Locker plugin. Back up your chunks if you wish to
