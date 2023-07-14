@@ -15,6 +15,7 @@ public class ArchipelagoPanel extends PluginPanel {
     private final TaskPanel taskListPanel;
     private final ItemPanel itemListPanel;
 
+    private final JLabel messageLabel;
 
     ArchipelagoPanel(final ArchipelagoPlugin plugin, final ArchipelagoConfig config)
     {
@@ -33,6 +34,9 @@ public class ArchipelagoPanel extends PluginPanel {
         final JPanel statusPanel = buildStatusPanel();
         layoutPanel.add(statusPanel);
         layoutPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+
+        messageLabel = new JLabel("");
+        layoutPanel.add(messageLabel);
 
         taskListPanel = new TaskPanel(plugin);
         layoutPanel.add(taskListPanel);
@@ -60,7 +64,9 @@ public class ArchipelagoPanel extends PluginPanel {
         connectButton.addActionListener(e -> {
             plugin.ConnectToAPServer();
         });
+
         statusPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         return statusPanel;
     }
 
@@ -76,5 +82,10 @@ public class ArchipelagoPanel extends PluginPanel {
 
     public void UpdateItems(){
         itemListPanel.UpdateItems();
+    }
+
+    public void DisplayNetworkMessage(String message){
+        String formattedMessage = String.format("<html><body style=\"text-align: justify;  text-justify: inter-word;\">%s</body></html>",message);
+        messageLabel.setText(formattedMessage);
     }
 }

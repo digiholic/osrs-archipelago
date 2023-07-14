@@ -469,4 +469,8 @@ public class ArchipelagoPlugin extends Plugin
 			LocationCheckStates.put(loc, true);
 		}
 	}
+
+	public void DisplayNetworkMessage(String message){
+		panel.DisplayNetworkMessage(message);
+	}
 }

@@ -59,7 +59,7 @@ public class OSRSClient  extends ArchipelagoClient {
 
     @Override
     public void onError(Exception e) {
-        //ArchipelagoPanel.apPanel.statusText.setText("Server Error NL " + e.getMessage());
+        ArchipelagoPlugin.plugin.DisplayNetworkMessage("Server Error: " + e.getMessage());
     }
 
     @Override

@@ -18,7 +18,7 @@ public class ConnectionResult {
                 msg = "Slot already in use.";
                 break;
             case Success:
-                msg = "Connected Starting Game.";
+                msg = "Connection Successful.";
                 break;
             case InvalidSlot:
                 msg = "Invalid Slot Name. Please make sure you typed it correctly.";
@@ -33,6 +33,7 @@ public class ConnectionResult {
                 msg = "Unknown Error";
         }
 
+        ArchipelagoPlugin.plugin.DisplayNetworkMessage(msg);
         ArchipelagoPlugin.plugin.SetConnectionState(event.getResult() == gg.archipelago.client.network.ConnectionResult.Success);
     }
 }
