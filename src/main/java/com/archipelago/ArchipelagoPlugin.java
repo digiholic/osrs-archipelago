@@ -381,10 +381,7 @@ public class ArchipelagoPlugin extends Plugin
 
 	public void ConnectToAPServer()
 	{
-		String protocol = "wss://";
-		if (config.address().contains("localhost") || config.address().contains("127.0.0.1"))
-			protocol = "ws://";
-		String uri = protocol+config.address()+":"+config.port();
+		String uri = config.address()+":"+config.port();
 		log.info(uri);
 		apClient.newConnection(this, uri, config.slotname(), config.password());
 	}
