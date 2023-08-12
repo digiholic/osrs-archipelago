@@ -147,19 +147,27 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		if (justLoggedIn && client.getLocalPlayer().getName() != null){
 			//If we've just logged in with a character that's stored as our autoreconnect, connect immediately.
-			if (config.autoreconnect().equals(client.getLocalPlayer().getName())){
+			if (!connected && config.autoreconnect().equals(client.getLocalPlayer().getName())){
 				ConnectToAPServer();
 				log.info("Detected log in of autoreconnect, connecting to AP server");
 			}
 			//If there is no autoreconnect set, and we're already connected to the AP server, set autoreconnect
-			if (config.autoreconnect().isBlank() && connected){
+			else if (config.autoreconnect().isBlank() && connected){
 				configManager.setConfiguration("Archipelago", "autoreconnect", client.getLocalPlayer().getName());
 				log.info("Detected first log in or connection, setting autoreconnect");
 			}
+			//If there _is_ an autoreconnect, we are currently connected, and the player we log in isn't the reconnect
+			//IMMEDIATELY disconnect, do not pass go, do not collect $200
+			else if (connected && !config.autoreconnect().equals(client.getLocalPlayer().getName())){
+				apClient.disconnect();
+				log.info("Detected log in of a non-auto-reconnect player. Disconnecting from server to avoid mixing checks");
+			}
 			justLoggedIn = false;
 		}
-		checkStatus();
-		SendChecks();
+		if (connected){
+			checkStatus();
+			SendChecks();
+		}
 	}
 
 	@Subscribe
