@@ -369,15 +369,15 @@ public class ArchipelagoPlugin extends Plugin
 		SetCheckByName(LocationNames.QP_X_Marks_the_Spot,      Quest.X_MARKS_THE_SPOT.getState(client) == QuestState.FINISHED);
 		SetCheckByName(LocationNames.QP_Below_Ice_Mountain,    Quest.BELOW_ICE_MOUNTAIN.getState(client) == QuestState.FINISHED);
 
-		SetCheckByName(LocationNames.Total_XP_5000,            client.getOverallExperience() > 5000);
-		SetCheckByName(LocationNames.Total_XP_10000,           client.getOverallExperience() > 10000);
-		SetCheckByName(LocationNames.Total_XP_25000,           client.getOverallExperience() > 25000);
-		SetCheckByName(LocationNames.Total_XP_50000,           client.getOverallExperience() > 50000);
-		SetCheckByName(LocationNames.Total_XP_100000,          client.getOverallExperience() > 100000);
-		SetCheckByName(LocationNames.Total_Level_50,           client.getTotalLevel() > 50);
-		SetCheckByName(LocationNames.Total_Level_100,          client.getTotalLevel() > 100);
-		SetCheckByName(LocationNames.Total_Level_150,          client.getTotalLevel() > 150);
-		SetCheckByName(LocationNames.Total_Level_200,          client.getTotalLevel() > 200);
+		SetCheckByName(LocationNames.Total_XP_5000,            client.getOverallExperience() >= 5000);
+		SetCheckByName(LocationNames.Total_XP_10000,           client.getOverallExperience() >= 10000);
+		SetCheckByName(LocationNames.Total_XP_25000,           client.getOverallExperience() >= 25000);
+		SetCheckByName(LocationNames.Total_XP_50000,           client.getOverallExperience() >= 50000);
+		SetCheckByName(LocationNames.Total_XP_100000,          client.getOverallExperience() >= 100000);
+		SetCheckByName(LocationNames.Total_Level_50,           client.getTotalLevel() >= 50);
+		SetCheckByName(LocationNames.Total_Level_100,          client.getTotalLevel() >= 100);
+		SetCheckByName(LocationNames.Total_Level_150,          client.getTotalLevel() >= 150);
+		SetCheckByName(LocationNames.Total_Level_200,          client.getTotalLevel() >= 200);
 		SetCheckByName(LocationNames.Combat_Level_5,           client.getLocalPlayer().getCombatLevel() >= 5);
 		SetCheckByName(LocationNames.Combat_Level_15,          client.getLocalPlayer().getCombatLevel() >= 15);
 		SetCheckByName(LocationNames.Combat_Level_25,          client.getLocalPlayer().getCombatLevel() >= 25);
