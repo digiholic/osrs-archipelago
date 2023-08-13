@@ -56,7 +56,7 @@ public class ItemHandler {
             Map.entry(ItemNames.Draynor_Village, "12338,12339"),
             Map.entry(ItemNames.Draynor_Manor, "12340"),
             Map.entry(ItemNames.Wizards_Tower, "12337"),
-            Map.entry(ItemNames.Al_Kharid, "13107,13106,13362,13105"),
+            Map.entry(ItemNames.Al_Kharid, "13107,13106,13362,13105,13104"),
             Map.entry(ItemNames.Citharede_Abbey, "13361,13617"),
             Map.entry(ItemNames.South_Of_Varrock, "13108,12852,12596"),
             Map.entry(ItemNames.Central_Varrock, "12853"),
