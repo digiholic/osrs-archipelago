@@ -1,6 +1,7 @@
 package com.archipelago;
 
 import com.archipelago.data.ItemData;
+import com.archipelago.data.ItemNames;
 import com.archipelago.data.LocationData;
 import com.archipelago.data.LocationNames;
 import com.google.inject.Provides;
@@ -255,6 +256,59 @@ public class ArchipelagoPlugin extends Plugin
 			log.info("Sending string to AP: "+cmd);
 			chatboxInput.consume();
 		}
+	}
+
+	@Subscribe
+	public void onMenuOptionClicked(MenuOptionClicked event){
+		if (connected){
+			if (event.getMenuOption().equals("Wear") || event.getMenuOption().equals("Wield")){
+				//If we are equipping an item
+				if (event.getItemId() != -1){
+					if (!IsItemAllowed((event.getItemId()))){
+						event.consume();
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "You have not unlocked the ability to equip this item", null);
+					}
+				}
+			}
+		}
+	}
+
+	private boolean IsItemAllowed(int itemId){
+		if (ItemHandler.MetalWeaponItemIds.contains(itemId)){
+			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Weapons)).count();
+			for (int i=0; i < itemTier; i++){
+				if (Arrays.asList(ItemHandler.MetalWeaponsPermittedByTier.get(i)).contains(itemId)){
+					return true;
+				}
+			}
+			return false;
+		} else if (ItemHandler.MetalArmorItemIds.contains(itemId)){
+			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Armor)).count();
+			for (int i=0; i < itemTier; i++){
+				if (Arrays.asList(ItemHandler.MetalArmorPermittedByTier.get(i)).contains(itemId)){
+					return true;
+				}
+			}
+			return false;
+		} else if (ItemHandler.RangeWeaponItemIds.contains(itemId)){
+			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Range_Weapon)).count();
+			for (int i=0; i < itemTier; i++){
+				if (Arrays.asList(ItemHandler.RangeWeaponsPermittedByTier.get(i)).contains(itemId)){
+					return true;
+				}
+			}
+			return false;
+		} else if (ItemHandler.RangeArmorItemIds.contains(itemId)){
+			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Range_Armor)).count();
+			for (int i=0; i < itemTier; i++){
+				if (Arrays.asList(ItemHandler.RangeArmorPermittedByTier.get(i)).contains(itemId)){
+					return true;
+				}
+			}
+			return false;
+		}
+		//If it's not in any of those lists, it's fine
+		return true;
 	}
 
 	public void SetConnectionState(boolean newConnectionState){
