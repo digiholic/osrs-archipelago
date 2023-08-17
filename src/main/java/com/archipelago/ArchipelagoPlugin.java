@@ -1,12 +1,14 @@
 package com.archipelago;
 
 import com.archipelago.data.ItemData;
+import com.archipelago.data.ItemNames;
 import com.archipelago.data.LocationData;
 import com.archipelago.data.LocationNames;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import javax.swing.*;
 
+import com.sun.jna.platform.unix.X11;
 import gg.archipelago.client.ClientStatus;
 import gg.archipelago.client.LocationManager;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import net.runelite.api.*;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.api.widgets.WidgetModalMode;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -64,6 +67,9 @@ public class ArchipelagoPlugin extends Plugin
 	//This boolean will become true when we log in, and will be set back to false in the first game tick.
 	//This lets us check if the logged in player should auto-connect to AP
 	private boolean justLoggedIn = false;
+
+	private Queue<String[]> queuedMessages = new LinkedList<>();
+	private boolean isDisplayingPopup = false;
 
 	@Provides
 	ArchipelagoConfig provideConfig(ConfigManager configManager)
@@ -147,19 +153,58 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		if (justLoggedIn && client.getLocalPlayer().getName() != null){
 			//If we've just logged in with a character that's stored as our autoreconnect, connect immediately.
-			if (config.autoreconnect().equals(client.getLocalPlayer().getName())){
+			if (!connected && config.autoreconnect().equals(client.getLocalPlayer().getName())){
 				ConnectToAPServer();
 				log.info("Detected log in of autoreconnect, connecting to AP server");
 			}
 			//If there is no autoreconnect set, and we're already connected to the AP server, set autoreconnect
-			if (config.autoreconnect().isBlank() && connected){
+			else if (config.autoreconnect().isBlank() && connected){
 				configManager.setConfiguration("Archipelago", "autoreconnect", client.getLocalPlayer().getName());
 				log.info("Detected first log in or connection, setting autoreconnect");
 			}
+			//If there _is_ an autoreconnect, we are currently connected, and the player we log in isn't the reconnect
+			//IMMEDIATELY disconnect, do not pass go, do not collect $200
+			else if (connected && !config.autoreconnect().equals(client.getLocalPlayer().getName())){
+				apClient.disconnect();
+				log.info("Detected log in of a non-auto-reconnect player. Disconnecting from server to avoid mixing checks");
+			}
 			justLoggedIn = false;
 		}
-		checkStatus();
-		SendChecks();
+		if (loggedIn && connected){
+			checkStatus();
+			SendChecks();
+
+			if (!isDisplayingPopup && queuedMessages.size() > 0){
+				String[] msg = queuedMessages.poll();
+				isDisplayingPopup = true;
+				clientThread.invokeLater(() -> {
+					DisplayPopupMessage(msg[0],msg[1]);
+				});
+			}
+		}
+	}
+
+	public void QueuePopupMessage(String header, String body){
+		log.info("Queueing popup message for "+body);
+		queuedMessages.add(new String[]{header, body});
+	}
+	private void DisplayPopupMessage(String header, String body){
+		WidgetNode widgetNode = client.openInterface((161 << 16) | 13, 660, WidgetModalMode.MODAL_CLICKTHROUGH);
+		log.info("Opening popup message for "+body);
+		client.runScript(3343, header, body, -1);
+
+		clientThread.invokeLater(() -> {
+			Widget w = client.getWidget(660, 1);
+			if (w.getWidth() > 0) {
+				return false;
+			}
+
+			client.closeInterface(widgetNode, true);
+			log.info("Closing interface message for "+body);
+			isDisplayingPopup = false;
+			return true;
+		});
+
 	}
 
 	@Subscribe
@@ -246,7 +291,62 @@ public class ArchipelagoPlugin extends Plugin
 			apClient.sendChat(cmd);
 			log.info("Sending string to AP: "+cmd);
 			chatboxInput.consume();
+
+			clientThread.invokeLater((() -> DisplayPopupMessage("Test 1", "Test 2")));
 		}
+	}
+
+	@Subscribe
+	public void onMenuOptionClicked(MenuOptionClicked event){
+		if (connected){
+			if (event.getMenuOption().equals("Wear") || event.getMenuOption().equals("Wield")){
+				//If we are equipping an item
+				if (event.getItemId() != -1){
+					if (!IsItemAllowed((event.getItemId()))){
+						event.consume();
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "You have not unlocked the ability to equip this item", null);
+					}
+				}
+			}
+		}
+	}
+
+	private boolean IsItemAllowed(int itemId){
+		if (ItemHandler.MetalWeaponItemIds.contains(itemId)){
+			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Weapons)).count();
+			for (int i=0; i < itemTier; i++){
+				if (Arrays.asList(ItemHandler.MetalWeaponsPermittedByTier.get(i)).contains(itemId)){
+					return true;
+				}
+			}
+			return false;
+		} else if (ItemHandler.MetalArmorItemIds.contains(itemId)){
+			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Armor)).count();
+			for (int i=0; i < itemTier; i++){
+				if (Arrays.asList(ItemHandler.MetalArmorPermittedByTier.get(i)).contains(itemId)){
+					return true;
+				}
+			}
+			return false;
+		} else if (ItemHandler.RangeWeaponItemIds.contains(itemId)){
+			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Range_Weapon)).count();
+			for (int i=0; i < itemTier; i++){
+				if (Arrays.asList(ItemHandler.RangeWeaponsPermittedByTier.get(i)).contains(itemId)){
+					return true;
+				}
+			}
+			return false;
+		} else if (ItemHandler.RangeArmorItemIds.contains(itemId)){
+			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Range_Armor)).count();
+			for (int i=0; i < itemTier; i++){
+				if (Arrays.asList(ItemHandler.RangeArmorPermittedByTier.get(i)).contains(itemId)){
+					return true;
+				}
+			}
+			return false;
+		}
+		//If it's not in any of those lists, it's fine
+		return true;
 	}
 
 	public void SetConnectionState(boolean newConnectionState){
@@ -361,15 +461,15 @@ public class ArchipelagoPlugin extends Plugin
 		SetCheckByName(LocationNames.QP_X_Marks_the_Spot,      Quest.X_MARKS_THE_SPOT.getState(client) == QuestState.FINISHED);
 		SetCheckByName(LocationNames.QP_Below_Ice_Mountain,    Quest.BELOW_ICE_MOUNTAIN.getState(client) == QuestState.FINISHED);
 
-		SetCheckByName(LocationNames.Total_XP_5000,            client.getOverallExperience() > 5000);
-		SetCheckByName(LocationNames.Total_XP_10000,           client.getOverallExperience() > 10000);
-		SetCheckByName(LocationNames.Total_XP_25000,           client.getOverallExperience() > 25000);
-		SetCheckByName(LocationNames.Total_XP_50000,           client.getOverallExperience() > 50000);
-		SetCheckByName(LocationNames.Total_XP_100000,          client.getOverallExperience() > 100000);
-		SetCheckByName(LocationNames.Total_Level_50,           client.getTotalLevel() > 50);
-		SetCheckByName(LocationNames.Total_Level_100,          client.getTotalLevel() > 100);
-		SetCheckByName(LocationNames.Total_Level_150,          client.getTotalLevel() > 150);
-		SetCheckByName(LocationNames.Total_Level_200,          client.getTotalLevel() > 200);
+		SetCheckByName(LocationNames.Total_XP_5000,            client.getOverallExperience() >= 5000);
+		SetCheckByName(LocationNames.Total_XP_10000,           client.getOverallExperience() >= 10000);
+		SetCheckByName(LocationNames.Total_XP_25000,           client.getOverallExperience() >= 25000);
+		SetCheckByName(LocationNames.Total_XP_50000,           client.getOverallExperience() >= 50000);
+		SetCheckByName(LocationNames.Total_XP_100000,          client.getOverallExperience() >= 100000);
+		SetCheckByName(LocationNames.Total_Level_50,           client.getTotalLevel() >= 50);
+		SetCheckByName(LocationNames.Total_Level_100,          client.getTotalLevel() >= 100);
+		SetCheckByName(LocationNames.Total_Level_150,          client.getTotalLevel() >= 150);
+		SetCheckByName(LocationNames.Total_Level_200,          client.getTotalLevel() >= 200);
 		SetCheckByName(LocationNames.Combat_Level_5,           client.getLocalPlayer().getCombatLevel() >= 5);
 		SetCheckByName(LocationNames.Combat_Level_15,          client.getLocalPlayer().getCombatLevel() >= 15);
 		SetCheckByName(LocationNames.Combat_Level_25,          client.getLocalPlayer().getCombatLevel() >= 25);
