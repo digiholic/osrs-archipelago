@@ -314,7 +314,7 @@ public class ArchipelagoPlugin extends Plugin
 	private boolean IsItemAllowed(int itemId){
 		if (ItemHandler.MetalWeaponItemIds.contains(itemId)){
 			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Weapons)).count();
-			for (int i=0; i < itemTier; i++){
+			for (int i=0; i <= itemTier; i++){
 				if (Arrays.asList(ItemHandler.MetalWeaponsPermittedByTier.get(i)).contains(itemId)){
 					return true;
 				}
@@ -322,7 +322,7 @@ public class ArchipelagoPlugin extends Plugin
 			return false;
 		} else if (ItemHandler.MetalArmorItemIds.contains(itemId)){
 			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Armor)).count();
-			for (int i=0; i < itemTier; i++){
+			for (int i=0; i <= itemTier; i++){
 				if (Arrays.asList(ItemHandler.MetalArmorPermittedByTier.get(i)).contains(itemId)){
 					return true;
 				}
@@ -330,7 +330,7 @@ public class ArchipelagoPlugin extends Plugin
 			return false;
 		} else if (ItemHandler.RangeWeaponItemIds.contains(itemId)){
 			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Range_Weapon)).count();
-			for (int i=0; i < itemTier; i++){
+			for (int i=0; i <= itemTier; i++){
 				if (Arrays.asList(ItemHandler.RangeWeaponsPermittedByTier.get(i)).contains(itemId)){
 					return true;
 				}
@@ -338,7 +338,7 @@ public class ArchipelagoPlugin extends Plugin
 			return false;
 		} else if (ItemHandler.RangeArmorItemIds.contains(itemId)){
 			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Range_Armor)).count();
-			for (int i=0; i < itemTier; i++){
+			for (int i=0; i <= itemTier; i++){
 				if (Arrays.asList(ItemHandler.RangeArmorPermittedByTier.get(i)).contains(itemId)){
 					return true;
 				}
