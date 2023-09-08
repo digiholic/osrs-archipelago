@@ -1,7 +1,6 @@
-package com.archipelago;
+package gg.archipelago;
 
-import com.archipelago.data.LocationData;
-import net.runelite.client.game.SpriteManager;
+import gg.archipelago.data.LocationData;
 import net.runelite.client.ui.ColorScheme;
 
 import javax.swing.*;

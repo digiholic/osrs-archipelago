@@ -1,10 +1,8 @@
-package com.archipelago.apEvents;
+package gg.archipelago.apEvents;
 
-import com.archipelago.ArchipelagoPanel;
-import com.archipelago.ArchipelagoPlugin;
+import gg.archipelago.ArchipelagoPlugin;
 import gg.archipelago.client.events.ArchipelagoEventListener;
 import gg.archipelago.client.events.ConnectionResultEvent;
-import gg.archipelago.client.helper.DeathLink;
 
 public class ConnectionResult {
 

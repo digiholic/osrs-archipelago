@@ -1,16 +1,14 @@
-package com.archipelago;
+package gg.archipelago;
 
-import com.archipelago.data.ItemData;
-import com.archipelago.data.ItemNames;
-import com.archipelago.data.LocationData;
-import com.archipelago.data.LocationNames;
+import gg.archipelago.data.ItemData;
+import gg.archipelago.data.ItemNames;
+import gg.archipelago.data.LocationData;
+import gg.archipelago.data.LocationNames;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import javax.swing.*;
 
-import com.sun.jna.platform.unix.X11;
 import gg.archipelago.client.ClientStatus;
-import gg.archipelago.client.LocationManager;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
@@ -22,7 +20,6 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ChatboxInput;
 import net.runelite.client.events.NpcLootReceived;
-import net.runelite.client.game.SkillIconManager;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;

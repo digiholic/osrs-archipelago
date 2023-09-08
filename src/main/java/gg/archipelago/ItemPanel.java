@@ -1,7 +1,7 @@
-package com.archipelago;
+package gg.archipelago;
 
-import com.archipelago.data.ItemData;
-import com.archipelago.data.ItemNames;
+import gg.archipelago.data.ItemData;
+import gg.archipelago.data.ItemNames;
 import net.runelite.client.ui.ColorScheme;
 
 import javax.swing.*;

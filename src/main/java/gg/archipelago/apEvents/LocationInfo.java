@@ -1,6 +1,5 @@
-package com.archipelago.apEvents;
+package gg.archipelago.apEvents;
 
-import com.archipelago.ArchipelagoPlugin;
 import gg.archipelago.client.events.ArchipelagoEventListener;
 import gg.archipelago.client.events.LocationInfoEvent;
 

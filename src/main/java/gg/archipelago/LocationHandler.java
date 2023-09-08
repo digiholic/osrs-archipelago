@@ -1,17 +1,16 @@
-package com.archipelago;
+package gg.archipelago;
 
-import com.archipelago.data.LocationData;
-import com.archipelago.data.LocationNames;
+import gg.archipelago.data.LocationData;
+import gg.archipelago.data.LocationNames;
 import net.runelite.api.SpriteID;
 import net.runelite.client.game.SpriteManager;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class LocationHandler {
     public static List<LocationData> AllLocations = List.of(
-            new LocationData(0x070000L,LocationNames.Q_Cooks_Assistant, SpriteID.TAB_QUESTS, 0, true),
+            new LocationData(0x070000L, LocationNames.Q_Cooks_Assistant, SpriteID.TAB_QUESTS, 0, true),
             new LocationData(0x070001L,LocationNames.Q_Demon_Slayer, SpriteID.TAB_QUESTS, 0, true),
             new LocationData(0x070002L,LocationNames.Q_Restless_Ghost, SpriteID.TAB_QUESTS, 0, true),
             new LocationData(0x070003L,LocationNames.Q_Romeo_Juliet, SpriteID.TAB_QUESTS, 0, true),

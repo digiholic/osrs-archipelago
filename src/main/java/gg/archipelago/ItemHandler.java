@@ -1,9 +1,7 @@
-package com.archipelago;
+package gg.archipelago;
 
-import com.archipelago.data.ItemData;
-import com.archipelago.data.ItemNames;
-import com.archipelago.data.LocationData;
-import net.runelite.api.Item;
+import gg.archipelago.data.ItemData;
+import gg.archipelago.data.ItemNames;
 import net.runelite.api.ItemID;
 import net.runelite.api.SpriteID;
 import net.runelite.client.game.SpriteManager;

@@ -1,11 +1,9 @@
-package com.archipelago.apEvents;
+package gg.archipelago.apEvents;
 
-import com.archipelago.ArchipelagoPlugin;
-import com.archipelago.ItemHandler;
+import gg.archipelago.ArchipelagoPlugin;
+import gg.archipelago.ItemHandler;
 import gg.archipelago.client.events.ArchipelagoEventListener;
 import gg.archipelago.client.events.ReceiveItemEvent;
-
-import java.text.MessageFormat;
 
 public class ReceiveItem {
 

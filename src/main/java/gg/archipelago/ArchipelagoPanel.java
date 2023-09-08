@@ -1,6 +1,5 @@
-package com.archipelago;
+package gg.archipelago;
 
-import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package com.archipelago.data;
+package gg.archipelago.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
