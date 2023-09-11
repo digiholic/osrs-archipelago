@@ -17,30 +17,30 @@ public class ChatMessageTask extends APTask{
     }
 
     @Override
-    void CheckChatMessage(String message) {
+    public void CheckChatMessage(String message) {
         if (message.equalsIgnoreCase(_messageToCheck)){
             _isCompleted = true;
         }
     }
 
     @Override
-    void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(NPC npc) { }
     @Override
-    void CheckPlayerStatus(Client client) { }
+    public void CheckPlayerStatus(Client client) { }
     @Override
-    void OnGameTick(Client client) { }
+    public void OnGameTick(Client client) { }
     @Override
-    void OnMenuOption(MenuOptionClicked event) {
+    public void OnMenuOption(MenuOptionClicked event) {
 
     }
 
     @Override
-    boolean IsCompleted() {
+    public boolean IsCompleted() {
         return _isCompleted;
     }
 
     @Override
-    long GetID() {
+    public long GetID() {
         return _ID;
     }
 }

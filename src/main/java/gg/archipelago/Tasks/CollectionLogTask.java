@@ -4,33 +4,31 @@ import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.events.MenuOptionClicked;
 
-public class KillTask extends APTask{
+public class CollectionLogTask extends APTask{
     private final long _ID;
-    private final String _mobName;
+    private final String _logName;
+    private final int _checksRequired;
     private boolean _isCompleted = false;
 
 
-    public KillTask(long ID, String mobName){
+    public CollectionLogTask(long ID, String logName, int checksRequired){
         _ID = ID;
-        _mobName = mobName;
-
+        _logName = logName;
+        _checksRequired = checksRequired;
     }
 
     @Override
-    public void CheckMobKill(NPC npc) {
-        if (_mobName.equalsIgnoreCase(npc.getName())){
-            _isCompleted = true;
-        }
+    public void CheckPlayerStatus(Client client) {
+        //Check if collection log of specific name has enough checks
     }
-
-    @Override
-    public void CheckPlayerStatus(Client client) { }
     @Override
     public void OnGameTick(Client client) { }
     @Override
     public void OnMenuOption(MenuOptionClicked event) { }
     @Override
     public void CheckChatMessage(String message) { }
+    @Override
+    public void CheckMobKill(NPC npc) { }
     @Override
     public boolean IsCompleted() {
         return _isCompleted;

@@ -13,7 +13,7 @@ public abstract class StateTrackingTask extends APTask {
     private boolean checkTriggered = false;
 
     @Override
-    void OnGameTick(Client client){
+    public void OnGameTick(Client client){
         //If the triggering event happened and our state matches our post-triggered state requirements, we've completed the task
         if (checkTriggered){
             if (CheckPostTriggerStateOK(client)){
@@ -35,7 +35,7 @@ public abstract class StateTrackingTask extends APTask {
     abstract boolean CheckPostTriggerStateOK(Client client);
 
     @Override
-    boolean IsCompleted() {
+    public boolean IsCompleted() {
         return _isCompleted;
     }
 }

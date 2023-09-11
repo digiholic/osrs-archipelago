@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskLists {
-    public static final int base_id = 0x070000;
+    public static final long base_id = 0x070000;
     public static List<APTask> allTasks = List.of(
             new QuestTask(base_id, Quest.COOKS_ASSISTANT),
             new QuestTask(base_id + 1, Quest.DEMON_SLAYER),
@@ -35,13 +35,13 @@ public class TaskLists {
             new VarbitTask(base_id + 22, Prayer.ROCK_SKIN.getVarbit(), 1),
             new VarbitTask(base_id + 23, Prayer.PROTECT_ITEM.getVarbit(), 1),
 //            Pray at the Edgeville Monastery
-//            Cast Bones To Bananas
-//            Teleport to Varrock
-//            Teleport to Lumbridge
-//            Teleport to Falador
-//            Craft an Air Rune
-//            Craft runes with a Mind Core
-//            Craft runes with a Body Core
+            new CastSpellTask(base_id + 25, "Bones to Bananas"),
+            new CastSpellTask(base_id + 26, "Varrock Teleport"),
+            new CastSpellTask(base_id + 27, "Lumbridge Teleport"),
+            new CastSpellTask(base_id + 28, "Falador Teleport"),
+            new CraftRunesTask(base_id + 29, "Air Rune", false),
+            new CraftRunesTask(base_id + 30, "Mind Rune", true),
+            new CraftRunesTask(base_id + 31, "Body Rune", true),
 //            Make an Unblessed Symbol
             new ChatMessageTask(base_id + 33, "You cut the sapphire."),
             new ChatMessageTask(base_id + 34, "You cut the emerald."),
@@ -66,8 +66,8 @@ public class TaskLists {
             new ChatMessageTask(base_id + 53, "You successfully bake a traditional apple pie."),
             new ChatMessageTask(base_id + 54, "You successfully bake a cake."),
             new ChatMessageTask(base_id + 55, "You add the meat to the pizza."),
-//            Burn some Oak Logs
-//            Burn some Willow Logs
+            new BurnLogsTask(base_id + 56, "Oak Logs"),
+            new BurnLogsTask(base_id + 57, "Willow Logs"),
             new ChatMessageTask(base_id + 58, "Your canoe sinks into the water after the hard journey."),
             new KillTask(base_id + 59, "You get some oak logs."),
             new KillTask(base_id + 60, "You get some willow logs."),
@@ -75,18 +75,18 @@ public class TaskLists {
             new KillTask(base_id + 62, "Goblin"),
             new KillTask(base_id + 63, "Monkey"),
             new KillTask(base_id + 64, "Barbarian"),
-//            1 Unique Skull Sceptre Piece
+            new CollectionLogTask(base_id + 65, "Stronghold of Security", 1),
             new KillTask(base_id + 66, "Giant Frog"),
             new KillTask(base_id + 67, "Zombie"),
             new KillTask(base_id + 68, "Guard"),
             new KillTask(base_id + 69, "Hill Giant"),
-//            2 Unique Skull Sceptre Pieces
+            new CollectionLogTask(base_id + 70, "Stronghold of Security", 2),
             new KillTask(base_id + 71, "Deadly Red Spider"),
             new KillTask(base_id + 72, "Moss Giant"),
             new KillTask(base_id + 73, "Catablepon"),
-//            3 Unique Skull Sceptre Pieces
+            new CollectionLogTask(base_id + 74, "Stronghold of Security", 3),
             new KillTask(base_id + 75, "Ice Giant"),
-//            Obtain a Skull Sceptre
+            new CollectionLogTask(base_id + 76, "Stronghold of Security", 4),
             new KillTask(base_id + 77, "Lesser Demon"),
             new KillTask(base_id + 78, "Ogress Shaman"),
             new KillTask(base_id + 79, "Obor"),
@@ -115,6 +115,5 @@ public class TaskLists {
 //            Open a Simple Lockbox
 //            Open an Elaborate Lockbox
 //            Open an Ornate Lockbox
-
     );
 }

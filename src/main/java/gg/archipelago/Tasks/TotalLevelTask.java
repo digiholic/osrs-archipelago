@@ -16,23 +16,23 @@ public class TotalLevelTask extends APTask{
 
     }
     @Override
-    void CheckPlayerStatus(Client client) {
+    public void CheckPlayerStatus(Client client) {
         _isCompleted = client.getTotalLevel() >= _totalLevelRequired;
     }
     @Override
-    void OnGameTick(Client client) { }
+    public void OnGameTick(Client client) { }
     @Override
-    void OnMenuOption(MenuOptionClicked event) { }
+    public void OnMenuOption(MenuOptionClicked event) { }
     @Override
-    void CheckChatMessage(String message) { }
+    public void CheckChatMessage(String message) { }
     @Override
-    void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(NPC npc) { }
     @Override
-    boolean IsCompleted() {
+    public boolean IsCompleted() {
         return _isCompleted;
     }
     @Override
-    long GetID() {
+    public long GetID() {
         return _ID;
     }
 }

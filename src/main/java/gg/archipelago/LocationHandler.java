@@ -89,26 +89,6 @@ public class LocationHandler {
 
     public static final Map<LocationData, BufferedImage> loadedSprites = new HashMap<LocationData, BufferedImage>();
 
-    public static final String OAK_MESSAGE = "You get some oak logs.";
-    public static final String WILLOW_MESSAGE = "You get some willow logs.";
-    public static final String SAPPHIRE_MESSAGE = "You cut the sapphire.";
-    public static final String EMERALD_MESSAGE = "You cut the emerald.";
-    public static final String RUBY_MESSAGE = "You cut the ruby.";
-    public static final String DIAMOND_MESSAGE = "You cut the diamond.";
-    public static final String COAL_MINED_MESSAGE = "You manage to mine some coal.";
-    public static final String SILVER_MINED_MESSAGE = "You manage to mine some silver.";
-    public static final String GOLD_MINED_MESSAGE = "You manage to mine some gold.";
-    public static final String STEEL_SMELTED_MESSAGE = "You retrieve a bar of steel.";
-    public static final String SILVER_SMELTED_MESSAGE = "You retrieve a bar of silver from the furnace.";
-    public static final String GOLD_SMELTED_MESSAGE = "You retrieve a bar of gold from the furnace.";
-    public static final String APPLE_PIE_MESSAGE = "You successfully bake a traditional apple pie.";
-    public static final String CAKE_MESSAGE = "You successfully bake a cake.";
-    public static final String PIZZA_MESSAGE = "You add the meat to the pizza.";
-    public static final String CRUSH_BARRONITE_MESSAGE = "You crush a barronite deposit with your hammer.";
-    public static final String TETRA_MESSAGE = "You successfully prepare the Tetra.";
-    public static final String CAVEFISH_MESSAGE = "You successfully prepare the Cavefish.";
-    public static final String GUPPY_MESSAGE = "You successfully prepare the Guppy.";
-    public static final String LOBSTER_MESSAGE = "You catch a lobster.";
 
     public static LocationData GetLocationByName(String name){
         return AllLocations.stream()
