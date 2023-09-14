@@ -34,7 +34,7 @@ public class TaskLists {
             new QuestTask(base_id + 21, Quest.DRAGON_SLAYER_I),
             new VarbitTask(base_id + 22, Prayer.ROCK_SKIN.getVarbit(), 1),
             new VarbitTask(base_id + 23, Prayer.PROTECT_ITEM.getVarbit(), 1),
-//            Pray at the Edgeville Monastery
+            new EdgevilleMonasteryTask(base_id + 24),
             new CastSpellTask(base_id + 25, CastSpellTask.SpellToCast.BONES_TO_BANANAS),
             new CastSpellTask(base_id + 26, CastSpellTask.SpellToCast.VARROCK_TELE),
             new CastSpellTask(base_id + 27, CastSpellTask.SpellToCast.LUMBRIDGE_TELE),
@@ -42,7 +42,7 @@ public class TaskLists {
             new CraftRunesTask(base_id + 29, CraftRunesTask.RuneType.AIR_RUNE),
             new CraftRunesTask(base_id + 30, CraftRunesTask.RuneType.MIND_RUNE),
             new CraftRunesTask(base_id + 31, CraftRunesTask.RuneType.BODY_RUNE),
-//            Make an Unblessed Symbol
+            new ChatMessageTask(base_id + 32, "You put some string on your holy symbol."),
             new ChatMessageTask(base_id + 33, "You cut the sapphire."),
             new ChatMessageTask(base_id + 34, "You cut the emerald."),
             new ChatMessageTask(base_id + 35, "You cut the ruby."),
@@ -61,8 +61,8 @@ public class TaskLists {
             new ChatMessageTask(base_id + 48, "You successfully prepare the Tetra."),
             new ChatMessageTask(base_id + 49, "You catch a lobster."),
             new ChatMessageTask(base_id + 50, "You catch a swordfish."),
-//            Bake a Redberry Pie
-//            Cook some Stew
+            new ChatMessageTask(base_id + 51, "You successfully bake a delicious redberry pie."),
+            new ChatMessageTask(base_id + 52, "You cook some stew."),
             new ChatMessageTask(base_id + 53, "You successfully bake a traditional apple pie."),
             new ChatMessageTask(base_id + 54, "You successfully bake a cake."),
             new ChatMessageTask(base_id + 55, "You add the meat to the pizza."),
