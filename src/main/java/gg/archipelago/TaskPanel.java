@@ -68,7 +68,8 @@ public class TaskPanel extends JPanel {
 
     public void UpdateTaskStatus(){
         for (LocationData loc : LocationHandler.AllLocations){
-            boolean completed = plugin.LocationCheckStates.getOrDefault(loc, false);
+            //boolean completed = plugin.LocationCheckStates.getOrDefault(loc, false);
+            boolean completed = false;
             TaskRow taskPanel = locationPanels.getOrDefault(loc,null);
             if (taskPanel != null){
                 taskPanel.UpdateCompleted(completed);
@@ -78,7 +79,8 @@ public class TaskPanel extends JPanel {
     }
 
     private void AddOrUpdateTaskRow(LocationData loc){
-        boolean completed = plugin.LocationCheckStates.getOrDefault(loc,false);
+        //boolean completed = plugin.LocationCheckStates.getOrDefault(loc,false);
+        boolean completed = false;
         if (locationPanels.containsKey(loc)){
             locationPanels.get(loc).UpdateCompleted(completed);
             locationPanels.get(loc).UpdateDisplay();

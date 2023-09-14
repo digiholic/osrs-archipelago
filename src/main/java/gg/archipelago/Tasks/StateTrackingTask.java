@@ -10,10 +10,15 @@ public abstract class StateTrackingTask extends APTask {
     private boolean prevStateOK = false;
     //One a triggering event (casting a spell, using an item, etc.) is fired, this is set to true, to check the next tick's state
 
-    private boolean checkTriggered = false;
+    protected boolean checkTriggered = false;
 
     @Override
     public void OnGameTick(Client client){
+        //If our previous state isn't set, don't bother checking the trigger or the post-state
+        if (!prevStateOK){
+            checkTriggered = false;
+            return;
+        }
         //If the triggering event happened and our state matches our post-triggered state requirements, we've completed the task
         if (checkTriggered){
             if (CheckPostTriggerStateOK(client)){

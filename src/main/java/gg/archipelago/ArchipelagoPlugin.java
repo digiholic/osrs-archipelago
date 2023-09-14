@@ -24,6 +24,7 @@ import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.plugins.mta.graveyard.GraveyardCounter;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ImageUtil;
@@ -32,6 +33,8 @@ import net.runelite.client.util.Text;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static net.runelite.api.ItemID.ANIMALS_BONES;
 
 @Slf4j
 @PluginDescriptor(
@@ -255,6 +258,18 @@ public class ArchipelagoPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
+	public void onItemContainerChanged(ItemContainerChanged event)
+	{
+		ItemContainer container = event.getItemContainer();
+
+		if (container == client.getItemContainer(InventoryID.INVENTORY))
+		{
+			Item[] items = container.getItems();
+			log.info(items.toString());
+		}
+	}
+
 	private boolean IsItemAllowed(int itemId){
 		if (ItemHandler.MetalWeaponItemIds.contains(itemId)){
 			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Weapons)).count();
@@ -302,7 +317,7 @@ public class ArchipelagoPlugin extends Plugin
 			configManager.setConfiguration("Archipelago", "autoreconnect", client.getLocalPlayer().getName());
 			log.info("Detected first log in or connection, setting autoreconnect");
 		}
-		UpdateCollectedChecks();
+		//UpdateCollectedChecks();
 	}
 
 

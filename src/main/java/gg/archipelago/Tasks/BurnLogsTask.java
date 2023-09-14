@@ -1,18 +1,41 @@
 package gg.archipelago.Tasks;
 
-public class BurnLogsTask extends StateTrackingTask{
+import net.runelite.api.Client;
+import net.runelite.api.NPC;
+import net.runelite.api.Skill;
+import net.runelite.api.events.MenuOptionClicked;
+
+public class  BurnLogsTask extends StateTrackingTask{
 
     private long _ID;
-    private String _logType;
+    private LogType _logType;
 
-    public BurnLogsTask(Long ID, String logType){
+    private int _required_level;
+    private int _xp_gained;
+    private int _previousFiremakingXP;
+
+    private final String logs_burning_message = "The fire catches and the logs begin to burn.";
+    public BurnLogsTask(Long ID, LogType logType){
         _ID = ID;
         _logType = logType;
+
+        switch(logType){
+            case OAK:
+                _required_level = 15;
+                _xp_gained = 60;
+                break;
+            case WILLOW:
+                _required_level = 30;
+                _xp_gained = 90;
+        }
     }
 
     @Override
     public void CheckChatMessage(String message) {
         // Check for burning log message
+        if (message.equalsIgnoreCase(logs_burning_message)){
+            checkTriggered = true;
+        }
     }
     @Override
     public void CheckMobKill(NPC npc) { }
@@ -29,12 +52,19 @@ public class BurnLogsTask extends StateTrackingTask{
     @Override
     boolean CheckInitialStateOK(Client client) {
         // Check for Firemaking level requirement
+        if (!(client.getRealSkillLevel(Skill.FIREMAKING) >= _required_level)) return false;
+        _previousFiremakingXP = client.getSkillExperience(Skill.FIREMAKING);
         return false;
     }
 
     @Override
     boolean CheckPostTriggerStateOK(Client client) {
         // Check for XP increase for specific log
-        return false;
+        return client.getSkillExperience(Skill.FIREMAKING) == _previousFiremakingXP + _xp_gained;
+    }
+
+    public enum LogType{
+        OAK,
+        WILLOW
     }
 }
