@@ -3,6 +3,7 @@ package gg.archipelago.Tasks;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.Skill;
+import net.runelite.api.SpriteID;
 import net.runelite.api.events.MenuOptionClicked;
 
 public class CastSpellTask extends StateTrackingTask{
@@ -12,9 +13,11 @@ public class CastSpellTask extends StateTrackingTask{
     private int _required_level;
     private int _xp_gained;
     private int _previousMagicXP;
+    private SpellToCast _spell;
 
     public CastSpellTask(Long ID, SpellToCast spell){
         _ID = ID;
+        _spell = spell;
 
         switch(spell){
             case BONES_TO_BANANAS:
@@ -51,8 +54,34 @@ public class CastSpellTask extends StateTrackingTask{
     }
 
     @Override
+    public String GetName() {
+        switch(_spell){
+            case BONES_TO_BANANAS:
+                return "Cast Bones to Bananas";
+            case VARROCK_TELE:
+                return "Teleport to Varrock";
+            case LUMBRIDGE_TELE:
+                    return "Teleport to Lumbridge";
+            case FALADOR_TELE:
+                return "Teleport to Falador";
+            default:
+                return "Cast an unknown spell";
+        }
+    }
+
+    @Override
     public long GetID() {
         return _ID;
+    }
+
+    @Override
+    public int GetSpriteID() {
+        return SpriteID.SKILL_MAGIC;
+    }
+
+    @Override
+    public boolean ShouldDisplayPanel() {
+        return true;
     }
 
     @Override

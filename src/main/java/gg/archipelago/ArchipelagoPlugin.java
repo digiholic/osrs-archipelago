@@ -72,7 +72,7 @@ public class ArchipelagoPlugin extends Plugin
 	private Queue<String[]> queuedMessages = new LinkedList<>();
 	private boolean isDisplayingPopup = false;
 
-	private List<APTask> activeTasks;
+	protected List<APTask> activeTasks;
 
 	@Provides
 	ArchipelagoConfig provideConfig(ConfigManager configManager)
@@ -98,7 +98,7 @@ public class ArchipelagoPlugin extends Plugin
 
 		clientToolbar.addNavigation(navButton);
 
-		clientThread.invoke(() -> LocationHandler.LoadImages(spriteManager));
+		clientThread.invoke(() -> TaskLists.LoadImages(spriteManager));
 		clientThread.invoke(() -> ItemHandler.LoadImages(spriteManager));
 
 		loadSprites();
@@ -344,6 +344,7 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		String uri = config.address()+":"+config.port();
 		log.info(uri);
+		activeTasks = TaskLists.allTasks;
 		apClient.newConnection(this, uri, config.slotname(), config.password());
 	}
 

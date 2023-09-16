@@ -2,6 +2,7 @@ package gg.archipelago.Tasks;
 
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
+import net.runelite.api.SpriteID;
 import net.runelite.api.events.MenuOptionClicked;
 
 public class KillTask extends APTask{
@@ -35,6 +36,22 @@ public class KillTask extends APTask{
     public boolean IsCompleted() {
         return _isCompleted;
     }
+
+    @Override
+    public int GetSpriteID() {
+        return SpriteID.TAB_COMBAT;
+    }
+
+    @Override
+    public boolean ShouldDisplayPanel() {
+        return true;
+    }
+
+    @Override
+    public String GetName() {
+        return String.format("Kill %",_mobName);
+    }
+
     @Override
     public long GetID() {
         return _ID;

@@ -9,9 +9,12 @@ public class VarbitTask extends APTask{
     private final int _varbitToCheck;
     private final int _valueToCheck;
     private boolean _isCompleted = false;
+    private String _name;
+    private int _spriteID;
 
-
-    public VarbitTask(long ID, int varbitToCheck, int valueToCheck){
+    public VarbitTask(String name, int SpriteID, long ID, int varbitToCheck, int valueToCheck){
+        _name = name;
+        _spriteID = SpriteID;
         _ID = ID;
         _varbitToCheck = varbitToCheck;
         _valueToCheck = valueToCheck;
@@ -33,6 +36,21 @@ public class VarbitTask extends APTask{
     @Override
     public boolean IsCompleted() {
         return _isCompleted;
+    }
+
+    @Override
+    public int GetSpriteID() {
+        return _spriteID;
+    }
+
+    @Override
+    public boolean ShouldDisplayPanel() {
+        return true;
+    }
+
+    @Override
+    public String GetName() {
+        return _name;
     }
 
     @Override

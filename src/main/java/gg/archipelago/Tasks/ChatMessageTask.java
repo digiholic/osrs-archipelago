@@ -8,9 +8,12 @@ public class ChatMessageTask extends APTask{
     private final long _ID;
     private final String _messageToCheck;
     private boolean _isCompleted = false;
+    private String _name;
+    private int _spriteID;
 
-
-    public ChatMessageTask(long ID, String messageToCheck){
+    public ChatMessageTask(String name, int spriteID, long ID, String messageToCheck){
+        _name = name;
+        _spriteID = spriteID;
         _ID = ID;
         _messageToCheck = messageToCheck;
 
@@ -37,6 +40,21 @@ public class ChatMessageTask extends APTask{
     @Override
     public boolean IsCompleted() {
         return _isCompleted;
+    }
+
+    @Override
+    public int GetSpriteID() {
+        return _spriteID;
+    }
+
+    @Override
+    public boolean ShouldDisplayPanel() {
+        return true;
+    }
+
+    @Override
+    public String GetName() {
+        return _name;
     }
 
     @Override

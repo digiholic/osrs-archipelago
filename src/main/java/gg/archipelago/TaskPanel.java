@@ -1,5 +1,6 @@
 package gg.archipelago;
 
+import gg.archipelago.Tasks.APTask;
 import gg.archipelago.data.LocationData;
 import net.runelite.client.ui.ColorScheme;
 
@@ -13,7 +14,7 @@ public class TaskPanel extends JPanel {
     private final ArchipelagoPlugin plugin;
 
     private final JCheckBox displayCompleted;
-    private final HashMap<LocationData, TaskRow> locationPanels = new HashMap<LocationData, TaskRow>();
+    private final HashMap<APTask, TaskRow> locationPanels = new HashMap<APTask, TaskRow>();
 
     public TaskPanel(ArchipelagoPlugin plugin){
         this.plugin = plugin;
@@ -67,10 +68,9 @@ public class TaskPanel extends JPanel {
     }
 
     public void UpdateTaskStatus(){
-        for (LocationData loc : LocationHandler.AllLocations){
-            //boolean completed = plugin.LocationCheckStates.getOrDefault(loc, false);
+        for (APTask task : plugin.activeTasks){
             boolean completed = false;
-            TaskRow taskPanel = locationPanels.getOrDefault(loc,null);
+            TaskRow taskPanel = locationPanels.getOrDefault(task, null);
             if (taskPanel != null){
                 taskPanel.UpdateCompleted(completed);
                 taskPanel.UpdateDisplay();
@@ -78,15 +78,15 @@ public class TaskPanel extends JPanel {
         }
     }
 
-    private void AddOrUpdateTaskRow(LocationData loc){
+    private void AddOrUpdateTaskRow(APTask task){
         //boolean completed = plugin.LocationCheckStates.getOrDefault(loc,false);
         boolean completed = false;
-        if (locationPanels.containsKey(loc)){
-            locationPanels.get(loc).UpdateCompleted(completed);
-            locationPanels.get(loc).UpdateDisplay();
+        if (locationPanels.containsKey(task)){
+            locationPanels.get(task).UpdateCompleted(completed);
+            locationPanels.get(task).UpdateDisplay();
         } else {
-            TaskRow taskPanel = new TaskRow(loc.name, LocationHandler.loadedSprites.get(loc), completed);
-            locationPanels.put(loc, taskPanel);
+            TaskRow taskPanel = new TaskRow(task.GetName(), TaskLists.loadedSprites.get(task), completed);
+            locationPanels.put(task, taskPanel);
             add(taskPanel);
         }
     }
@@ -95,10 +95,10 @@ public class TaskPanel extends JPanel {
         if (connectionSuccessful){
             setVisible(true);
 
-            for (LocationData loc : LocationHandler.AllLocations) {
-                if (loc.display_in_panel){
+            for (APTask task : plugin.activeTasks){
+                if (task.ShouldDisplayPanel()){
                     SwingUtilities.invokeLater(() -> {
-                        AddOrUpdateTaskRow(loc);
+                        AddOrUpdateTaskRow(task);
                     });
                 }
             }

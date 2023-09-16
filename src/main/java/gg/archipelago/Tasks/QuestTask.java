@@ -1,9 +1,6 @@
 package gg.archipelago.Tasks;
 
-import net.runelite.api.Client;
-import net.runelite.api.NPC;
-import net.runelite.api.Quest;
-import net.runelite.api.QuestState;
+import net.runelite.api.*;
 import net.runelite.api.events.MenuOptionClicked;
 
 public class QuestTask extends APTask{
@@ -34,6 +31,22 @@ public class QuestTask extends APTask{
     public boolean IsCompleted() {
         return _isCompleted;
     }
+
+    @Override
+    public int GetSpriteID() {
+        return SpriteID.TAB_QUESTS;
+    }
+
+    @Override
+    public boolean ShouldDisplayPanel() {
+        return true;
+    }
+
+    @Override
+    public String GetName() {
+        return _questToCheck.getName();
+    }
+
     @Override
     public long GetID() {
         return _ID;

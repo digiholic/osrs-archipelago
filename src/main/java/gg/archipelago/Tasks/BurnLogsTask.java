@@ -1,8 +1,10 @@
 package gg.archipelago.Tasks;
 
+import lombok.extern.java.Log;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.Skill;
+import net.runelite.api.SpriteID;
 import net.runelite.api.events.MenuOptionClicked;
 
 public class  BurnLogsTask extends StateTrackingTask{
@@ -45,8 +47,30 @@ public class  BurnLogsTask extends StateTrackingTask{
     public void OnMenuOption(MenuOptionClicked event) { }
 
     @Override
+    public String GetName() {
+        switch (_logType){
+            case OAK:
+                return "Burn an Oak Log";
+            case WILLOW:
+                return "Burn a Willow Log";
+            default:
+                return "Burn an unknown log";
+        }
+    }
+
+    @Override
     public long GetID() {
         return _ID;
+    }
+
+    @Override
+    public int GetSpriteID() {
+        return SpriteID.SKILL_FIREMAKING;
+    }
+
+    @Override
+    public boolean ShouldDisplayPanel() {
+        return true;
     }
 
     @Override

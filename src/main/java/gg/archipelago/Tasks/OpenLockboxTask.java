@@ -33,8 +33,32 @@ public class OpenLockboxTask extends StateTrackingTask{
     }
 
     @Override
+    public String GetName() {
+        switch(_lockboxItemID){
+            case ItemID.SIMPLE_LOCKBOX:
+                return "Open a Simple Lockbox";
+            case ItemID.ELABORATE_LOCKBOX:
+                return "Open an Elaborate Lockbox";
+            case ItemID.ORNATE_LOCKBOX:
+                return "Open an Ornate Lockbox";
+            default:
+                return "Open an Unknown Lockbox";
+        }
+    }
+
+    @Override
     public long GetID() {
         return _ID;
+    }
+
+    @Override
+    public int GetSpriteID() {
+        return SpriteID.SKILL_THIEVING;
+    }
+
+    @Override
+    public boolean ShouldDisplayPanel() {
+        return true;
     }
 
     @Override

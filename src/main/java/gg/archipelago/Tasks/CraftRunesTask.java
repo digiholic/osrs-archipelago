@@ -15,8 +15,10 @@ public class CraftRunesTask extends StateTrackingTask{
     private int _previousEssenceCount;
     private int _previousRunecraftXP;
 
+    private RuneType _runeType;
     public CraftRunesTask(Long ID, RuneType runeType){
         _ID = ID;
+        _runeType = runeType;
 
         switch (runeType){
             case AIR_RUNE:
@@ -49,10 +51,25 @@ public class CraftRunesTask extends StateTrackingTask{
     }
 
     @Override
-    public long GetID() {
-        return _ID;
+    public String GetName() {
+        switch (_runeType){
+            case AIR_RUNE:
+                return "Craft some Air Runes";
+            case MIND_RUNE:
+                return "Craft some Mind Runes using a Mind Core";
+            case BODY_RUNE:
+                return "Craft some Body Runes using a Body Core";
+            default:
+                return "Unknown Runecraft Task";
+        }
     }
 
+    @Override
+    public long GetID() { return _ID; }
+    @Override
+    public int GetSpriteID() { return SpriteID.SKILL_RUNECRAFT; }
+    @Override
+    public boolean ShouldDisplayPanel() { return true; }
     @Override
     boolean CheckInitialStateOK(Client client) {
         if (!(client.getRealSkillLevel(Skill.RUNECRAFT) >= _required_level)) return false;
