@@ -1,6 +1,7 @@
 package gg.archipelago;
 
 import gg.archipelago.Tasks.*;
+import net.runelite.api.ItemID;
 import net.runelite.api.Prayer;
 import net.runelite.api.Quest;
 
@@ -105,11 +106,11 @@ public class TaskLists {
             new TotalLevelTask(base_id + 92, 250),
             new TotalXPTask(base_id + 93, 150000),
             new TotalLevelTask(base_id + 94, 300),
-            new CombatLevelTask(base_id + 95, 40)
+            new CombatLevelTask(base_id + 95, 40),
 //            Stronghold of Security Floor 1
 //            Stronghold of Security Floor 2
-//            Open a Simple Lockbox
-//            Open an Elaborate Lockbox
-//            Open an Ornate Lockbox
+            new OpenLockboxTask(base_id + 98, ItemID.SIMPLE_LOCKBOX),
+            new OpenLockboxTask(base_id + 99, ItemID.ELABORATE_LOCKBOX),
+            new OpenLockboxTask(base_id + 100, ItemID.ORNATE_LOCKBOX)
     );
 }
