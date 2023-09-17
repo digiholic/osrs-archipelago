@@ -1,7 +1,6 @@
 package gg.archipelago;
 
 import gg.archipelago.apEvents.ConnectionResult;
-import gg.archipelago.apEvents.LocationInfo;
 import gg.archipelago.apEvents.ReceiveItem;
 import gg.archipelago.client.ArchipelagoClient;
 import gg.archipelago.client.ItemFlags;
@@ -28,8 +27,8 @@ public class OSRSClient  extends ArchipelagoClient {
         setItemsHandlingFlags(ItemFlags.SEND_ITEMS + ItemFlags.SEND_OWN_ITEMS + ItemFlags.SEND_STARTING_INVENTORY);
 
         getEventManager().registerListener(new ConnectionResult());
-        getEventManager().registerListener(new LocationInfo());
         getEventManager().registerListener(new ReceiveItem());
+
         try {
             connect(address);
         } catch (URISyntaxException e) {

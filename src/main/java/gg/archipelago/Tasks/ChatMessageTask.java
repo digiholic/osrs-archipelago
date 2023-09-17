@@ -41,6 +41,8 @@ public class ChatMessageTask extends APTask{
     public boolean IsCompleted() {
         return _isCompleted;
     }
+    @Override
+    public void SetCompleted() { _isCompleted = true; }
 
     @Override
     public int GetSpriteID() {

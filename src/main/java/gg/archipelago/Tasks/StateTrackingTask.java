@@ -43,4 +43,6 @@ public abstract class StateTrackingTask extends APTask {
     public boolean IsCompleted() {
         return _isCompleted;
     }
+    @Override
+    public void SetCompleted() { _isCompleted = true; }
 }

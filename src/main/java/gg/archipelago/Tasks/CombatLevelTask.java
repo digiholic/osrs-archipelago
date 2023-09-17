@@ -18,7 +18,8 @@ public class CombatLevelTask extends APTask{
     }
     @Override
     public void CheckPlayerStatus(Client client) {
-        _isCompleted = client.getLocalPlayer().getCombatLevel() >= _combatLevelRequired;
+        if (client.getLocalPlayer().getCombatLevel() >= _combatLevelRequired)
+            _isCompleted = true;
     }
 
     @Override
@@ -33,6 +34,8 @@ public class CombatLevelTask extends APTask{
     public boolean IsCompleted() {
         return _isCompleted;
     }
+    @Override
+    public void SetCompleted() { _isCompleted = true; }
     @Override
     public int GetSpriteID() { return SpriteID.SKILL_TOTAL; }
     @Override

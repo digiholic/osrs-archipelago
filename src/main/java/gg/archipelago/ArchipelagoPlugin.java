@@ -72,7 +72,7 @@ public class ArchipelagoPlugin extends Plugin
 	private Queue<String[]> queuedMessages = new LinkedList<>();
 	private boolean isDisplayingPopup = false;
 
-	protected List<APTask> activeTasks;
+	protected List<APTask> activeTasks = new ArrayList<>();
 
 	@Provides
 	ArchipelagoConfig provideConfig(ConfigManager configManager)
@@ -309,6 +309,18 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	public void SetConnectionState(boolean newConnectionState){
+		activeTasks = new ArrayList<>();
+		for(long id : apClient.getLocationManager().getCheckedLocations()){
+			APTask task = TaskLists.GetTaskByID(id);
+			task.SetCompleted();
+			activeTasks.add(task);
+		}
+		for(long id : apClient.getLocationManager().getMissingLocations()){
+			APTask task = TaskLists.GetTaskByID(id);
+			activeTasks.add(task);
+		}
+		activeTasks = activeTasks.stream().sorted(Comparator.comparing(APTask::GetID)).collect(Collectors.toList());
+
 		if (connected != newConnectionState)
 			panel.ConnectionStateChanged(newConnectionState);
 		connected = newConnectionState;
@@ -317,7 +329,6 @@ public class ArchipelagoPlugin extends Plugin
 			configManager.setConfiguration("Archipelago", "autoreconnect", client.getLocalPlayer().getName());
 			log.info("Detected first log in or connection, setting autoreconnect");
 		}
-		//UpdateCollectedChecks();
 	}
 
 
@@ -344,7 +355,6 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		String uri = config.address()+":"+config.port();
 		log.info(uri);
-		activeTasks = TaskLists.allTasks;
 		apClient.newConnection(this, uri, config.slotname(), config.password());
 	}
 

@@ -69,10 +69,9 @@ public class TaskPanel extends JPanel {
 
     public void UpdateTaskStatus(){
         for (APTask task : plugin.activeTasks){
-            boolean completed = false;
             TaskRow taskPanel = locationPanels.getOrDefault(task, null);
             if (taskPanel != null){
-                taskPanel.UpdateCompleted(completed);
+                taskPanel.UpdateCompleted(task.IsCompleted());
                 taskPanel.UpdateDisplay();
             }
         }
@@ -80,12 +79,11 @@ public class TaskPanel extends JPanel {
 
     private void AddOrUpdateTaskRow(APTask task){
         //boolean completed = plugin.LocationCheckStates.getOrDefault(loc,false);
-        boolean completed = false;
         if (locationPanels.containsKey(task)){
-            locationPanels.get(task).UpdateCompleted(completed);
+            locationPanels.get(task).UpdateCompleted(task.IsCompleted());
             locationPanels.get(task).UpdateDisplay();
         } else {
-            TaskRow taskPanel = new TaskRow(task.GetName(), TaskLists.loadedSprites.get(task), completed);
+            TaskRow taskPanel = new TaskRow(task.GetName(), TaskLists.loadedSprites.get(task), task.IsCompleted());
             locationPanels.put(task, taskPanel);
             add(taskPanel);
         }

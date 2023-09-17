@@ -18,7 +18,9 @@ public class TotalLevelTask extends APTask{
     }
     @Override
     public void CheckPlayerStatus(Client client) {
-        _isCompleted = client.getTotalLevel() >= _totalLevelRequired;
+
+        if (client.getTotalLevel() >= _totalLevelRequired)
+            _isCompleted = true;
     }
     @Override
     public void OnGameTick(Client client) { }
@@ -42,6 +44,8 @@ public class TotalLevelTask extends APTask{
     public boolean ShouldDisplayPanel() {
         return true;
     }
+    @Override
+    public void SetCompleted() { _isCompleted = true; }
 
     @Override
     public String GetName() {

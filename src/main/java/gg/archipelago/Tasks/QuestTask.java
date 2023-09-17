@@ -16,7 +16,8 @@ public class QuestTask extends APTask{
     }
     @Override
     public void CheckPlayerStatus(Client client) {
-        _isCompleted = _questToCheck.getState(client) == QuestState.FINISHED;
+        if (_questToCheck.getState(client) == QuestState.FINISHED)
+            _isCompleted = true;
     }
 
     @Override
@@ -41,6 +42,8 @@ public class QuestTask extends APTask{
     public boolean ShouldDisplayPanel() {
         return true;
     }
+    @Override
+    public void SetCompleted() { _isCompleted = true; }
 
     @Override
     public String GetName() {

@@ -22,7 +22,8 @@ public class VarbitTask extends APTask{
 
     @Override
     public void CheckPlayerStatus(Client client) {
-        _isCompleted = client.getServerVarbitValue(_varbitToCheck) == _valueToCheck;
+        if (client.getServerVarbitValue(_varbitToCheck) == _valueToCheck)
+            _isCompleted = true;
     }
 
     @Override
@@ -42,6 +43,8 @@ public class VarbitTask extends APTask{
     public int GetSpriteID() {
         return _spriteID;
     }
+    @Override
+    public void SetCompleted() { _isCompleted = true; }
 
     @Override
     public boolean ShouldDisplayPanel() {

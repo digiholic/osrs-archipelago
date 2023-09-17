@@ -9,6 +9,7 @@ public abstract class APTask {
     public abstract String GetName();
     public abstract long GetID();
     public abstract boolean IsCompleted();
+    public abstract void SetCompleted();
     public abstract int GetSpriteID();
     public abstract boolean ShouldDisplayPanel();
 

@@ -18,7 +18,8 @@ public class TotalXPTask extends APTask{
     }
     @Override
     public void CheckPlayerStatus(Client client) {
-        _isCompleted = client.getOverallExperience() >= _totalXPRequired;
+        if (client.getOverallExperience() >= _totalXPRequired)
+            _isCompleted = true;
     }
     @Override
     public void OnGameTick(Client client) { }
@@ -32,7 +33,8 @@ public class TotalXPTask extends APTask{
     public boolean IsCompleted() {
         return _isCompleted;
     }
-
+    @Override
+    public void SetCompleted() { _isCompleted = true; }
     @Override
     public int GetSpriteID() {
         return SpriteID.SKILL_TOTAL;

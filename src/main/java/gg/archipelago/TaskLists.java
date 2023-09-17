@@ -2,10 +2,7 @@ package gg.archipelago;
 
 import gg.archipelago.Tasks.*;
 import gg.archipelago.data.LocationData;
-import net.runelite.api.ItemID;
-import net.runelite.api.Prayer;
-import net.runelite.api.Quest;
-import net.runelite.api.SpriteID;
+import net.runelite.api.*;
 import net.runelite.client.game.SpriteManager;
 
 import java.awt.image.BufferedImage;
@@ -110,8 +107,8 @@ public class TaskLists {
             new TotalXPTask(base_id + 93, 150000),
             new TotalLevelTask(base_id + 94, 300),
             new CombatLevelTask(base_id + 95, 40),
-//            Stronghold of Security Floor 1
-//            Stronghold of Security Floor 2
+            new VarbitTask("Stronghold of Security Floor 1", SpriteID.TAB_QUESTS_BROWN_CHARACTER_SUMMARY, base_id + 96, Varbits.LEAGUE_RELIC_1, 1),
+            new VarbitTask("Stronghold of Security Floor 1", SpriteID.TAB_QUESTS_BROWN_CHARACTER_SUMMARY, base_id + 97, Varbits.LEAGUE_RELIC_1, 1),
             new OpenLockboxTask(base_id + 98, ItemID.SIMPLE_LOCKBOX),
             new OpenLockboxTask(base_id + 99, ItemID.ELABORATE_LOCKBOX),
             new OpenLockboxTask(base_id + 100, ItemID.ORNATE_LOCKBOX)

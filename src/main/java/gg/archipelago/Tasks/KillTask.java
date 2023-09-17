@@ -49,8 +49,10 @@ public class KillTask extends APTask{
 
     @Override
     public String GetName() {
-        return String.format("Kill %",_mobName);
+        return String.format("Kill %s",_mobName);
     }
+    @Override
+    public void SetCompleted() { _isCompleted = true; }
 
     @Override
     public long GetID() {
