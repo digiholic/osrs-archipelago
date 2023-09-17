@@ -235,8 +235,6 @@ public class ArchipelagoPlugin extends Plugin
 			apClient.sendChat(cmd);
 			log.info("Sending string to AP: "+cmd);
 			chatboxInput.consume();
-
-			clientThread.invokeLater((() -> DisplayPopupMessage("Test 1", "Test 2")));
 		}
 	}
 

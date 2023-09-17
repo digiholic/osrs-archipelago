@@ -11,10 +11,10 @@ public class ChatMessageTask extends APTask{
     private String _name;
     private int _spriteID;
 
-    public ChatMessageTask(String name, int spriteID, long ID, String messageToCheck){
+    public ChatMessageTask(long ID, String name, int spriteID, String messageToCheck){
+        _ID = ID;
         _name = name;
         _spriteID = spriteID;
-        _ID = ID;
         _messageToCheck = messageToCheck;
 
     }

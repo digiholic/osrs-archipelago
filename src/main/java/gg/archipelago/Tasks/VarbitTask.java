@@ -12,10 +12,10 @@ public class VarbitTask extends APTask{
     private String _name;
     private int _spriteID;
 
-    public VarbitTask(String name, int SpriteID, long ID, int varbitToCheck, int valueToCheck){
+    public VarbitTask(long ID, String name, int SpriteID,  int varbitToCheck, int valueToCheck){
+        _ID = ID;
         _name = name;
         _spriteID = SpriteID;
-        _ID = ID;
         _varbitToCheck = varbitToCheck;
         _valueToCheck = valueToCheck;
     }
