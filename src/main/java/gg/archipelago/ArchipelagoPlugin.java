@@ -266,7 +266,6 @@ public class ArchipelagoPlugin extends Plugin
 		if (container == client.getItemContainer(InventoryID.INVENTORY))
 		{
 			Item[] items = container.getItems();
-			log.info(items.toString());
 		}
 	}
 

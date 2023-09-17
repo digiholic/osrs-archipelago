@@ -1,8 +1,14 @@
 package gg.archipelago.Tasks;
 
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
+import net.runelite.client.plugins.PluginDescriptor;
 
+@Slf4j
+@PluginDescriptor(
+        name = "Archipelago Randomizer"
+)
 public abstract class StateTrackingTask extends APTask {
     private boolean _isCompleted = false;
 
@@ -17,7 +23,6 @@ public abstract class StateTrackingTask extends APTask {
         //If our previous state isn't set, don't bother checking the trigger or the post-state
         if (!prevStateOK){
             checkTriggered = false;
-            return;
         }
         //If the triggering event happened and our state matches our post-triggered state requirements, we've completed the task
         if (checkTriggered){

@@ -1,16 +1,18 @@
 package gg.archipelago.Tasks;
 
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.Skill;
 import net.runelite.api.SpriteID;
 import net.runelite.api.events.MenuOptionClicked;
+import net.runelite.client.plugins.PluginDescriptor;
 
 public class  BurnLogsTask extends StateTrackingTask{
 
-    private long _ID;
-    private LogType _logType;
+    private final long _ID;
+    private final LogType _logType;
 
     private int _required_level;
     private int _xp_gained;
@@ -78,7 +80,7 @@ public class  BurnLogsTask extends StateTrackingTask{
         // Check for Firemaking level requirement
         if (!(client.getRealSkillLevel(Skill.FIREMAKING) >= _required_level)) return false;
         _previousFiremakingXP = client.getSkillExperience(Skill.FIREMAKING);
-        return false;
+        return true;
     }
 
     @Override
