@@ -14,7 +14,7 @@ public class ItemHandler {
     public static List<ItemData> AllItems = List.of(
             new ItemData(base_id, ItemNames.Lumbridge, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
             new ItemData(base_id + 1, ItemNames.Lumbridge_Swamp, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 2, ItemNames.Draynor_Village, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 2, ItemNames.HAM_Hideout, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
             new ItemData(base_id + 3, ItemNames.Lumbridge_Farms, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
             new ItemData(base_id + 4, ItemNames.South_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
             new ItemData(base_id + 5, ItemNames.East_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
@@ -250,7 +250,18 @@ public class ItemHandler {
                     ItemID.IRON_PLATEBODY, ItemID.IRON_PLATEBODY_T, ItemID.IRON_PLATEBODY_G,
                     ItemID.IRON_PLATELEGS, ItemID.IRON_PLATELEGS_T, ItemID.IRON_PLATELEGS_G,
                     ItemID.IRON_PLATESKIRT, ItemID.IRON_PLATESKIRT_T, ItemID.IRON_PLATESKIRT_G,
-                    ItemID.IRON_SQ_SHIELD
+                    ItemID.IRON_SQ_SHIELD, ItemID.IRONMAN_HELM, ItemID.IRONMAN_PLATEBODY, ItemID.IRONMAN_PLATELEGS,
+                    ItemID.HARDCORE_IRONMAN_HELM, ItemID.HARDCORE_IRONMAN_PLATEBODY, ItemID.HARDCORE_IRONMAN_PLATELEGS,
+                    ItemID.GROUP_IRON_BRACERS, ItemID.GROUP_IRON_BRACERS_UNRANKED, ItemID.GROUP_IRON_HELM,
+                    ItemID.GROUP_IRON_HELM_UNRANKED, ItemID.GROUP_IRON_PLATEBODY, ItemID.GROUP_IRON_PLATEBODY_26160,
+                    ItemID.GROUP_IRON_PLATEBODY_26162, ItemID.GROUP_IRON_PLATEBODY_26164,
+                    ItemID.GROUP_IRON_PLATEBODY_UNRANKED, ItemID.GROUP_IRON_PLATEBODY_UNRANKED_27050,
+                    ItemID.GROUP_IRON_PLATEBODY_UNRANKED_27052, ItemID.GROUP_IRON_PLATEBODY_UNRANKED_27054,
+                    ItemID.GROUP_IRON_PLATELEGS, ItemID.GROUP_IRON_PLATELEGS_UNRANKED,
+                    ItemID.HARDCORE_GROUP_IRON_BRACERS, ItemID.HARDCORE_GROUP_IRON_HELM,
+                    ItemID.HARDCORE_GROUP_IRON_PLATEBODY, ItemID.HARDCORE_GROUP_IRON_PLATEBODY_26174,
+                    ItemID.HARDCORE_GROUP_IRON_PLATEBODY_26176, ItemID.HARDCORE_GROUP_IRON_PLATEBODY_26178,
+                    ItemID.HARDCORE_GROUP_IRON_PLATELEGS
             });
             put(2, new Integer[]{
                     ItemID.STEEL_BOOTS, ItemID.STEEL_CHAINBODY, ItemID.STEEL_GLOVES, ItemID.STEEL_MED_HELM,

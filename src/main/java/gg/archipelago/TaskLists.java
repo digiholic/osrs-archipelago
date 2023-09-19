@@ -108,6 +108,8 @@ public class TaskLists {
             new TotalXPTask(base_id + taskCount++, 150000),
             new TotalLevelTask(base_id + taskCount++, 300),
             new CombatLevelTask(base_id + taskCount++, 40),
+            new VarbitTask(base_id + taskCount++, "", 0, 0, 0),
+            new VarbitTask(base_id + taskCount++, "", 0, 0, 0),
             new OpenLockboxTask(base_id + taskCount++, ItemID.SIMPLE_LOCKBOX),
             new OpenLockboxTask(base_id + taskCount++, ItemID.ELABORATE_LOCKBOX),
             new OpenLockboxTask(base_id + taskCount++, ItemID.ORNATE_LOCKBOX)
