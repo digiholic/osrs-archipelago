@@ -57,7 +57,7 @@ public class TaskLists {
             new ChatMessageTask(base_id + taskCount++,"Smelt an Iron Bar",SpriteID.SKILL_SMITHING, "You retrieve a bar of iron."),
             new ChatMessageTask(base_id + taskCount++,"Smelt a Silver Bar",SpriteID.SKILL_SMITHING, "You retrieve a bar of silver from the furnace."),
             new ChatMessageTask(base_id + taskCount++,"Smelt a Steel Bar",SpriteID.SKILL_SMITHING, "You retrieve a bar of steel."),
-            new ChatMessageTask(base_id + taskCount++,"Smelt a Gold BAr",SpriteID.SKILL_SMITHING, "You retrieve a bar of gold from the furnace."),
+            new ChatMessageTask(base_id + taskCount++,"Smelt a Gold Bar",SpriteID.SKILL_SMITHING, "You retrieve a bar of gold from the furnace."),
             new ChatMessageTask(base_id + taskCount++,"Catch some Anchovies",SpriteID.SKILL_FISHING, "You catch some anchovies."),
             new ChatMessageTask(base_id + taskCount++,"Catch a Trout",SpriteID.SKILL_FISHING, "You catch a trout."),
             new ChatMessageTask(base_id + taskCount++,"Prepare a Tetra",SpriteID.SKILL_FISHING, "You successfully prepare the Tetra."),
