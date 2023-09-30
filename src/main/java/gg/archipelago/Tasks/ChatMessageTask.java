@@ -21,8 +21,12 @@ public class ChatMessageTask extends APTask{
 
     @Override
     public void CheckChatMessage(String message) {
-        if (message.equalsIgnoreCase(_messageToCheck)){
-            _isCompleted = true;
+
+        String[] splitMessages = message.split("<br>");
+        for (String msg : splitMessages) {
+            if (msg.equalsIgnoreCase(_messageToCheck)){
+                _isCompleted = true;
+            }
         }
     }
 

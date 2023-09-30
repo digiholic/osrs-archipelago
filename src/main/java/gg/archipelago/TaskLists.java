@@ -81,7 +81,6 @@ public class TaskLists {
             new KillTask(base_id + taskCount++, "Zombie"),
             new KillTask(base_id + taskCount++, "Guard"),
             new KillTask(base_id + taskCount++, "Hill Giant"),
-            new KillTask(base_id + taskCount++, "Deadly Red Spider"),
             new KillTask(base_id + taskCount++, "Moss Giant"),
             new KillTask(base_id + taskCount++, "Catablepon"),
             new KillTask(base_id + taskCount++, "Ice Giant"),
@@ -108,8 +107,6 @@ public class TaskLists {
             new TotalXPTask(base_id + taskCount++, 150000),
             new TotalLevelTask(base_id + taskCount++, 300),
             new CombatLevelTask(base_id + taskCount++, 40),
-            new VarbitTask(base_id + taskCount++, "", 0, 0, 0),
-            new VarbitTask(base_id + taskCount++, "", 0, 0, 0),
             new OpenLockboxTask(base_id + taskCount++, ItemID.SIMPLE_LOCKBOX),
             new OpenLockboxTask(base_id + taskCount++, ItemID.ELABORATE_LOCKBOX),
             new OpenLockboxTask(base_id + taskCount++, ItemID.ORNATE_LOCKBOX)
