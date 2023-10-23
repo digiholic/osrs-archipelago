@@ -25,6 +25,10 @@ public class EdgevilleMonasteryTask extends APTask{
     public void OnGameTick(Client client) { }
     @Override
     public void OnMenuOption(MenuOptionClicked event) { }
+
+    @Override
+    public boolean CanManuallyActivate() { return true; }
+
     @Override
     public void CheckChatMessage(String message) { }
     @Override

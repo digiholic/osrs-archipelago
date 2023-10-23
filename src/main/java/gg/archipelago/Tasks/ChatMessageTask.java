@@ -67,4 +67,10 @@ public class ChatMessageTask extends APTask{
     public long GetID() {
         return _ID;
     }
+
+
+    @Override
+    public boolean CanManuallyActivate() {
+        return true;
+    }
 }
