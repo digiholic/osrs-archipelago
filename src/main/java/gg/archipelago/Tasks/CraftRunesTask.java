@@ -1,11 +1,13 @@
 package gg.archipelago.Tasks;
 
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.MenuOptionClicked;
 
 import java.util.Arrays;
 import java.util.Optional;
 
+@Slf4j
 public class CraftRunesTask extends StateTrackingTask{
 
     private final long _ID;
@@ -47,6 +49,7 @@ public class CraftRunesTask extends StateTrackingTask{
         //Check for Runecraft option
         if (event.getMenuOption().equalsIgnoreCase("Craft-rune")){
             checkTriggered = true;
+            //log.info("Runecraft task is primed.");
         }
     }
 
@@ -72,18 +75,25 @@ public class CraftRunesTask extends StateTrackingTask{
     public boolean ShouldDisplayPanel() { return true; }
     @Override
     boolean CheckInitialStateOK(Client client) {
-        if (!(client.getRealSkillLevel(Skill.RUNECRAFT) >= _required_level)) return false;
+        if (!(client.getRealSkillLevel(Skill.RUNECRAFT) >= _required_level)){
+            //log.info(GetName()+" - Runecraft level below requirements. Initial State not OK");
+            return false;
+        }
         _previousRunecraftXP = client.getSkillExperience(Skill.RUNECRAFT);
         ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);
         if (inventory != null) {
             Item[] currentItems = inventory.getItems();
             final int finalItem_id = _essence_id;
             final int[] item_count = {0}; //anti lambda capture shenanigans
+            Object[] items = Arrays.stream(currentItems).filter(item -> item.getId() == finalItem_id).toArray();
+
             Arrays.stream(currentItems).filter(item -> item.getId() == finalItem_id)
                     .forEach(item -> item_count[0] += item.getQuantity());
             _previousEssenceCount = item_count[0];
         }
-
+        if (_previousEssenceCount <= 0){
+            //log.info(GetName()+" - Not enough essence. Initial State not OK");
+        }
         //Check for level, presence of essence, optional presence of core
         return _previousEssenceCount > 0;
     }
@@ -102,6 +112,10 @@ public class CraftRunesTask extends StateTrackingTask{
         }
 
         boolean hasSpentEssence = currentEssenceCount < _previousEssenceCount;
+
+        //if (!hasGainedXP) log.info(GetName()+" - Did not gain RC XP. Second state not OK");
+        //if (!hasSpentEssence) log.info(GetName()+" - Did not spend essence. Second state not OK");
+        //if (hasGainedXP && hasSpentEssence) log.info(GetName()+" - Successfully completed task");
         //Check for any increase in RC XP and increase in item count for rune
         return hasGainedXP && hasSpentEssence;
     }
