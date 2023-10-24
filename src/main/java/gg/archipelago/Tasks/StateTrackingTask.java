@@ -50,4 +50,9 @@ public abstract class StateTrackingTask extends APTask {
     }
     @Override
     public void SetCompleted() { _isCompleted = true; }
+
+    @Override
+    public boolean CanManuallyActivate() {
+        return true;
+    }
 }

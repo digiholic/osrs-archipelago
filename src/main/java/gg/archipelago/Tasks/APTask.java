@@ -18,5 +18,7 @@ public abstract class APTask {
     public abstract void CheckPlayerStatus(Client client);
     public abstract void OnGameTick(Client client);
     public abstract void OnMenuOption(MenuOptionClicked event);
+
+    public abstract boolean CanManuallyActivate();
 }
 

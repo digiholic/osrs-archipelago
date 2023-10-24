@@ -32,14 +32,16 @@ public class ArchipelagoPanel extends PluginPanel {
 
         final JPanel statusPanel = buildStatusPanel();
         layoutPanel.add(statusPanel);
-        layoutPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        //layoutPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
         messageLabel = new JLabel("");
+        messageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        messageLabel.setBorder(new EmptyBorder(5, 5, 5, 10));
         layoutPanel.add(messageLabel);
 
         taskListPanel = new TaskPanel(plugin);
         layoutPanel.add(taskListPanel);
-        layoutPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        //layoutPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
         itemListPanel = new ItemPanel(plugin);
         layoutPanel.add(itemListPanel);
@@ -49,23 +51,27 @@ public class ArchipelagoPanel extends PluginPanel {
 
     private JPanel buildStatusPanel(){
         final JPanel statusPanel = new JPanel();
-        statusPanel.setLayout(new BorderLayout());
+        statusPanel.setLayout(new GridLayout(2, 1));
         statusPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-        statusPanel.setPreferredSize(new Dimension(0, 30));
+        statusPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 80));
         statusPanel.setBorder(new EmptyBorder(5, 5, 5, 10));
         statusPanel.setVisible(true);
 
+        JLabel instructionText = new JLabel("<html>Server address, port, and slot can be found in plugin settings.</html>");
+        instructionText.setPreferredSize(new Dimension(Integer.MAX_VALUE, 30));
+        instructionText.setBorder(new EmptyBorder(5, 5, 5, 10));
+
         connectButton = new JButton("Connect");
-        connectButton.setPreferredSize(new Dimension(0, 30));
+        connectButton.setPreferredSize(new Dimension(Integer.MAX_VALUE, 30));
         connectButton.setBorder(new EmptyBorder(5, 5, 5, 10));
 
+        statusPanel.add(instructionText);
         statusPanel.add(connectButton);
         connectButton.addActionListener(e -> {
             plugin.ConnectToAPServer();
         });
 
         statusPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
         return statusPanel;
     }
 

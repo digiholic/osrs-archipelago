@@ -25,6 +25,12 @@ public class TotalXPTask extends APTask{
     public void OnGameTick(Client client) { }
     @Override
     public void OnMenuOption(MenuOptionClicked event) { }
+
+    @Override
+    public boolean CanManuallyActivate() {
+        return false;
+    }
+
     @Override
     public void CheckChatMessage(String message) { }
     @Override

@@ -67,7 +67,7 @@ public class TaskLists {
             new ChatMessageTask(base_id + taskCount++,"Cook a Stew",SpriteID.SKILL_COOKING, "You cook some stew."),
             new ChatMessageTask(base_id + taskCount++,"Bake an Apple Pie",SpriteID.SKILL_COOKING, "You successfully bake a traditional apple pie."),
             new ChatMessageTask(base_id + taskCount++,"Bake a Cake",SpriteID.SKILL_COOKING, "You successfully bake a cake."),
-            new ChatMessageTask(base_id + taskCount++,"Bake a Pizza",SpriteID.SKILL_COOKING, "You add the meat to the pizza."),
+            new ChatMessageTask(base_id + taskCount++,"Bake a Meat Pizza",SpriteID.SKILL_COOKING, "You add the meat to the pizza."),
             new BurnLogsTask(base_id + taskCount++, BurnLogsTask.LogType.OAK),
             new BurnLogsTask(base_id + taskCount++, BurnLogsTask.LogType.WILLOW),
             new ChatMessageTask(base_id + taskCount++, "Sail on a Canoe",SpriteID.SKILL_WOODCUTTING, "Your canoe sinks into the water after the hard journey."),
