@@ -2,6 +2,7 @@ package gg.archipelago;
 
 import gg.archipelago.Tasks.APTask;
 import gg.archipelago.data.LocationData;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.ColorScheme;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
+@Slf4j
 public class TaskPanel extends JPanel {
     private final ArchipelagoPlugin plugin;
 
@@ -36,12 +38,13 @@ public class TaskPanel extends JPanel {
     private class TaskRow extends JPanel{
         private JComponent taskName;
 
-        private boolean completed;
-        public TaskRow(String text, BufferedImage image, boolean completed, boolean manual){
-            this.completed = completed;
+        private APTask task;
+        public TaskRow(APTask task){
+            this.task = task;
 
+            BufferedImage image = TaskLists.loadedSprites.get(task);
             setLayout(new BorderLayout());
-            setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARKER_GRAY_COLOR);
+            setBackground(task.IsCompleted() ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARKER_GRAY_COLOR);
             setPreferredSize(new Dimension(0, 36));
             setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -51,29 +54,33 @@ public class TaskPanel extends JPanel {
                 add(icon, BorderLayout.WEST);
             }
 
-            if (manual){
-                JButton taskButton = new JButton("<html><div style='text-align:center'>"+text+"</div></html>");
+            if (!task.IsCompleted() && task.CanManuallyActivate()){
+                JButton taskButton = new JButton("<html><div style='text-align:center'>"+task.GetName()+"</div></html>");
                 taskButton.setHorizontalAlignment(SwingConstants.CENTER);
                 taskButton.addActionListener(e -> ManuallyComplete());
 
                 taskName = taskButton;
             } else {
-                taskName = new JLabel("<html><div style='text-align:center'>"+text+"</div></html>", SwingConstants.CENTER);
+                taskName = new JLabel("<html><div style='text-align:center'>"+task.GetName()+"</div></html>", SwingConstants.CENTER);
             }
 
-            taskName.setForeground(completed ? Color.BLACK : Color.WHITE);
+            taskName.setForeground(task.IsCompleted() ? Color.BLACK : Color.WHITE);
             add(taskName, BorderLayout.CENTER);
-            setVisible(!completed || displayCompleted.isSelected());
+            setVisible(!task.IsCompleted() || displayCompleted.isSelected());
         }
 
         public void UpdateCompleted(boolean completed){
+            if (completed && taskName instanceof JButton) {
+                remove(taskName);
+                taskName = new JLabel("<html><div style='text-align:center'>"+task.GetName()+"</div></html>", SwingConstants.CENTER);
+                add(taskName, BorderLayout.CENTER);
+            }
             setBackground(completed ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARKER_GRAY_COLOR);
             taskName.setForeground(completed ? Color.BLACK : Color.WHITE);
-            this.completed = completed;
         }
 
         public void UpdateDisplay(){
-            setVisible(!completed || displayCompleted.isSelected());
+            setVisible(!task.IsCompleted() || displayCompleted.isSelected());
         }
 
         public void ManuallyComplete(){
@@ -83,6 +90,10 @@ public class TaskPanel extends JPanel {
                     "Mark this task as completed?", "Manually Complete",
                     JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
+            if (result == JOptionPane.OK_OPTION){
+                log.info("Completed task "+task.GetName());
+                task.SetCompleted();
+            }
         }
     }
 
@@ -102,7 +113,7 @@ public class TaskPanel extends JPanel {
             locationPanels.get(task).UpdateCompleted(task.IsCompleted());
             locationPanels.get(task).UpdateDisplay();
         } else {
-            TaskRow taskPanel = new TaskRow(task.GetName(), TaskLists.loadedSprites.get(task), task.IsCompleted(), task.CanManuallyActivate());
+            TaskRow taskPanel = new TaskRow(task);
             locationPanels.put(task, taskPanel);
             add(taskPanel);
         }
