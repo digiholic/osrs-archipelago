@@ -162,7 +162,7 @@ public class ItemHandler {
     public static final Map<Integer, Integer[]> MetalWeaponsPermittedByTier = new Hashtable<>() {
         {
             put(0, new Integer[]{
-                    ItemID.BRONZE_2H_AXE, ItemID.BRONZE_2H_SWORD, ItemID.BRONZE_AXE, ItemID.BRONZE_BATTLEAXE,
+                    ItemID.BRONZE_2H_SWORD, ItemID.BRONZE_AXE, ItemID.BRONZE_BATTLEAXE,
                     ItemID.BRONZE_CLAWS, ItemID.BRONZE_DAGGER, ItemID.BRONZE_DAGGERP, ItemID.BRONZE_DAGGERP_5670,
                     ItemID.BRONZE_DAGGERP_5688, ItemID.BRONZE_HALBERD, ItemID.BRONZE_HASTA, ItemID.BRONZE_HASTAKP,
                     ItemID.BRONZE_HASTAP, ItemID.BRONZE_HASTAP_11382, ItemID.BRONZE_HASTAP_11384,
@@ -171,7 +171,7 @@ public class ItemHandler {
                     ItemID.BRONZE_SPEARP_5718, ItemID.BRONZE_SWORD, ItemID.BRONZE_WARHAMMER
             });
             put(1, new Integer[]{
-                    ItemID.IRON_2H_AXE, ItemID.IRON_2H_SWORD, ItemID.IRON_AXE, ItemID.IRON_BATTLEAXE,
+                    ItemID.IRON_2H_SWORD, ItemID.IRON_AXE, ItemID.IRON_BATTLEAXE,
                     ItemID.IRON_CLAWS, ItemID.IRON_DAGGER, ItemID.IRON_DAGGERP, ItemID.IRON_DAGGERP_5668,
                     ItemID.IRON_DAGGERP_5686, ItemID.IRON_HALBERD, ItemID.IRON_HASTA, ItemID.IRON_HASTAKP,
                     ItemID.IRON_HASTAP, ItemID.IRON_HASTAP_11389, ItemID.IRON_HASTAP_11391,
@@ -180,7 +180,7 @@ public class ItemHandler {
                     ItemID.IRON_SPEARP_5720, ItemID.IRON_SWORD, ItemID.IRON_WARHAMMER
             });
             put(2, new Integer[]{
-                    ItemID.STEEL_2H_AXE, ItemID.STEEL_2H_SWORD, ItemID.STEEL_AXE, ItemID.STEEL_BATTLEAXE,
+                    ItemID.STEEL_2H_SWORD, ItemID.STEEL_AXE, ItemID.STEEL_BATTLEAXE,
                     ItemID.STEEL_CLAWS, ItemID.STEEL_DAGGER, ItemID.STEEL_DAGGERP, ItemID.STEEL_DAGGERP_5672,
                     ItemID.STEEL_DAGGERP_5690, ItemID.STEEL_HALBERD, ItemID.STEEL_HASTA, ItemID.STEEL_HASTAKP,
                     ItemID.STEEL_HASTAP, ItemID.STEEL_HASTAP_11396, ItemID.STEEL_HASTAP_11398,
@@ -189,7 +189,7 @@ public class ItemHandler {
                     ItemID.STEEL_SPEARP_5722, ItemID.STEEL_SWORD, ItemID.STEEL_WARHAMMER
             });
             put(3, new Integer[]{
-                    ItemID.BLACK_2H_AXE, ItemID.BLACK_2H_SWORD, ItemID.BLACK_AXE, ItemID.BLACK_BATTLEAXE,
+                    ItemID.BLACK_2H_SWORD, ItemID.BLACK_AXE, ItemID.BLACK_BATTLEAXE,
                     ItemID.BLACK_CLAWS, ItemID.BLACK_DAGGER, ItemID.BLACK_DAGGERP, ItemID.BLACK_DAGGERP_5682,
                     ItemID.BLACK_DAGGERP_5700, ItemID.BLACK_HALBERD, ItemID.BLACK_LONGSWORD, ItemID.BLACK_MACE,
                     ItemID.BLACK_PICKAXE, ItemID.BLACK_SCIMITAR, ItemID.BLACK_SPEAR, ItemID.BLACK_SPEARKP,
@@ -197,7 +197,7 @@ public class ItemHandler {
                     ItemID.BLACK_WARHAMMER
             });
             put(4, new Integer[]{
-                    ItemID.MITHRIL_2H_AXE, ItemID.MITHRIL_2H_SWORD, ItemID.MITHRIL_AXE, ItemID.MITHRIL_BATTLEAXE,
+                    ItemID.MITHRIL_2H_SWORD, ItemID.MITHRIL_AXE, ItemID.MITHRIL_BATTLEAXE,
                     ItemID.MITHRIL_CLAWS, ItemID.MITHRIL_DAGGER, ItemID.MITHRIL_DAGGERP, ItemID.MITHRIL_DAGGERP_5674,
                     ItemID.MITHRIL_DAGGERP_5692, ItemID.MITHRIL_HALBERD, ItemID.MITHRIL_HASTA, ItemID.MITHRIL_HASTAKP,
                     ItemID.MITHRIL_HASTAP, ItemID.MITHRIL_HASTAP_11403, ItemID.MITHRIL_HASTAP_11405,
@@ -206,7 +206,7 @@ public class ItemHandler {
                     ItemID.MITHRIL_SPEARP_5724, ItemID.MITHRIL_SWORD, ItemID.MITHRIL_WARHAMMER
             });
             put(5, new Integer[]{
-                    ItemID.ADAMANT_2H_AXE, ItemID.ADAMANT_2H_SWORD, ItemID.ADAMANT_AXE, ItemID.ADAMANT_BATTLEAXE,
+                    ItemID.ADAMANT_2H_SWORD, ItemID.ADAMANT_AXE, ItemID.ADAMANT_BATTLEAXE,
                     ItemID.ADAMANT_CLAWS, ItemID.ADAMANT_DAGGER, ItemID.ADAMANT_DAGGERP, ItemID.ADAMANT_DAGGERP_5676,
                     ItemID.ADAMANT_DAGGERP_5694, ItemID.ADAMANT_HALBERD, ItemID.ADAMANT_HASTA, ItemID.ADAMANT_HASTAKP,
                     ItemID.ADAMANT_HASTAP, ItemID.ADAMANT_HASTAP_11410, ItemID.ADAMANT_HASTAP_11412,
@@ -215,7 +215,7 @@ public class ItemHandler {
                     ItemID.ADAMANT_SPEARP_5726, ItemID.ADAMANT_SWORD, ItemID.ADAMANT_WARHAMMER
             });
             put(6, new Integer[]{
-                    ItemID.RUNE_2H_AXE, ItemID.RUNE_2H_SWORD, ItemID.RUNE_AXE, ItemID.RUNE_BATTLEAXE,
+                    ItemID.RUNE_2H_SWORD, ItemID.RUNE_AXE, ItemID.RUNE_BATTLEAXE,
                     ItemID.RUNE_CLAWS, ItemID.RUNE_DAGGER, ItemID.RUNE_DAGGERP, ItemID.RUNE_DAGGERP_5678,
                     ItemID.RUNE_DAGGERP_5696, ItemID.RUNE_HALBERD, ItemID.RUNE_HASTA, ItemID.RUNE_HASTAKP,
                     ItemID.RUNE_HASTAP, ItemID.RUNE_HASTAP_11417, ItemID.RUNE_HASTAP_11419,

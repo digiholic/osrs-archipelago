@@ -27,7 +27,7 @@ dependencies {
 }
 
 group = 'gg.archipelago'
-version = '0.9.6-BETA'
+version = '1.0.0-BETA'
 
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
