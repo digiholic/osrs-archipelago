@@ -1,4 +1,4 @@
-package com.archipelago.data;
+package gg.archipelago.data;
 
 public class ItemNames {
     public static final String Lumbridge = "Area: Lumbridge";

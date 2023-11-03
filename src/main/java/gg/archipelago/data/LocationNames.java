@@ -1,4 +1,4 @@
-package com.archipelago.data;
+package gg.archipelago.data;
 
 public class LocationNames {
     public static final String Q_Cooks_Assistant = "Quest: Cook's Assistant";

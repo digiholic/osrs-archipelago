@@ -1,9 +1,7 @@
-package com.archipelago;
+package gg.archipelago;
 
-import com.archipelago.data.ItemData;
-import com.archipelago.data.ItemNames;
-import com.archipelago.data.LocationData;
-import net.runelite.api.Item;
+import gg.archipelago.data.ItemData;
+import gg.archipelago.data.ItemNames;
 import net.runelite.api.ItemID;
 import net.runelite.api.SpriteID;
 import net.runelite.client.game.SpriteManager;
@@ -12,42 +10,43 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class ItemHandler {
+    public static final long base_id = 0x070000;
     public static List<ItemData> AllItems = List.of(
-            new ItemData(0x07001DL, ItemNames.Progressive_Armor, SpriteID.MAP_ICON_HELMET_SHOP, 0),
-            new ItemData(0x07001EL, ItemNames.Progressive_Weapons, SpriteID.MAP_ICON_SWORD_SHOP, 0),
-            new ItemData(0x07001FL, ItemNames.Progressive_Tools, SpriteID.MAP_ICON_MINING_SHOP, 0),
-            new ItemData(0x070020L, ItemNames.Progressive_Range_Armor, SpriteID.MAP_ICON_TANNERY, 0),
-            new ItemData(0x070021L, ItemNames.Progressive_Range_Weapon, SpriteID.MAP_ICON_ARCHERY_SHOP, 0),
-            new ItemData(0x070022L, ItemNames.Progressive_Magic, SpriteID.MAP_ICON_MAGIC_SHOP, 0),
-            new ItemData(0x070000L, ItemNames.Lumbridge, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070001L, ItemNames.Lumbridge_Swamp, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070002L, ItemNames.Lumbridge_Farms, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070003L, ItemNames.HAM_Hideout, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070004L, ItemNames.Draynor_Village, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070005L, ItemNames.Draynor_Manor, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070006L, ItemNames.Wizards_Tower, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070007L, ItemNames.Al_Kharid, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070008L, ItemNames.Citharede_Abbey, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070009L, ItemNames.South_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x07000AL, ItemNames.Central_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x07000BL, ItemNames.Varrock_Palace, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x07000CL, ItemNames.East_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x07000DL, ItemNames.West_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x07000EL, ItemNames.Edgeville, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x07000FL, ItemNames.Barbarian_Village, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070010L, ItemNames.Monastery, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070011L, ItemNames.Ice_Mountain, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070012L, ItemNames.Dwarven_Mines, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070013L, ItemNames.Falador, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070014L, ItemNames.Falador_Farm, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070015L, ItemNames.Crafting_Guild, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070016L, ItemNames.Rimmington, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070017L, ItemNames.Port_Sarim, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070018L, ItemNames.Mudskipper_Point, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x070019L, ItemNames.Karamja, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x07001AL, ItemNames.Crandor, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x07001BL, ItemNames.Corsair_Cove, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(0x07001CL, ItemNames.Wilderness, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0)
+            new ItemData(base_id, ItemNames.Lumbridge, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 1, ItemNames.Lumbridge_Swamp, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 2, ItemNames.HAM_Hideout, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 3, ItemNames.Lumbridge_Farms, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 4, ItemNames.South_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 5, ItemNames.East_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 6, ItemNames.Central_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 7, ItemNames.Varrock_Palace, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 8, ItemNames.West_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 9, ItemNames.Edgeville, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 10, ItemNames.Barbarian_Village, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 11, ItemNames.Draynor_Manor, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 12, ItemNames.Falador, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 13, ItemNames.Dwarven_Mines, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 14, ItemNames.Ice_Mountain, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 15, ItemNames.Monastery, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 16, ItemNames.Falador_Farm, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 17, ItemNames.Port_Sarim, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 18, ItemNames.Mudskipper_Point, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 19, ItemNames.Karamja, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 20, ItemNames.Crandor, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 21, ItemNames.Rimmington, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 22, ItemNames.Crafting_Guild, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 23, ItemNames.Draynor_Village, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 24, ItemNames.Wizards_Tower, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 25, ItemNames.Corsair_Cove, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 26, ItemNames.Al_Kharid, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 27, ItemNames.Citharede_Abbey, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 28, ItemNames.Wilderness, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
+            new ItemData(base_id + 29, ItemNames.Progressive_Armor, SpriteID.MAP_ICON_HELMET_SHOP, 0),
+            new ItemData(base_id + 30, ItemNames.Progressive_Weapons, SpriteID.MAP_ICON_SWORD_SHOP, 0),
+            new ItemData(base_id + 31, ItemNames.Progressive_Tools, SpriteID.MAP_ICON_MINING_SHOP, 0),
+            new ItemData(base_id + 32, ItemNames.Progressive_Range_Weapon, SpriteID.MAP_ICON_ARCHERY_SHOP, 0),
+            new ItemData(base_id + 33, ItemNames.Progressive_Range_Armor, SpriteID.MAP_ICON_TANNERY, 0),
+            new ItemData(base_id + 34, ItemNames.Progressive_Magic, SpriteID.MAP_ICON_MAGIC_SHOP, 0)
     );
 
     public static Map<String, String> RegionNamesToChunkIdString = Map.ofEntries(
@@ -163,7 +162,7 @@ public class ItemHandler {
     public static final Map<Integer, Integer[]> MetalWeaponsPermittedByTier = new Hashtable<>() {
         {
             put(0, new Integer[]{
-                    ItemID.BRONZE_2H_AXE, ItemID.BRONZE_2H_SWORD, ItemID.BRONZE_AXE, ItemID.BRONZE_BATTLEAXE,
+                    ItemID.BRONZE_2H_SWORD, ItemID.BRONZE_AXE, ItemID.BRONZE_BATTLEAXE,
                     ItemID.BRONZE_CLAWS, ItemID.BRONZE_DAGGER, ItemID.BRONZE_DAGGERP, ItemID.BRONZE_DAGGERP_5670,
                     ItemID.BRONZE_DAGGERP_5688, ItemID.BRONZE_HALBERD, ItemID.BRONZE_HASTA, ItemID.BRONZE_HASTAKP,
                     ItemID.BRONZE_HASTAP, ItemID.BRONZE_HASTAP_11382, ItemID.BRONZE_HASTAP_11384,
@@ -172,7 +171,7 @@ public class ItemHandler {
                     ItemID.BRONZE_SPEARP_5718, ItemID.BRONZE_SWORD, ItemID.BRONZE_WARHAMMER
             });
             put(1, new Integer[]{
-                    ItemID.IRON_2H_AXE, ItemID.IRON_2H_SWORD, ItemID.IRON_AXE, ItemID.IRON_BATTLEAXE,
+                    ItemID.IRON_2H_SWORD, ItemID.IRON_AXE, ItemID.IRON_BATTLEAXE,
                     ItemID.IRON_CLAWS, ItemID.IRON_DAGGER, ItemID.IRON_DAGGERP, ItemID.IRON_DAGGERP_5668,
                     ItemID.IRON_DAGGERP_5686, ItemID.IRON_HALBERD, ItemID.IRON_HASTA, ItemID.IRON_HASTAKP,
                     ItemID.IRON_HASTAP, ItemID.IRON_HASTAP_11389, ItemID.IRON_HASTAP_11391,
@@ -181,7 +180,7 @@ public class ItemHandler {
                     ItemID.IRON_SPEARP_5720, ItemID.IRON_SWORD, ItemID.IRON_WARHAMMER
             });
             put(2, new Integer[]{
-                    ItemID.STEEL_2H_AXE, ItemID.STEEL_2H_SWORD, ItemID.STEEL_AXE, ItemID.STEEL_BATTLEAXE,
+                    ItemID.STEEL_2H_SWORD, ItemID.STEEL_AXE, ItemID.STEEL_BATTLEAXE,
                     ItemID.STEEL_CLAWS, ItemID.STEEL_DAGGER, ItemID.STEEL_DAGGERP, ItemID.STEEL_DAGGERP_5672,
                     ItemID.STEEL_DAGGERP_5690, ItemID.STEEL_HALBERD, ItemID.STEEL_HASTA, ItemID.STEEL_HASTAKP,
                     ItemID.STEEL_HASTAP, ItemID.STEEL_HASTAP_11396, ItemID.STEEL_HASTAP_11398,
@@ -190,7 +189,7 @@ public class ItemHandler {
                     ItemID.STEEL_SPEARP_5722, ItemID.STEEL_SWORD, ItemID.STEEL_WARHAMMER
             });
             put(3, new Integer[]{
-                    ItemID.BLACK_2H_AXE, ItemID.BLACK_2H_SWORD, ItemID.BLACK_AXE, ItemID.BLACK_BATTLEAXE,
+                    ItemID.BLACK_2H_SWORD, ItemID.BLACK_AXE, ItemID.BLACK_BATTLEAXE,
                     ItemID.BLACK_CLAWS, ItemID.BLACK_DAGGER, ItemID.BLACK_DAGGERP, ItemID.BLACK_DAGGERP_5682,
                     ItemID.BLACK_DAGGERP_5700, ItemID.BLACK_HALBERD, ItemID.BLACK_LONGSWORD, ItemID.BLACK_MACE,
                     ItemID.BLACK_PICKAXE, ItemID.BLACK_SCIMITAR, ItemID.BLACK_SPEAR, ItemID.BLACK_SPEARKP,
@@ -198,7 +197,7 @@ public class ItemHandler {
                     ItemID.BLACK_WARHAMMER
             });
             put(4, new Integer[]{
-                    ItemID.MITHRIL_2H_AXE, ItemID.MITHRIL_2H_SWORD, ItemID.MITHRIL_AXE, ItemID.MITHRIL_BATTLEAXE,
+                    ItemID.MITHRIL_2H_SWORD, ItemID.MITHRIL_AXE, ItemID.MITHRIL_BATTLEAXE,
                     ItemID.MITHRIL_CLAWS, ItemID.MITHRIL_DAGGER, ItemID.MITHRIL_DAGGERP, ItemID.MITHRIL_DAGGERP_5674,
                     ItemID.MITHRIL_DAGGERP_5692, ItemID.MITHRIL_HALBERD, ItemID.MITHRIL_HASTA, ItemID.MITHRIL_HASTAKP,
                     ItemID.MITHRIL_HASTAP, ItemID.MITHRIL_HASTAP_11403, ItemID.MITHRIL_HASTAP_11405,
@@ -207,7 +206,7 @@ public class ItemHandler {
                     ItemID.MITHRIL_SPEARP_5724, ItemID.MITHRIL_SWORD, ItemID.MITHRIL_WARHAMMER
             });
             put(5, new Integer[]{
-                    ItemID.ADAMANT_2H_AXE, ItemID.ADAMANT_2H_SWORD, ItemID.ADAMANT_AXE, ItemID.ADAMANT_BATTLEAXE,
+                    ItemID.ADAMANT_2H_SWORD, ItemID.ADAMANT_AXE, ItemID.ADAMANT_BATTLEAXE,
                     ItemID.ADAMANT_CLAWS, ItemID.ADAMANT_DAGGER, ItemID.ADAMANT_DAGGERP, ItemID.ADAMANT_DAGGERP_5676,
                     ItemID.ADAMANT_DAGGERP_5694, ItemID.ADAMANT_HALBERD, ItemID.ADAMANT_HASTA, ItemID.ADAMANT_HASTAKP,
                     ItemID.ADAMANT_HASTAP, ItemID.ADAMANT_HASTAP_11410, ItemID.ADAMANT_HASTAP_11412,
@@ -216,7 +215,7 @@ public class ItemHandler {
                     ItemID.ADAMANT_SPEARP_5726, ItemID.ADAMANT_SWORD, ItemID.ADAMANT_WARHAMMER
             });
             put(6, new Integer[]{
-                    ItemID.RUNE_2H_AXE, ItemID.RUNE_2H_SWORD, ItemID.RUNE_AXE, ItemID.RUNE_BATTLEAXE,
+                    ItemID.RUNE_2H_SWORD, ItemID.RUNE_AXE, ItemID.RUNE_BATTLEAXE,
                     ItemID.RUNE_CLAWS, ItemID.RUNE_DAGGER, ItemID.RUNE_DAGGERP, ItemID.RUNE_DAGGERP_5678,
                     ItemID.RUNE_DAGGERP_5696, ItemID.RUNE_HALBERD, ItemID.RUNE_HASTA, ItemID.RUNE_HASTAKP,
                     ItemID.RUNE_HASTAP, ItemID.RUNE_HASTAP_11417, ItemID.RUNE_HASTAP_11419,
@@ -251,7 +250,18 @@ public class ItemHandler {
                     ItemID.IRON_PLATEBODY, ItemID.IRON_PLATEBODY_T, ItemID.IRON_PLATEBODY_G,
                     ItemID.IRON_PLATELEGS, ItemID.IRON_PLATELEGS_T, ItemID.IRON_PLATELEGS_G,
                     ItemID.IRON_PLATESKIRT, ItemID.IRON_PLATESKIRT_T, ItemID.IRON_PLATESKIRT_G,
-                    ItemID.IRON_SQ_SHIELD
+                    ItemID.IRON_SQ_SHIELD, ItemID.IRONMAN_HELM, ItemID.IRONMAN_PLATEBODY, ItemID.IRONMAN_PLATELEGS,
+                    ItemID.HARDCORE_IRONMAN_HELM, ItemID.HARDCORE_IRONMAN_PLATEBODY, ItemID.HARDCORE_IRONMAN_PLATELEGS,
+                    ItemID.GROUP_IRON_BRACERS, ItemID.GROUP_IRON_BRACERS_UNRANKED, ItemID.GROUP_IRON_HELM,
+                    ItemID.GROUP_IRON_HELM_UNRANKED, ItemID.GROUP_IRON_PLATEBODY, ItemID.GROUP_IRON_PLATEBODY_26160,
+                    ItemID.GROUP_IRON_PLATEBODY_26162, ItemID.GROUP_IRON_PLATEBODY_26164,
+                    ItemID.GROUP_IRON_PLATEBODY_UNRANKED, ItemID.GROUP_IRON_PLATEBODY_UNRANKED_27050,
+                    ItemID.GROUP_IRON_PLATEBODY_UNRANKED_27052, ItemID.GROUP_IRON_PLATEBODY_UNRANKED_27054,
+                    ItemID.GROUP_IRON_PLATELEGS, ItemID.GROUP_IRON_PLATELEGS_UNRANKED,
+                    ItemID.HARDCORE_GROUP_IRON_BRACERS, ItemID.HARDCORE_GROUP_IRON_HELM,
+                    ItemID.HARDCORE_GROUP_IRON_PLATEBODY, ItemID.HARDCORE_GROUP_IRON_PLATEBODY_26174,
+                    ItemID.HARDCORE_GROUP_IRON_PLATEBODY_26176, ItemID.HARDCORE_GROUP_IRON_PLATEBODY_26178,
+                    ItemID.HARDCORE_GROUP_IRON_PLATELEGS
             });
             put(2, new Integer[]{
                     ItemID.STEEL_BOOTS, ItemID.STEEL_CHAINBODY, ItemID.STEEL_GLOVES, ItemID.STEEL_MED_HELM,
