@@ -81,6 +81,7 @@ public class TaskLists {
             new KillTask(base_id + taskCount++, "Zombie"),
             new KillTask(base_id + taskCount++, "Guard"),
             new KillTask(base_id + taskCount++, "Hill Giant"),
+            new KillTask(base_id + taskCount++, "Deadly Red Spider"),
             new KillTask(base_id + taskCount++, "Moss Giant"),
             new KillTask(base_id + taskCount++, "Catablepon"),
             new KillTask(base_id + taskCount++, "Ice Giant"),
