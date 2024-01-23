@@ -309,12 +309,16 @@ public class ArchipelagoPlugin extends Plugin
 		activeTasks = new ArrayList<>();
 		for(long id : apClient.getLocationManager().getCheckedLocations()){
 			APTask task = TaskLists.GetTaskByID(id);
-			task.SetCompleted();
-			activeTasks.add(task);
+			if (task != null){
+				task.SetCompleted();
+				activeTasks.add(task);
+			}
 		}
 		for(long id : apClient.getLocationManager().getMissingLocations()){
 			APTask task = TaskLists.GetTaskByID(id);
-			activeTasks.add(task);
+			if (task != null){
+				activeTasks.add(task);
+			}
 		}
 		activeTasks = activeTasks.stream().sorted(Comparator.comparing(APTask::GetID)).collect(Collectors.toList());
 

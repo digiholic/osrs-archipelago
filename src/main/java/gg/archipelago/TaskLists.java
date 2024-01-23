@@ -113,7 +113,12 @@ public class TaskLists {
     );
 
     public static APTask GetTaskByID(long id){
-        return allTasks.stream().filter(apTask -> apTask.GetID() == id).findFirst().get();
+        var filter = allTasks.stream().filter(apTask -> apTask.GetID() == id).findFirst();
+        if (filter.isEmpty()){
+            return null;
+        } else {
+            return filter.get();
+        }
     }
 
     public static final Map<APTask, BufferedImage> loadedSprites = new HashMap<APTask, BufferedImage>();

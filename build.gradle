@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id "com.github.johnrengelman.shadow" version "6.1.0"
 }
 
 repositories {
@@ -22,13 +23,25 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 
-	implementation files("lib/Archipelago.MultiClient.Java-1.12-all.jar")
+	implementation 'org.java-websocket:Java-WebSocket:1.5.2'
+	implementation 'com.google.code.gson:gson:2.8.9'
+	implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+	implementation 'org.apache.httpcomponents.core5:httpcore5:5.2'
 }
 
 group = 'gg.archipelago'
-version = '1.0.0-BETA'
+version = '1.0.1-BETA'
 
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 	options.release.set(11)
 }
+
+shadowJar {
+	from sourceSets.test.output
+	configurations = [project.configurations.testRuntimeClasspath]
+	manifest {
+		attributes "Main-Class": "gg.archipelago.ArchipelagoPluginTest"
+	}
+}
+
