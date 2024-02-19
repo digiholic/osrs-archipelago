@@ -398,6 +398,7 @@ public class ArchipelagoPlugin extends Plugin
 		}
 
 		SwingUtilities.invokeLater(panel::UpdateTaskStatus);
+		SwingUtilities.invokeLater(panel::UpdateItems);
 	}
 
 	public void addCollectedItem(ItemData item){
@@ -418,6 +419,14 @@ public class ArchipelagoPlugin extends Plugin
 		configManager.setConfiguration("regionlocker", "unlockedRegions", csv);
 	}
 
+
+	public List<ItemData> getCollectedItems() {
+		return collectedItems;
+	}
+	public void DisplayNetworkMessage(String message){
+		panel.DisplayNetworkMessage(message);
+	}
+	
 	/////////// SPRITES ///////////
 	private void loadSprites()
 	{
@@ -480,11 +489,4 @@ public class ArchipelagoPlugin extends Plugin
 		});
 	}
 	/////////// END POPUP ///////////
-
-	public List<ItemData> getCollectedItems() {
-		return collectedItems;
-	}
-	public void DisplayNetworkMessage(String message){
-		panel.DisplayNetworkMessage(message);
-	}
 }

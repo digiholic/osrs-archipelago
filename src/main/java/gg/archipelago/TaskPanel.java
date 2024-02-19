@@ -54,7 +54,10 @@ public class TaskPanel extends JPanel {
                 add(icon, BorderLayout.WEST);
             }
 
-            if (!task.IsCompleted() && task.CanManuallyActivate()){
+            // For the time being, disable the "Can Manually Activate" check and let users click any of the task buttons.
+            // The state-based tasks _should_ be working now, but no sense letting a glitch prevent someone's progress
+            // if (!task.IsCompleted() && task.CanManuallyActivate()){
+            if (!task.IsCompleted()){
                 JButton taskButton = new JButton("<html><div style='text-align:center'>"+task.GetName()+"</div></html>");
                 taskButton.setHorizontalAlignment(SwingConstants.CENTER);
                 taskButton.addActionListener(e -> ManuallyComplete());
