@@ -3,8 +3,6 @@ package gg.archipelago;
 import gg.archipelago.Tasks.APTask;
 import gg.archipelago.data.ItemData;
 import gg.archipelago.data.ItemNames;
-import gg.archipelago.data.LocationData;
-import gg.archipelago.data.LocationNames;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import javax.swing.*;
@@ -13,8 +11,8 @@ import gg.archipelago.client.ClientStatus;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
+import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.api.widgets.WidgetModalMode;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -372,7 +370,7 @@ public class ArchipelagoPlugin extends Plugin
 
 	private void updateChatbox()
 	{
-		Widget chatboxTypedText = client.getWidget(WidgetInfo.CHATBOX_INPUT);
+		Widget chatboxTypedText = client.getWidget(ComponentID.CHATBOX_INPUT);
 
 		if (chatboxTypedText == null || chatboxTypedText.isHidden() || !apClient.isConnected())
 		{
