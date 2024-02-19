@@ -23,14 +23,11 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 
-	implementation 'org.java-websocket:Java-WebSocket:1.5.2'
-	implementation 'com.google.code.gson:gson:2.8.9'
-	implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
-	implementation 'org.apache.httpcomponents.core5:httpcore5:5.2'
+	implementation files("lib/Archipelago.MultiClient.Java-1.12-all.jar")
 }
 
 group = 'gg.archipelago'
-version = '1.0.1-BETA'
+version = '1.0.2-BETA'
 
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
