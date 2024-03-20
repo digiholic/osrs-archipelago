@@ -22,7 +22,7 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 
-	implementation files("lib/Archipelago.MultiClient.Java-1.12-all.jar")
+	implementation files("lib/Archipelago.MultiClient.Java-1.12.jar")
 }
 
 group = 'gg.archipelago'
@@ -32,4 +32,3 @@ tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 	options.release.set(11)
 }
-
