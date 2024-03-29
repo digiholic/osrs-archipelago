@@ -23,7 +23,9 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 
 	implementation files("lib/Archipelago.MultiClient.Java-1.12.jar")
-	implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+	implementation ('org.apache.httpcomponents.client5:httpclient5:5.2.1') {
+		exclude group: 'org.junit'
+	}
 	implementation 'org.apache.httpcomponents.core5:httpcore5:5.2'
 	implementation  'org.java-websocket:Java-WebSocket:1.4.0'
 	implementation 'com.google.code.gson:gson:2.8.6'
