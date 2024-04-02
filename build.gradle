@@ -22,11 +22,23 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 
+
+
 	implementation files("lib/Archipelago.MultiClient.Java-1.12.jar")
-	implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
 	implementation 'org.apache.httpcomponents.core5:httpcore5:5.2'
 	implementation 'org.java-websocket:Java-WebSocket:1.4.0'
 	implementation 'com.google.code.gson:gson:2.8.6'
+
+	components {
+		withModule("org.apache.httpcomponents.client5:httpclient5") {
+			allVariants {
+				withDependencies {
+					removeAll { it.group == "org.junit" && it.name == "junit-bom" }
+				}
+			}
+		}
+	}
+
 }
 
 group = 'gg.archipelago'
@@ -38,5 +50,5 @@ tasks.withType(JavaCompile) {
 }
 
 tasks.withType(Jar).all {
-	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
