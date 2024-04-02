@@ -37,6 +37,6 @@ tasks.withType(JavaCompile) {
 	options.release.set(11)
 }
 
-tasks.withType(Copy).all {
+tasks.withType(Jar).all {
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
