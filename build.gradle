@@ -30,7 +30,7 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.8.6'
 
 	components {
-		withModule("org.apache.httpcomponents.client5:httpclient5") {
+		withModule("org.apache.httpcomponents.core5:httpcore5") {
 			allVariants {
 				withDependencies {
 					removeAll { it.group == "org.junit" && it.name == "junit-bom" }
