@@ -38,5 +38,5 @@ tasks.withType(JavaCompile) {
 }
 
 tasks.withType(Copy).all {
-	duplicatesStrategy 'include'
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
