@@ -69,6 +69,7 @@ public class ArchipelagoPlugin extends Plugin
 
 	private Queue<String[]> queuedMessages = new LinkedList<>();
 	private boolean isDisplayingPopup = false;
+	private NavigationButton navButton;
 
 	protected List<APTask> activeTasks = new ArrayList<>();
 
@@ -87,7 +88,7 @@ public class ArchipelagoPlugin extends Plugin
 
 		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
 
-		NavigationButton navButton = NavigationButton.builder()
+		navButton = NavigationButton.builder()
 				.tooltip("Archipelago Randomizer")
 				.icon(icon)
 				.priority(20)
@@ -106,6 +107,7 @@ public class ArchipelagoPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		clientToolbar.removeNavigation(navButton);
 		plugin = null;
 		if (apClient != null && apClient.isConnected())
 		{
