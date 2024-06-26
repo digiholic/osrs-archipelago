@@ -336,9 +336,11 @@ public class ArchipelagoPlugin extends Plugin
 
 	public void DisplayChatMessage(String msg)
 	{
-		clientThread.invoke(() ->
-				client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "<img=" + modIconIndex + ">"+msg, null)
-		);
+		if (config.apMessages()){
+			clientThread.invoke(() ->
+					client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "<img=" + modIconIndex + ">"+msg, null)
+			);
+		}
 	}
 
 	private void checkStatus()

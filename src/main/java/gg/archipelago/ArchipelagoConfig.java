@@ -44,6 +44,7 @@ public interface ArchipelagoConfig extends Config
 			keyName = "password",
 			name = "Server Password",
 			description = "The Password of the server to connect to",
+			secret = true,
 			position = 3
 	)
 	default String password()
@@ -61,4 +62,12 @@ public interface ArchipelagoConfig extends Config
 	{
 		return "";
 	}
+
+	@ConfigItem(
+			keyName = "apMessages",
+			name = "Display AP Messages in Chat",
+			description = "Whether or not to display messages, such as sending and receiving items, in chat.",
+			position = 5
+	)
+	default boolean apMessages() { return true; }
 }

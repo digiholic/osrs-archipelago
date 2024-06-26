@@ -25,7 +25,7 @@ in the Multiworld might have installation requirements. Please see the installat
 on the [Archipelago Website](https://archipelago.gg/).
 
 To Generate a game, open the Archipelago directory (default location `C:\ProgramData\Archipelago`) and create a directory named
-`worlds` if it does not already exist. Download the [OSRS APWorld file](https://github.com/digiholic/Archipelago/releases/tag/beta-0.2.0) from the beta branch of Archipelago, and place it in the `worlds` directory.
+`worlds` if it does not already exist. Download the most recent [OSRS APWorld file](https://github.com/digiholic/Archipelago/releases) from the beta branch of Archipelago, and place it in the `worlds` directory.
 This will allow you to generate randomized games including OSRS.
 
 To generate a Randomized game, gather the Settings YAMLs from the players who will be participating (see "Creating a Settings YAML" below)
