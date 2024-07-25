@@ -1,8 +1,8 @@
 package gg.archipelago.apEvents;
 
 import gg.archipelago.ArchipelagoPlugin;
-import gg.archipelago.client.events.ArchipelagoEventListener;
-import gg.archipelago.client.events.ConnectionResultEvent;
+import dev.koifysh.archipelago.events.ArchipelagoEventListener;
+import dev.koifysh.archipelago.events.ConnectionResultEvent;
 
 public class ConnectionResult {
 
@@ -32,6 +32,6 @@ public class ConnectionResult {
         }
 
         ArchipelagoPlugin.plugin.DisplayNetworkMessage(msg);
-        ArchipelagoPlugin.plugin.SetConnectionState(event.getResult() == gg.archipelago.client.network.ConnectionResult.Success);
+        ArchipelagoPlugin.plugin.SetConnectionState(event.getResult() == dev.koifysh.archipelago.network.ConnectionResult.Success);
     }
 }

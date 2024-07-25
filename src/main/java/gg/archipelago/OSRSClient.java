@@ -1,18 +1,19 @@
 package gg.archipelago;
 
 import gg.archipelago.apEvents.ConnectionResult;
+import gg.archipelago.apEvents.PrintJson;
 import gg.archipelago.apEvents.ReceiveItem;
-import gg.archipelago.client.ArchipelagoClient;
-import gg.archipelago.client.ItemFlags;
-import gg.archipelago.client.Print.APPrint;
-import gg.archipelago.client.Print.APPrintPart;
-import gg.archipelago.client.parts.NetworkItem;
+import dev.koifysh.archipelago.Client;
+import dev.koifysh.archipelago.ItemFlags;
+import dev.koifysh.archipelago.Print.APPrint;
+import dev.koifysh.archipelago.Print.APPrintPart;
+import dev.koifysh.archipelago.parts.NetworkItem;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URISyntaxException;
 
 @Slf4j
-public class OSRSClient  extends ArchipelagoClient {
+public class OSRSClient  extends Client {
 
     private ArchipelagoPlugin plugin;
 
@@ -28,6 +29,7 @@ public class OSRSClient  extends ArchipelagoClient {
 
         getEventManager().registerListener(new ConnectionResult());
         getEventManager().registerListener(new ReceiveItem());
+        getEventManager().registerListener(new PrintJson());
 
         try {
             connect(address);
@@ -39,21 +41,6 @@ public class OSRSClient  extends ArchipelagoClient {
     private OSRSClient() {
         super();
         this.setGame("Old School Runescape");
-    }
-
-    @Override
-    public void onPrint(String s) {
-
-    }
-
-    @Override
-    public void onPrintJson(APPrint apPrint, String s, int i, NetworkItem networkItem) {
-        if ("Join".equals(apPrint.type) || "Tutorial".equals(apPrint.type)) return;
-        StringBuilder msgBuilder = new StringBuilder();
-        for (APPrintPart part : apPrint.parts){
-            msgBuilder.append(part.text);
-        }
-        plugin.DisplayChatMessage(msgBuilder.toString());
     }
 
     @Override
