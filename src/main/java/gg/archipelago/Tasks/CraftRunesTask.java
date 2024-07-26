@@ -12,30 +12,38 @@ public class CraftRunesTask extends StateTrackingTask{
 
     private final long _ID;
 
+    private String _name;
     private int _required_level;
     private int _essence_id;
     private int _previousEssenceCount;
     private int _previousRunecraftXP;
 
-    private RuneType _runeType;
     public CraftRunesTask(Long ID, RuneType runeType){
         _ID = ID;
-        _runeType = runeType;
 
         switch (runeType){
             case AIR_RUNE:
+                _name = "Craft some Air Runes";
                 _required_level = 1;
                 _essence_id = ItemID.RUNE_ESSENCE;
                 break;
             case MIND_RUNE:
+                _name = "Craft some Mind Runes using a Mind Core";
                 _required_level = 2;
                 _essence_id = ItemID.MIND_CORE;
                 break;
             case BODY_RUNE:
+                _name = "Craft some Body Runes using a Body Core";
                 _required_level = 20;
                 _essence_id = ItemID.BODY_CORE;
                 break;
         }
+    }
+    public CraftRunesTask(Long ID, String name, int required_level, int essence_id){
+        _ID = ID;
+        _name = name;
+        _required_level = required_level;
+        _essence_id = essence_id;
     }
 
     @Override
@@ -55,16 +63,7 @@ public class CraftRunesTask extends StateTrackingTask{
 
     @Override
     public String GetName() {
-        switch (_runeType){
-            case AIR_RUNE:
-                return "Craft some Air Runes";
-            case MIND_RUNE:
-                return "Craft some Mind Runes using a Mind Core";
-            case BODY_RUNE:
-                return "Craft some Body Runes using a Body Core";
-            default:
-                return "Unknown Runecraft Task";
-        }
+        return _name;
     }
 
     @Override

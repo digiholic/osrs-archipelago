@@ -1,7 +1,6 @@
 package gg.archipelago;
 
 import gg.archipelago.Tasks.APTask;
-import gg.archipelago.data.LocationData;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.ColorScheme;
 

@@ -55,14 +55,16 @@ public class ArchipelagoPlugin extends Plugin
 	@Inject
 	private ConfigManager configManager;
 
+	public boolean loggedIn;
+	public boolean connected;
+	public long lastItemReceivedIndex = -1;
+	protected List<APTask> activeTasks = new ArrayList<>();
+
 	private ArchipelagoPanel panel;
 	private OSRSClient apClient;
 	private int modIconIndex = -1;
 	private final List<ItemData> collectedItems = new ArrayList<>();
 
-	public boolean loggedIn;
-	public boolean connected;
-	public long lastItemReceivedIndex = -1;
 	//This boolean will become true when we log in, and will be set back to false in the first game tick.
 	//This lets us check if the logged in player should auto-connect to AP
 	private boolean justLoggedIn = false;
@@ -71,7 +73,7 @@ public class ArchipelagoPlugin extends Plugin
 	private boolean isDisplayingPopup = false;
 	private NavigationButton navButton;
 
-	protected List<APTask> activeTasks = new ArrayList<>();
+	private SlotData slotData;
 
 	@Provides
 	ArchipelagoConfig provideConfig(ConfigManager configManager)
@@ -191,6 +193,8 @@ public class ArchipelagoPlugin extends Plugin
 				});
 			}
 		}
+		// If we've lost connection since last tick, we want to update the button.
+		panel.UpdateStatusButton(apClient.isConnected());
 	}
 
 	@Subscribe
@@ -306,21 +310,24 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	public void SetConnectionState(boolean newConnectionState){
-		activeTasks = new ArrayList<>();
-		for(long id : apClient.getLocationManager().getCheckedLocations()){
-			APTask task = TaskLists.GetTaskByID(id);
-			if (task != null){
-				task.SetCompleted();
-				activeTasks.add(task);
+		// If we've just reconnected, check all our tasks and items
+		if (newConnectionState){
+			activeTasks = new ArrayList<>();
+			for(long id : apClient.getLocationManager().getCheckedLocations()){
+				APTask task = TaskLists.GetTaskByID(id);
+				if (task != null){
+					task.SetCompleted();
+					activeTasks.add(task);
+				}
 			}
-		}
-		for(long id : apClient.getLocationManager().getMissingLocations()){
-			APTask task = TaskLists.GetTaskByID(id);
-			if (task != null){
-				activeTasks.add(task);
+			for(long id : apClient.getLocationManager().getMissingLocations()){
+				APTask task = TaskLists.GetTaskByID(id);
+				if (task != null){
+					activeTasks.add(task);
+				}
 			}
+			activeTasks = activeTasks.stream().sorted(Comparator.comparing(APTask::GetID)).collect(Collectors.toList());
 		}
-		activeTasks = activeTasks.stream().sorted(Comparator.comparing(APTask::GetID)).collect(Collectors.toList());
 
 		if (connected != newConnectionState)
 			panel.ConnectionStateChanged(newConnectionState);
@@ -391,8 +398,8 @@ public class ArchipelagoPlugin extends Plugin
 	private void SendChecks()
 	{
 		Collection<Long> checkedLocations = activeTasks.stream()
-				.filter(loc -> loc.IsCompleted())
-				.map(loc -> loc.GetID())
+				.filter(APTask::IsCompleted)
+				.map(APTask::GetID)
 				.collect(Collectors.toList());
 
 		if (apClient != null && apClient.isConnected()){
@@ -427,6 +434,9 @@ public class ArchipelagoPlugin extends Plugin
 	}
 	public void DisplayNetworkMessage(String message){
 		panel.DisplayNetworkMessage(message);
+	}
+	public void SetSlotData(SlotData data){
+		this.slotData = data;
 	}
 	
 	/////////// SPRITES ///////////

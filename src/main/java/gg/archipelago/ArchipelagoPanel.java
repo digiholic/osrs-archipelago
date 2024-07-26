@@ -77,10 +77,13 @@ public class ArchipelagoPanel extends PluginPanel {
 
     public void ConnectionStateChanged(boolean connectionSuccessful) {
         taskListPanel.ConnectionStateChanged(connectionSuccessful);
+        UpdateStatusButton(connectionSuccessful);
+    }
+
+    public void UpdateStatusButton(boolean connectionSuccessful){
         connectButton.setEnabled(!connectionSuccessful);
         connectButton.setText(connectionSuccessful ? "Connected!" : "Connect");
     }
-
     public void UpdateTaskStatus(){
         taskListPanel.UpdateTaskStatus();
     }

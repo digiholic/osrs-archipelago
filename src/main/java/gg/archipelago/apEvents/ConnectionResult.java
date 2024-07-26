@@ -3,6 +3,7 @@ package gg.archipelago.apEvents;
 import gg.archipelago.ArchipelagoPlugin;
 import dev.koifysh.archipelago.events.ArchipelagoEventListener;
 import dev.koifysh.archipelago.events.ConnectionResultEvent;
+import gg.archipelago.SlotData;
 
 public class ConnectionResult {
 
@@ -30,6 +31,8 @@ public class ConnectionResult {
             default:
                 msg = "Unknown Error";
         }
+
+        SlotData temp = event.getSlotData(SlotData.class);
 
         ArchipelagoPlugin.plugin.DisplayNetworkMessage(msg);
         ArchipelagoPlugin.plugin.SetConnectionState(event.getResult() == dev.koifysh.archipelago.network.ConnectionResult.Success);
