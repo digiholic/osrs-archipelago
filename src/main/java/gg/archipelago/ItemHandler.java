@@ -2,55 +2,141 @@ package gg.archipelago;
 
 import gg.archipelago.data.ItemData;
 import gg.archipelago.data.ItemNames;
-import net.runelite.api.Item;
 import net.runelite.api.ItemID;
 import net.runelite.api.SpriteID;
 import net.runelite.client.game.SpriteManager;
 
+import javax.swing.plaf.synth.Region;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ItemHandler {
     public static final long base_id = 0x070000;
-    public static List<ItemData> AllItems = List.of(
-            new ItemData(base_id, ItemNames.Lumbridge, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 1, ItemNames.Lumbridge_Swamp, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 2, ItemNames.HAM_Hideout, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 3, ItemNames.Lumbridge_Farms, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 4, ItemNames.South_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 5, ItemNames.East_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 6, ItemNames.Central_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 7, ItemNames.Varrock_Palace, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 8, ItemNames.West_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 9, ItemNames.Edgeville, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 10, ItemNames.Barbarian_Village, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 11, ItemNames.Draynor_Manor, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 12, ItemNames.Falador, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 13, ItemNames.Dwarven_Mines, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 14, ItemNames.Ice_Mountain, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 15, ItemNames.Monastery, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 16, ItemNames.Falador_Farm, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 17, ItemNames.Port_Sarim, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 18, ItemNames.Mudskipper_Point, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 19, ItemNames.Karamja, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 20, ItemNames.Crandor, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 21, ItemNames.Rimmington, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 22, ItemNames.Crafting_Guild, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 23, ItemNames.Draynor_Village, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 24, ItemNames.Wizards_Tower, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 25, ItemNames.Corsair_Cove, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 26, ItemNames.Al_Kharid, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 27, ItemNames.Citharede_Abbey, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 28, ItemNames.Wilderness, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0),
-            new ItemData(base_id + 29, ItemNames.Progressive_Armor, SpriteID.MAP_ICON_HELMET_SHOP, 0),
-            new ItemData(base_id + 30, ItemNames.Progressive_Weapons, SpriteID.MAP_ICON_SWORD_SHOP, 0),
-            new ItemData(base_id + 31, ItemNames.Progressive_Tools, SpriteID.MAP_ICON_MINING_SHOP, 0),
-            new ItemData(base_id + 32, ItemNames.Progressive_Range_Weapon, SpriteID.MAP_ICON_ARCHERY_SHOP, 0),
-            new ItemData(base_id + 33, ItemNames.Progressive_Range_Armor, SpriteID.MAP_ICON_TANNERY, 0),
-            new ItemData(base_id + 34, ItemNames.Progressive_Magic, SpriteID.MAP_ICON_MAGIC_SHOP, 0)
+    public static int itemCount = 0;
+    private static final String repository_address = "https://raw.githubusercontent.com/digiholic/osrs-archipelago-logic/";
+
+    private static List<ItemData> cachedAllItems = new ArrayList<>();
+    public static List<ItemData> GetItems() {
+        return cachedAllItems;
+    }
+
+    public static List<ItemData> GetAllItems(String data_version){
+        List<List<String>> items = GetItemCSVs(data_version);
+        itemCount = 0;
+        // For Legacy purposes, this is the data as it was on V1.2 of the Archipelago World. This was the last time
+        // the data was hard-coded instead of being generated by the logic CSV files. If there is no version number
+        // associated with the current slot, use that list.
+        if (data_version == null || data_version.isEmpty() || items == null){
+            cachedAllItems = defaultItems;
+            RegionNamesToChunkIdString = defaultChunkRegions;
+            for (ItemData item : defaultItems){
+                ItemsById.put(item.id, item);
+            }
+        } else {
+            cachedAllItems = new ArrayList<>();
+            for (List<String> itemRow : items){
+                int icon_id = 0;
+                int icon_file = 0;
+
+                switch(itemRow.get(3)){
+                    case "Area":
+                        icon_id = SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET;
+                        //Icon ID is already 0, no need to reassign
+                        String name = itemRow.get(0);
+                        String chunks = itemRow.get(4);
+                        RegionNamesToChunkIdString.put(name, chunks);
+                        break;
+                    case "Item":
+                        icon_id = Integer.parseInt(itemRow.get(4));
+                        icon_file = Integer.parseInt(itemRow.get(5));
+                        break;
+                }
+                ItemData item = new ItemData(base_id + itemCount++, itemRow.get(0), icon_id, icon_file, itemRow.get(3));
+                cachedAllItems.add(item);
+                ItemsById.put(item.id, item);
+            }
+        }
+        return cachedAllItems;
+    }
+
+    public static List<List<String>> GetItemCSVs(String dataVersion){
+        if (dataVersion == null || dataVersion.isEmpty()) return null;
+
+        String taggedRepoAddress = repository_address+dataVersion;
+        List<List<String>> items = new ArrayList<>();
+        try {
+            URL repo = new URL(taggedRepoAddress+"/items.csv");
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(repo.openStream()));
+
+            String inputLine;
+            while ((inputLine = in.readLine()) != null){
+                List<String> row = new ArrayList<>();
+                // Gnarly regex to capture CSV pattern without splitting on commas in quotes
+                Matcher m = Pattern.compile("(?:,|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*|(?:\\n|$))")
+                        .matcher(inputLine);
+                while (m.find()){
+                    String match = m.group();
+                    if (match.startsWith(",")) match = match.substring(1);
+                    match = match.replace("\"","");
+                    row.add(match);
+                }
+                items.add(row);
+            }
+            in.close();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return items;
+    }
+    private static List<ItemData> defaultItems = List.of(
+            new ItemData(base_id, ItemNames.Lumbridge, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 1, ItemNames.Lumbridge_Swamp, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 2, ItemNames.HAM_Hideout, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 3, ItemNames.Lumbridge_Farms, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 4, ItemNames.South_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 5, ItemNames.East_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 6, ItemNames.Central_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 7, ItemNames.Varrock_Palace, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 8, ItemNames.West_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 9, ItemNames.Edgeville, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 10, ItemNames.Barbarian_Village, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 11, ItemNames.Draynor_Manor, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 12, ItemNames.Falador, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 13, ItemNames.Dwarven_Mines, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 14, ItemNames.Ice_Mountain, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 15, ItemNames.Monastery, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 16, ItemNames.Falador_Farm, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 17, ItemNames.Port_Sarim, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 18, ItemNames.Mudskipper_Point, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 19, ItemNames.Karamja, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 20, ItemNames.Crandor, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 21, ItemNames.Rimmington, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 22, ItemNames.Crafting_Guild, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 23, ItemNames.Draynor_Village, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 24, ItemNames.Wizards_Tower, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 25, ItemNames.Corsair_Cove, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 26, ItemNames.Al_Kharid, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 27, ItemNames.Citharede_Abbey, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 28, ItemNames.Wilderness, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 29, ItemNames.Progressive_Armor, SpriteID.MAP_ICON_HELMET_SHOP, 0, "Item"),
+            new ItemData(base_id + 30, ItemNames.Progressive_Weapons, SpriteID.MAP_ICON_SWORD_SHOP, 0, "Item"),
+            new ItemData(base_id + 31, ItemNames.Progressive_Tools, SpriteID.MAP_ICON_MINING_SHOP, 0, "Item"),
+            new ItemData(base_id + 32, ItemNames.Progressive_Range_Weapon, SpriteID.MAP_ICON_ARCHERY_SHOP, 0, "Item"),
+            new ItemData(base_id + 33, ItemNames.Progressive_Range_Armor, SpriteID.MAP_ICON_TANNERY, 0, "Item"),
+            new ItemData(base_id + 34, ItemNames.Progressive_Magic, SpriteID.MAP_ICON_MAGIC_SHOP, 0, "Item")
     );
 
-    public static Map<String, String> RegionNamesToChunkIdString = Map.ofEntries(
+    public static Map<String, String> RegionNamesToChunkIdString = new HashMap<>();
+
+    private static Map<String, String> defaultChunkRegions = Map.ofEntries(
             Map.entry(ItemNames.Lumbridge, "12850"),
             Map.entry(ItemNames.Lumbridge_Swamp, "12849,12593"),
             Map.entry(ItemNames.Lumbridge_Farms, "12851,12595"),
@@ -81,21 +167,16 @@ public class ItemHandler {
             Map.entry(ItemNames.Corsair_Cove, "10284,10028"),
             Map.entry(ItemNames.Wilderness, "11836,11835,11834,11833,11832,11831,12092,12091,12090,12089,12088,12087,12348,12347,12346,12345,12344,12343,12604,12603,12602,12601,12600,12599,12860,12859,12858,12857,12856,12855,13116,13115,13114,13113,13112,13111,13372,13371,13370,13369,13368,13367")
     );
-
     public static final Map<ItemData, BufferedImage> loadedSprites = new HashMap<ItemData, BufferedImage>();
 
     public static ItemData GetItemByName(String name) {
-        return AllItems.stream()
+        return GetItems().stream()
                 .filter(item -> name.equals(item.name))
                 .findFirst()
                 .orElse(null);
     }
 
-    public static Dictionary<Long, ItemData> ItemsById = new Hashtable<>() {{
-        for (ItemData item : AllItems) {
-            put(item.id, item);
-        }
-    }};
+    public static Map<Long, ItemData> ItemsById = new HashMap<>();
 
     public static String MetalTierByCount(int count) {
         switch (count) {
@@ -154,7 +235,7 @@ public class ItemHandler {
     }
 
     public static void LoadImages(SpriteManager spriteManager) {
-        for (ItemData item : AllItems) {
+        for (ItemData item : GetItems()) {
             loadedSprites.put(item, spriteManager.getSprite(item.icon_id, item.icon_file));
         }
     }

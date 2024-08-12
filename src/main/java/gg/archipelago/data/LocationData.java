@@ -14,6 +14,7 @@ public class LocationData{
     private String category;
     private String[] regionsRequired;
     private String[] skillsRequired;
+    private String[] itemsRequired;
     private String qpRequired;
     private String pluginTaskType;
     private List<String> pluginTaskArgs = new ArrayList<String>();
@@ -23,9 +24,10 @@ public class LocationData{
         category = csvData.get(1);
         regionsRequired = csvData.get(2).split(",");
         skillsRequired = csvData.get(3).split(",");
-        qpRequired = csvData.get(4);
-        pluginTaskType = csvData.get(5);
-        if (csvData.size() > 6)
-            pluginTaskArgs = csvData.subList(6, csvData.size()-1);
+        itemsRequired = csvData.get(4).split(",");
+        qpRequired = csvData.get(5);
+        pluginTaskType = csvData.get(6);
+        if (csvData.size() > 7)
+            pluginTaskArgs = csvData.subList(7, csvData.size());
     }
 }
