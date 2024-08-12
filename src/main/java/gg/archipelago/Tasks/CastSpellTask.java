@@ -10,33 +10,43 @@ public class CastSpellTask extends StateTrackingTask{
 
     private final long _ID;
 
+    private String _name;
     private int _required_level;
     private int _xp_gained;
     private int _previousMagicXP;
-    private SpellToCast _spell;
 
     public CastSpellTask(Long ID, SpellToCast spell){
         _ID = ID;
-        _spell = spell;
 
         switch(spell){
             case BONES_TO_BANANAS:
+                _name = "Cast Bones to Bananas";
                 _required_level = 15;
                 _xp_gained = 25;
                 break;
             case VARROCK_TELE:
+                _name = "Teleport to Varrock";
                 _required_level = 25;
                 _xp_gained = 35;
                 break;
             case LUMBRIDGE_TELE:
+                _name = "Teleport to Lumbridge";
                 _required_level = 31;
                 _xp_gained = 41;
                 break;
             case FALADOR_TELE:
+                _name = "Teleport to Falador";
                 _required_level = 37;
                 _xp_gained = 48;
                 break;
         }
+    }
+
+    public CastSpellTask(Long ID, String name, int required_level, int xp_gained){
+        _ID = ID;
+        _name = name;
+        _required_level = required_level;
+        _xp_gained = xp_gained;
     }
 
     @Override
@@ -55,18 +65,7 @@ public class CastSpellTask extends StateTrackingTask{
 
     @Override
     public String GetName() {
-        switch(_spell){
-            case BONES_TO_BANANAS:
-                return "Cast Bones to Bananas";
-            case VARROCK_TELE:
-                return "Teleport to Varrock";
-            case LUMBRIDGE_TELE:
-                    return "Teleport to Lumbridge";
-            case FALADOR_TELE:
-                return "Teleport to Falador";
-            default:
-                return "Cast an unknown spell";
-        }
+        return _name;
     }
 
     @Override

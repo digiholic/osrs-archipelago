@@ -1,33 +1,39 @@
 package gg.archipelago;
 
 import gg.archipelago.apEvents.ConnectionResult;
+import gg.archipelago.apEvents.PrintJson;
 import gg.archipelago.apEvents.ReceiveItem;
-import gg.archipelago.client.ArchipelagoClient;
-import gg.archipelago.client.ItemFlags;
-import gg.archipelago.client.Print.APPrint;
-import gg.archipelago.client.Print.APPrintPart;
-import gg.archipelago.client.parts.NetworkItem;
+import dev.koifysh.archipelago.Client;
+import dev.koifysh.archipelago.ItemFlags;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URISyntaxException;
 
 @Slf4j
-public class OSRSClient  extends ArchipelagoClient {
+public class APClient extends Client {
 
     private ArchipelagoPlugin plugin;
 
-    public OSRSClient(ArchipelagoPlugin plugin){
+    public APClient(ArchipelagoPlugin plugin){
         this.plugin = plugin;
     }
 
+    // These variables are stored so we can unsubscribe on disconnect
+    private Object connectionListener, itemListener, printListener;
     public void newConnection(ArchipelagoPlugin plugin, String address, String slotName, String password) {
         setGame("Old School Runescape");
         setPassword(password);
         setName(slotName);
         setItemsHandlingFlags(ItemFlags.SEND_ITEMS + ItemFlags.SEND_OWN_ITEMS + ItemFlags.SEND_STARTING_INVENTORY);
 
-        getEventManager().registerListener(new ConnectionResult());
-        getEventManager().registerListener(new ReceiveItem());
+
+        connectionListener = new ConnectionResult();
+        itemListener = new ReceiveItem();
+        printListener = new PrintJson();
+
+        getEventManager().registerListener(connectionListener);
+        getEventManager().registerListener(itemListener);
+        getEventManager().registerListener(printListener);
 
         try {
             connect(address);
@@ -36,24 +42,9 @@ public class OSRSClient  extends ArchipelagoClient {
         }
     }
 
-    private OSRSClient() {
+    private APClient() {
         super();
         this.setGame("Old School Runescape");
-    }
-
-    @Override
-    public void onPrint(String s) {
-
-    }
-
-    @Override
-    public void onPrintJson(APPrint apPrint, String s, int i, NetworkItem networkItem) {
-        if ("Join".equals(apPrint.type) || "Tutorial".equals(apPrint.type)) return;
-        StringBuilder msgBuilder = new StringBuilder();
-        for (APPrintPart part : apPrint.parts){
-            msgBuilder.append(part.text);
-        }
-        plugin.DisplayChatMessage(msgBuilder.toString());
     }
 
     @Override
@@ -70,5 +61,9 @@ public class OSRSClient  extends ArchipelagoClient {
     public void disconnect(){
         super.disconnect();
         plugin.SetConnectionState(false);
+        getEventManager().unRegisterListener(connectionListener);
+        getEventManager().registerListener(itemListener);
+        getEventManager().registerListener(printListener);
+
     }
 }

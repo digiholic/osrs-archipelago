@@ -1,5 +1,6 @@
 package gg.archipelago;
 
+import dev.koifysh.archipelago.events.ReceiveItemEvent;
 import gg.archipelago.Tasks.APTask;
 import gg.archipelago.data.ItemData;
 import gg.archipelago.data.ItemNames;
@@ -7,13 +8,14 @@ import com.google.inject.Provides;
 import javax.inject.Inject;
 import javax.swing.*;
 
-import gg.archipelago.client.ClientStatus;
+import dev.koifysh.archipelago.ClientStatus;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetModalMode;
+import net.runelite.client.RuneLite;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -22,17 +24,15 @@ import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.plugins.mta.graveyard.GraveyardCounter;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 
 import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static net.runelite.api.ItemID.ANIMALS_BONES;
 
 @Slf4j
 @PluginDescriptor(
@@ -55,23 +55,30 @@ public class ArchipelagoPlugin extends Plugin
 	@Inject
 	private ConfigManager configManager;
 
+	public boolean loggedIn;
+	public boolean connected;
+
+	protected List<APTask> activeTasks = new ArrayList<>();
+
 	private ArchipelagoPanel panel;
-	private OSRSClient apClient;
+	private APClient apClient;
 	private int modIconIndex = -1;
 	private final List<ItemData> collectedItems = new ArrayList<>();
 
-	public boolean loggedIn;
-	public boolean connected;
-	public long lastItemReceivedIndex = -1;
 	//This boolean will become true when we log in, and will be set back to false in the first game tick.
 	//This lets us check if the logged in player should auto-connect to AP
 	private boolean justLoggedIn = false;
 
 	private Queue<String[]> queuedMessages = new LinkedList<>();
 	private boolean isDisplayingPopup = false;
+
 	private NavigationButton navButton;
 
-	protected List<APTask> activeTasks = new ArrayList<>();
+	private SlotData slotData;
+
+	private String dataPackageLocation;
+	private DataPackage dataPackage;
+	private long lastItemReceivedIndex = 0;
 
 	@Provides
 	ArchipelagoConfig provideConfig(ConfigManager configManager)
@@ -84,7 +91,7 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		plugin = this;
 		panel = new ArchipelagoPanel(this, config);
-		apClient = new OSRSClient(this);
+		apClient = new APClient(this);
 
 		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
 
@@ -96,9 +103,6 @@ public class ArchipelagoPlugin extends Plugin
 				.build();
 
 		clientToolbar.addNavigation(navButton);
-
-		clientThread.invoke(() -> TaskLists.LoadImages(spriteManager));
-		clientThread.invoke(() -> ItemHandler.LoadImages(spriteManager));
 
 		loadSprites();
 		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
@@ -140,7 +144,9 @@ public class ArchipelagoPlugin extends Plugin
 		{
 			loggedIn = true;
 			justLoggedIn = true;
-			loadSprites();
+			if (!apClient.isConnected()){
+				ConnectToAPServer();
+			}
 		}
 		else if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN){
 			loggedIn = false;
@@ -162,20 +168,23 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		if (justLoggedIn && client.getLocalPlayer().getName() != null){
 			//If we've just logged in with a character that's stored as our autoreconnect, connect immediately.
-			if (!connected && config.autoreconnect().equals(client.getLocalPlayer().getName())){
-				ConnectToAPServer();
+			if (!connected && dataPackage.characterHash == client.getAccountHash()){
 				log.info("Detected log in of autoreconnect, connecting to AP server");
 			}
 			//If there is no autoreconnect set, and we're already connected to the AP server, set autoreconnect
-			else if (config.autoreconnect().isBlank() && connected){
-				configManager.setConfiguration("Archipelago", "autoreconnect", client.getLocalPlayer().getName());
+			else if (dataPackage.characterHash == 0 && connected){
+				dataPackage.characterHash = client.getAccountHash();
 				log.info("Detected first log in or connection, setting autoreconnect");
+				saveDataPackage();
 			}
 			//If there _is_ an autoreconnect, we are currently connected, and the player we log in isn't the reconnect
 			//IMMEDIATELY disconnect, do not pass go, do not collect $200
-			else if (connected && !config.autoreconnect().equals(client.getLocalPlayer().getName())){
+			else if (connected && dataPackage.characterHash != client.getAccountHash()){
 				apClient.disconnect();
 				log.info("Detected log in of a non-auto-reconnect player. Disconnecting from server to avoid mixing checks");
+				DisplayNetworkMessage("This Archipelago Slot is not associated with this Character. " +
+						"Please use the proper character or update connection information, or press \"Connect\" "+
+						"to update this slot to this character");
 			}
 			justLoggedIn = false;
 		}
@@ -183,7 +192,7 @@ public class ArchipelagoPlugin extends Plugin
 			checkStatus();
 			SendChecks();
 
-			if (!isDisplayingPopup && queuedMessages.size() > 0){
+			if (!isDisplayingPopup && queuedMessages.size() > 0 && client.getWidget((161 << 16) | 13) != null){
 				String[] msg = queuedMessages.poll();
 				isDisplayingPopup = true;
 				clientThread.invokeLater(() -> {
@@ -191,6 +200,8 @@ public class ArchipelagoPlugin extends Plugin
 				});
 			}
 		}
+		// If we've lost connection since last tick, we want to update the button.
+		panel.UpdateStatusButton(apClient.isConnected());
 	}
 
 	@Subscribe
@@ -306,33 +317,57 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	public void SetConnectionState(boolean newConnectionState){
-		activeTasks = new ArrayList<>();
-		for(long id : apClient.getLocationManager().getCheckedLocations()){
-			APTask task = TaskLists.GetTaskByID(id);
-			if (task != null){
-				task.SetCompleted();
-				activeTasks.add(task);
+		// If we've just reconnected, check all our tasks and items
+		if (newConnectionState){
+
+			dataPackageLocation = RuneLite.RUNELITE_DIR + "/APData/" + apClient.getRoomInfo().seedName + "_" + apClient.getSlot() + ".save";
+			loadDataPackage();
+
+			activeTasks = new ArrayList<>();
+			for(long id : apClient.getLocationManager().getCheckedLocations()){
+				APTask task = TaskLists.GetTaskByID(id);
+				if (task != null){
+					task.SetCompleted();
+					activeTasks.add(task);
+				}
 			}
-		}
-		for(long id : apClient.getLocationManager().getMissingLocations()){
-			APTask task = TaskLists.GetTaskByID(id);
-			if (task != null){
-				activeTasks.add(task);
+			for(long id : apClient.getLocationManager().getMissingLocations()){
+				APTask task = TaskLists.GetTaskByID(id);
+				if (task != null){
+					activeTasks.add(task);
+				}
 			}
+			activeTasks = activeTasks.stream().sorted(Comparator.comparing(APTask::GetID)).collect(Collectors.toList());
 		}
-		activeTasks = activeTasks.stream().sorted(Comparator.comparing(APTask::GetID)).collect(Collectors.toList());
 
 		if (connected != newConnectionState)
 			panel.ConnectionStateChanged(newConnectionState);
 		connected = newConnectionState;
 
-		if (config.autoreconnect().isBlank() && connected && loggedIn){
-			configManager.setConfiguration("Archipelago", "autoreconnect", client.getLocalPlayer().getName());
+		if (dataPackage.characterHash == 0 && connected && loggedIn){
+			dataPackage.characterHash = client.getAccountHash();
 			log.info("Detected first log in or connection, setting autoreconnect");
+			saveDataPackage();
 		}
 	}
 
-
+	public void ReceiveItem(ReceiveItemEvent event){
+		//Check against our local copy of the last item received index to add it to the inventory
+		if (event.getIndex() >= lastItemReceivedIndex){
+			addCollectedItem(ItemHandler.ItemsById.get(event.getItemID()));
+			lastItemReceivedIndex = event.getIndex();
+			//Check against the datapaackage to determine if we popup a message
+			if (event.getIndex() > dataPackage.lastItemReceivedIndex){
+				dataPackage.lastItemReceivedIndex = event.getIndex();
+				String messageBody = "Received from " +
+						event.getPlayerName() +
+						" at " +
+						event.getLocationName();
+				QueuePopupMessage(event.getItemName(), messageBody);
+				saveDataPackage();
+			}
+		}
+	}
 
 	public void DisplayChatMessage(String msg)
 	{
@@ -391,8 +426,8 @@ public class ArchipelagoPlugin extends Plugin
 	private void SendChecks()
 	{
 		Collection<Long> checkedLocations = activeTasks.stream()
-				.filter(loc -> loc.IsCompleted())
-				.map(loc -> loc.GetID())
+				.filter(APTask::IsCompleted)
+				.map(APTask::GetID)
 				.collect(Collectors.toList());
 
 		if (apClient != null && apClient.isConnected()){
@@ -417,16 +452,65 @@ public class ArchipelagoPlugin extends Plugin
 			if (regions != null) unlockedRegions.add(regions);
 		}
 		String csv = Text.toCSV(unlockedRegions);
-		//TODO replace dependency on regionlocker with custom solution. Good for testing though
+		//TODO replace dependency on regionlocker with custom solution. Good enough for now though
 		configManager.setConfiguration("regionlocker", "unlockedRegions", csv);
 	}
 
+	private void saveDataPackage() {
+		try {
+			File dataPackageFile = new File(dataPackageLocation);
+
+			dataPackageFile.getParentFile().mkdirs();
+			dataPackageFile.createNewFile();
+
+			FileOutputStream fileOut = new FileOutputStream(dataPackageFile);
+			ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+
+			objectOut.writeObject(dataPackage);
+
+
+			fileOut.close();
+			objectOut.close();
+
+		} catch (IOException e) {
+			log.error("unable to save DataPackage.");
+		}
+	}
+
+	private void loadDataPackage() {
+		try {
+			FileInputStream fileInput = new FileInputStream(dataPackageLocation);
+			ObjectInputStream objectInput = new ObjectInputStream(fileInput);
+
+			dataPackage = (DataPackage) objectInput.readObject();
+			fileInput.close();
+			objectInput.close();
+
+		} catch (IOException e) {
+			log.info("no dataPackage found creating a new one.");
+			dataPackage = new DataPackage();
+			saveDataPackage();
+		} catch (ClassNotFoundException e) {
+			log.info("Failed to Read Previous datapackage. Creating new one.");
+			dataPackage = new DataPackage();
+		}
+	}
 
 	public List<ItemData> getCollectedItems() {
 		return collectedItems;
 	}
 	public void DisplayNetworkMessage(String message){
 		panel.DisplayNetworkMessage(message);
+	}
+	public void SetSlotData(SlotData data){
+
+		this.slotData = data;
+		TaskLists.GetAllTasks(slotData.data_csv_tag);
+		ItemHandler.GetAllItems(slotData.data_csv_tag);
+
+		//loadSprites();
+		clientThread.invoke(() -> TaskLists.LoadImages(spriteManager));
+		clientThread.invoke(() -> ItemHandler.LoadImages(spriteManager));
 	}
 	
 	/////////// SPRITES ///////////

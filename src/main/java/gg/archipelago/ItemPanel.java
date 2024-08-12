@@ -5,32 +5,48 @@ import gg.archipelago.data.ItemNames;
 import net.runelite.client.ui.ColorScheme;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemPanel extends JPanel {
     private final ArchipelagoPlugin plugin;
 
     private final HashMap<ItemData, ItemRow> itemPanels = new HashMap<>();
 
+    private final JPanel inventoryPanel;
+    private final JPanel areaPanel;
+
     public ItemPanel(ArchipelagoPlugin plugin){
         this.plugin = plugin;
 
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setLayout(new BorderLayout());
 
         setBackground(ColorScheme.DARKER_GRAY_COLOR);
         setBorder(new EmptyBorder(5, 5, 5, 10));
         setVisible(false);
 
         setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        inventoryPanel = new JPanel();
+        inventoryPanel.setLayout(new BoxLayout(inventoryPanel, BoxLayout.Y_AXIS));
+        add(inventoryPanel, BorderLayout.NORTH);
+
+        areaPanel = new JPanel();
+        areaPanel.setLayout(new BoxLayout(areaPanel, BoxLayout.Y_AXIS));
+        add(areaPanel, BorderLayout.SOUTH);
     }
 
     public void UpdateItems(){
         setVisible(true);
-
-        for (ItemData item : ItemHandler.AllItems){
+        List<ItemData> items = ItemHandler.GetItems();
+        if (items == null) return;
+        for (ItemData item : items){
             int countInCollection = (int) plugin.getCollectedItems().stream().filter(it -> it.name.equals(item.name)).count();
             //Progressive items have special name formatting. Everything else uses the item name
             switch(item.name){
@@ -58,6 +74,7 @@ public class ItemPanel extends JPanel {
                     }
             }
         }
+
         revalidate();
         repaint();
     }
@@ -71,9 +88,13 @@ public class ItemPanel extends JPanel {
         } else {
             itemPanels.put(item, null);
             SwingUtilities.invokeLater(() -> {
-                ItemRow itemPanel = new ItemRow(text, ItemHandler.loadedSprites.get(item));
+                ItemRow itemPanel = new ItemRow(text, item);
                 itemPanels.put(item, itemPanel);
-                add(itemPanel);
+                if (item.getItemType().equals("Area")){
+                    areaPanel.add(itemPanel);
+                } else {
+                    inventoryPanel.add(itemPanel);
+                }
             });
         }
     }
@@ -81,17 +102,24 @@ public class ItemPanel extends JPanel {
     private static class ItemRow extends JPanel {
 
         private final JLabel labelText;
-
-        public ItemRow(String text, BufferedImage image){
+        private final JLabel icon;
+        private boolean isIconReady;
+        private ItemData itemData;
+        public ItemRow(String text, ItemData item){
             super();
+            itemData = item;
             setLayout(new BorderLayout());
             setBackground(ColorScheme.DARKER_GRAY_COLOR);
             setPreferredSize(new Dimension(0, 30));
             setAlignmentX(Component.LEFT_ALIGNMENT);
 
+            icon = new JLabel();
+            add(icon, BorderLayout.WEST);
+
+            BufferedImage image = ItemHandler.loadedSprites.get(item);
             if (image != null){
-                JLabel icon = new JLabel(new ImageIcon(image));
-                add(icon, BorderLayout.WEST);
+                icon.setIcon(new ImageIcon(image));
+                isIconReady = true;
             }
 
             labelText = new JLabel(text);
@@ -102,6 +130,13 @@ public class ItemPanel extends JPanel {
 
         public void SetText(String text){
             labelText.setText(text);
+            if (!isIconReady){
+                BufferedImage image = ItemHandler.loadedSprites.get(itemData);
+                if (image != null){
+                    icon.setIcon(new ImageIcon(image));
+                    isIconReady = true;
+                }
+            }
         }
     }
 }

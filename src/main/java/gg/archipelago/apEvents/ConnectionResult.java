@@ -1,8 +1,9 @@
 package gg.archipelago.apEvents;
 
 import gg.archipelago.ArchipelagoPlugin;
-import gg.archipelago.client.events.ArchipelagoEventListener;
-import gg.archipelago.client.events.ConnectionResultEvent;
+import dev.koifysh.archipelago.events.ArchipelagoEventListener;
+import dev.koifysh.archipelago.events.ConnectionResultEvent;
+import gg.archipelago.SlotData;
 
 public class ConnectionResult {
 
@@ -31,7 +32,8 @@ public class ConnectionResult {
                 msg = "Unknown Error";
         }
 
+        ArchipelagoPlugin.plugin.SetSlotData(event.getSlotData(SlotData.class));
         ArchipelagoPlugin.plugin.DisplayNetworkMessage(msg);
-        ArchipelagoPlugin.plugin.SetConnectionState(event.getResult() == gg.archipelago.client.network.ConnectionResult.Success);
+        ArchipelagoPlugin.plugin.SetConnectionState(event.getResult() == dev.koifysh.archipelago.network.ConnectionResult.Success);
     }
 }

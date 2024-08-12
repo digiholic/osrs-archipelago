@@ -26,10 +26,11 @@ dependencies {
 	})
 
 
-	implementation files("lib/Archipelago.MultiClient.Java-1.12.jar")
 	implementation 'org.apache.httpcomponents.core5:httpcore5:5.2'
 	implementation 'org.java-websocket:Java-WebSocket:1.4.0'
 	implementation 'com.google.code.gson:gson:2.8.6'
+	// https://mvnrepository.com/artifact/dev.koifysh/archipelago-client
+	implementation 'dev.koifysh:archipelago-client:0.1.18'
 
 	components {
 		withModule("org.apache.httpcomponents.core5:httpcore5") {
@@ -44,7 +45,7 @@ dependencies {
 }
 
 group = 'gg.archipelago'
-version = '1.0.2-BETA'
+version = '1.2.0'
 
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'

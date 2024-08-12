@@ -12,8 +12,8 @@ import net.runelite.client.plugins.PluginDescriptor;
 public class  BurnLogsTask extends StateTrackingTask{
 
     private final long _ID;
-    private final LogType _logType;
 
+    private String _name;
     private int _required_level;
     private int _xp_gained;
     private int _previousFiremakingXP;
@@ -21,19 +21,26 @@ public class  BurnLogsTask extends StateTrackingTask{
     private final String logs_burning_message = "The fire catches and the logs begin to burn.";
     public BurnLogsTask(Long ID, LogType logType){
         _ID = ID;
-        _logType = logType;
 
         switch(logType){
             case OAK:
+                _name = "Burn an Oak Log";
                 _required_level = 15;
                 _xp_gained = 60;
                 break;
             case WILLOW:
+                _name = "Burn a Willow Log";
                 _required_level = 30;
                 _xp_gained = 90;
         }
     }
 
+    public BurnLogsTask(Long ID, String name, int required_level, int xp_gained){
+        _ID = ID;
+        _name = name;
+        _required_level = required_level;
+        _xp_gained = xp_gained;
+    }
     @Override
     public void CheckChatMessage(String message) {
         // Check for burning log message
@@ -50,14 +57,7 @@ public class  BurnLogsTask extends StateTrackingTask{
 
     @Override
     public String GetName() {
-        switch (_logType){
-            case OAK:
-                return "Burn an Oak Log";
-            case WILLOW:
-                return "Burn a Willow Log";
-            default:
-                return "Burn an unknown log";
-        }
+        return _name;
     }
 
     @Override

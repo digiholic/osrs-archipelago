@@ -53,17 +53,6 @@ public interface ArchipelagoConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "autoreconnect",
-			name = "Auto Reconnect On Login For",
-			description = "Whenever a character with this name logs in, automatically attempt connecting to the server.",
-			position = 4
-	)
-	default String autoreconnect()
-	{
-		return "";
-	}
-
-	@ConfigItem(
 			keyName = "apMessages",
 			name = "Display AP Messages in Chat",
 			description = "Whether or not to display messages, such as sending and receiving items, in chat.",

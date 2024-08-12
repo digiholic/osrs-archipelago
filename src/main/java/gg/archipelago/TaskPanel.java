@@ -1,7 +1,6 @@
 package gg.archipelago;
 
 import gg.archipelago.Tasks.APTask;
-import gg.archipelago.data.LocationData;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.ColorScheme;
 
@@ -37,7 +36,8 @@ public class TaskPanel extends JPanel {
 
     private class TaskRow extends JPanel{
         private JComponent taskName;
-
+        private boolean isIconReady = false;
+        private final JLabel icon;
         private APTask task;
         public TaskRow(APTask task){
             this.task = task;
@@ -49,10 +49,13 @@ public class TaskPanel extends JPanel {
             setAlignmentX(Component.LEFT_ALIGNMENT);
 
             if (image != null){
-                JLabel icon = new JLabel(new ImageIcon(image));
-                icon.setPreferredSize(new Dimension(32,0));
-                add(icon, BorderLayout.WEST);
+                icon = new JLabel(new ImageIcon(image));
+                isIconReady = true;
+            } else {
+                icon = new JLabel();
             }
+            icon.setPreferredSize(new Dimension(32,0));
+            add(icon, BorderLayout.WEST);
 
             // For the time being, disable the "Can Manually Activate" check and let users click any of the task buttons.
             // The state-based tasks _should_ be working now, but no sense letting a glitch prevent someone's progress
@@ -82,7 +85,15 @@ public class TaskPanel extends JPanel {
             taskName.setForeground(completed ? Color.BLACK : Color.WHITE);
         }
 
-        public void UpdateDisplay(){
+        public void UpdateDisplay()
+        {
+            if (!isIconReady){
+                BufferedImage image = TaskLists.loadedSprites.get(task);
+                if (image != null){
+                    icon.setIcon(new ImageIcon(image));
+                    isIconReady = true;
+                }
+            }
             setVisible(!task.IsCompleted() || displayCompleted.isSelected());
         }
 
