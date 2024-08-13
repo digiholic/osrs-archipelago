@@ -22,8 +22,10 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 
-
-	implementation 'org.apache.httpcomponents.core5:httpcore5:5.2'
+	implementation('org.apache.httpcomponents.core5:httpcore5:5.2'){
+		transitive=false
+	}
+	
 	implementation 'org.java-websocket:Java-WebSocket:1.4.0'
 	implementation 'com.google.code.gson:gson:2.8.6'
 	// https://mvnrepository.com/artifact/dev.koifysh/archipelago-client
