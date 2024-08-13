@@ -1,10 +1,11 @@
 package gg.archipelago;
 
+import dev.koifysh.archipelago.flags.ItemsHandling;
 import gg.archipelago.apEvents.ConnectionResult;
 import gg.archipelago.apEvents.PrintJson;
 import gg.archipelago.apEvents.ReceiveItem;
 import dev.koifysh.archipelago.Client;
-import dev.koifysh.archipelago.ItemFlags;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URISyntaxException;
@@ -24,7 +25,7 @@ public class APClient extends Client {
         setGame("Old School Runescape");
         setPassword(password);
         setName(slotName);
-        setItemsHandlingFlags(ItemFlags.SEND_ITEMS + ItemFlags.SEND_OWN_ITEMS + ItemFlags.SEND_STARTING_INVENTORY);
+        setItemsHandlingFlags(ItemsHandling.SEND_ITEMS + ItemsHandling.SEND_OWN_ITEMS + ItemsHandling.SEND_STARTING_INVENTORY);
 
 
         connectionListener = new ConnectionResult();
