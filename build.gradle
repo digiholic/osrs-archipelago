@@ -24,8 +24,9 @@ dependencies {
 
 	implementation('org.apache.httpcomponents.core5:httpcore5:5.2'){
 		transitive=false
+		exclude group: 'org.junit'
 	}
-	
+
 	implementation 'org.java-websocket:Java-WebSocket:1.4.0'
 	implementation 'com.google.code.gson:gson:2.8.6'
 	// https://mvnrepository.com/artifact/dev.koifysh/archipelago-client
