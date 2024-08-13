@@ -21,9 +21,6 @@ dependencies {
 	testImplementation 'junit:junit:4.12'
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
-	testImplementation(platform('org.junit:junit-bom:5.9.1'){
-		transitive=true
-	})
 
 
 	implementation 'org.apache.httpcomponents.core5:httpcore5:5.2'
