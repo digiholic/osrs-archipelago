@@ -1,5 +1,7 @@
 package gg.archipelago;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dev.koifysh.archipelago.events.ReceiveItemEvent;
 import gg.archipelago.Tasks.APTask;
 import gg.archipelago.data.ItemData;
@@ -31,6 +33,7 @@ import net.runelite.client.util.Text;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,6 +83,8 @@ public class ArchipelagoPlugin extends Plugin
 	private DataPackage dataPackage;
 	private long lastItemReceivedIndex = 0;
 
+	private Gson gson;
+
 	@Provides
 	ArchipelagoConfig provideConfig(ConfigManager configManager)
 	{
@@ -92,6 +97,10 @@ public class ArchipelagoPlugin extends Plugin
 		plugin = this;
 		panel = new ArchipelagoPanel(this, config);
 		apClient = new APClient(this);
+
+		GsonBuilder builder = new GsonBuilder()
+				.setPrettyPrinting();
+		gson = builder.create();
 
 		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
 
@@ -463,15 +472,12 @@ public class ArchipelagoPlugin extends Plugin
 			dataPackageFile.getParentFile().mkdirs();
 			dataPackageFile.createNewFile();
 
-			FileOutputStream fileOut = new FileOutputStream(dataPackageFile);
-			ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+			FileWriter writer = new FileWriter(dataPackageFile);
 
-			objectOut.writeObject(dataPackage);
-
-
-			fileOut.close();
-			objectOut.close();
-
+			String s = gson.toJson(dataPackage);
+			gson.toJson(dataPackage, writer);
+			writer.flush();
+			writer.close();
 		} catch (IOException e) {
 			log.error("unable to save DataPackage.");
 		}
@@ -480,19 +486,13 @@ public class ArchipelagoPlugin extends Plugin
 	private void loadDataPackage() {
 		try {
 			FileInputStream fileInput = new FileInputStream(dataPackageLocation);
-			ObjectInputStream objectInput = new ObjectInputStream(fileInput);
-
-			dataPackage = (DataPackage) objectInput.readObject();
+			dataPackage = gson.fromJson(new InputStreamReader(fileInput, StandardCharsets.UTF_8), DataPackage.class);
 			fileInput.close();
-			objectInput.close();
 
 		} catch (IOException e) {
 			log.info("no dataPackage found creating a new one.");
 			dataPackage = new DataPackage();
 			saveDataPackage();
-		} catch (ClassNotFoundException e) {
-			log.info("Failed to Read Previous datapackage. Creating new one.");
-			dataPackage = new DataPackage();
 		}
 	}
 
