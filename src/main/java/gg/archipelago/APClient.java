@@ -1,5 +1,6 @@
 package gg.archipelago;
 
+import com.google.gson.Gson;
 import dev.koifysh.archipelago.flags.ItemsHandling;
 import gg.archipelago.apEvents.ConnectionResult;
 import gg.archipelago.apEvents.PrintJson;
@@ -7,6 +8,7 @@ import gg.archipelago.apEvents.ReceiveItem;
 import dev.koifysh.archipelago.Client;
 
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.RuneLite;
 
 import java.net.URISyntaxException;
 
@@ -15,7 +17,9 @@ public class APClient extends Client {
 
     private ArchipelagoPlugin plugin;
 
-    public APClient(ArchipelagoPlugin plugin){
+    public APClient(ArchipelagoPlugin plugin, Gson gson){
+        super(RuneLite.RUNELITE_DIR + "/APData/DataPackage.ser", gson);
+        this.setGame("Old School Runescape");
         this.plugin = plugin;
     }
 
@@ -41,11 +45,6 @@ public class APClient extends Client {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-    }
-
-    private APClient() {
-        super();
-        this.setGame("Old School Runescape");
     }
 
     @Override
