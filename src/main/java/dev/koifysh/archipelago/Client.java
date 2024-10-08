@@ -296,7 +296,7 @@ public abstract class Client {
      */
     public void connect(URI address, boolean allowDowngrade) {
         LOGGER.fine("attempting WebSocket connection to " + address.toString());
-        webSocket = new WebSocket(address, this);
+        webSocket = new WebSocket(address, this, gson);
         locationManager.setAPWebSocket(webSocket);
         itemManager.setAPWebSocket(webSocket);
         webSocket.connect(allowDowngrade);

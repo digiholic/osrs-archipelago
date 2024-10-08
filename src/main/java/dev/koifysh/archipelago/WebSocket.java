@@ -37,7 +37,7 @@ class WebSocket extends WebSocketClient {
 
     private final Client client;
 
-    private final Gson gson = new Gson();
+    private final Gson gson;
 
     private boolean authenticated = false;
 
@@ -47,9 +47,10 @@ class WebSocket extends WebSocketClient {
     private static Timer reconnectTimer;
     private boolean downgrade = false;
 
-    public WebSocket(URI serverUri, Client client) {
+    public WebSocket(URI serverUri, Client client, Gson gson) {
         super(serverUri);
         this.client = client;
+        this.gson = gson;
         if (reconnectTimer != null) {
             reconnectTimer.cancel();
         }
@@ -121,7 +122,7 @@ class WebSocket extends WebSocketClient {
 
                         JsonElement slotData = packet.getAsJsonObject().get("slot_data");
 
-                        ConnectionAttemptEvent attemptConnectionEvent = new ConnectionAttemptEvent(connectedPacket.team, connectedPacket.slot, seedName, slotData);
+                        ConnectionAttemptEvent attemptConnectionEvent = new ConnectionAttemptEvent(connectedPacket.team, connectedPacket.slot, seedName, slotData, gson);
                         client.getEventManager().callEvent(attemptConnectionEvent);
 
                         if (!attemptConnectionEvent.isCanceled()) {
@@ -131,7 +132,7 @@ class WebSocket extends WebSocketClient {
                             client.getLocationManager().setMissingLocations(connectedPacket.missingLocations);
                             client.getLocationManager().sendIfChecked(connectedPacket.missingLocations);
 
-                            ConnectionResultEvent connectionResultEvent = new ConnectionResultEvent(ConnectionResult.Success, connectedPacket.team, connectedPacket.slot, seedName, slotData);
+                            ConnectionResultEvent connectionResultEvent = new ConnectionResultEvent(ConnectionResult.Success, connectedPacket.team, connectedPacket.slot, seedName, slotData, gson);
                             client.getEventManager().callEvent(connectionResultEvent);
                         } else {
                             this.close();
@@ -141,7 +142,7 @@ class WebSocket extends WebSocketClient {
                         break;
                     case ConnectionRefused:
                         ConnectionRefusedPacket error = gson.fromJson(cmdList.get(commandNumber), ConnectionRefusedPacket.class);
-                        client.getEventManager().callEvent(new ConnectionResultEvent(error.errors[0]));
+                        client.getEventManager().callEvent(new ConnectionResultEvent(error.errors[0], gson));
                         break;
                     case DataPackage:
                         JsonElement data = packet.getAsJsonObject().get("data");
@@ -209,11 +210,11 @@ class WebSocket extends WebSocketClient {
                         break;
                     case Retrieved:
                         RetrievedPacket retrievedPacket = gson.fromJson(packet, RetrievedPacket.class);
-                        client.getEventManager().callEvent(new RetrievedEvent(retrievedPacket.keys, packet.getAsJsonObject().get("keys").getAsJsonObject(), retrievedPacket.requestID));
+                        client.getEventManager().callEvent(new RetrievedEvent(retrievedPacket.keys, packet.getAsJsonObject().get("keys").getAsJsonObject(), retrievedPacket.requestID, gson));
                         break;
                     case SetReply:
                         SetReplyPacket setReplyPacket = gson.fromJson(packet, SetReplyPacket.class);
-                        client.getEventManager().callEvent(new SetReplyEvent(setReplyPacket.key, setReplyPacket.value, setReplyPacket.original_Value, packet.getAsJsonObject().get("value"), setReplyPacket.requestID));
+                        client.getEventManager().callEvent(new SetReplyEvent(setReplyPacket.key, setReplyPacket.value, setReplyPacket.original_Value, packet.getAsJsonObject().get("value"), setReplyPacket.requestID, gson));
                         break;
                     case InvalidPacket:
                         InvalidPacket invalidPacket = gson.fromJson(packet, InvalidPacket.class);

@@ -12,11 +12,14 @@ public class ConnectionAttemptEvent implements Event {
     private final String seedName;
     private final JsonElement slot_data;
 
-    public ConnectionAttemptEvent(int team, int slot, String seedName, JsonElement slotData) {
+    private final Gson gson;
+
+    public ConnectionAttemptEvent(int team, int slot, String seedName, JsonElement slotData, Gson gson) {
         this.team = team;
         this.slot = slot;
         this.seedName = seedName;
         this.slot_data = slotData;
+        this.gson = gson;
     }
 
     public void setCanceled(boolean canceled) {
@@ -40,7 +43,7 @@ public class ConnectionAttemptEvent implements Event {
     }
 
     public <T> T getSlotData(Class<T> classOfT) {
-        Object data = new Gson().fromJson(slot_data,classOfT);
+        Object data = gson.fromJson(slot_data,classOfT);
         return Primitives.wrap(classOfT).cast(data);
     }
 

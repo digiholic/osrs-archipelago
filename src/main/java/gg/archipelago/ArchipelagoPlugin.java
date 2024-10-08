@@ -1,7 +1,6 @@
 package gg.archipelago;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import dev.koifysh.archipelago.events.ReceiveItemEvent;
 import gg.archipelago.Tasks.APTask;
 import gg.archipelago.data.ItemData;

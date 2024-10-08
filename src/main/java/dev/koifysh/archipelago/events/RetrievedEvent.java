@@ -14,10 +14,13 @@ public class RetrievedEvent implements Event {
     private final int requestID;
     private final JsonObject jsonValue;
 
-    public RetrievedEvent(HashMap<String, Object> keys, JsonObject jsonValue, int requestID) {
+    private final Gson gson;
+
+    public RetrievedEvent(HashMap<String, Object> keys, JsonObject jsonValue, int requestID, Gson gson) {
         data = keys;
         this.jsonValue = jsonValue;
         this.requestID = requestID;
+        this.gson = gson;
     }
 
     public int getInt(String key) {
@@ -49,12 +52,12 @@ public class RetrievedEvent implements Event {
     }
 
     public <T> T getValueAsObject(String key, Class<T> classOfT) {
-        Object value = new Gson().fromJson(jsonValue.get(key), classOfT);
+        Object value = gson.fromJson(jsonValue.get(key), classOfT);
         return Primitives.wrap(classOfT).cast(value);
     }
 
     public <T> T getValueAsObject(String key, Type typeOfT) {
-        return jsonValue == null ? null : new Gson().fromJson(new JsonTreeReader(jsonValue.get(key)), typeOfT);
+        return jsonValue == null ? null : gson.fromJson(new JsonTreeReader(jsonValue.get(key)), typeOfT);
     }
 
     public int getRequestID() {
