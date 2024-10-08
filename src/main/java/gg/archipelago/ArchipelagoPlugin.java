@@ -57,6 +57,8 @@ public class ArchipelagoPlugin extends Plugin
 	private SpriteManager spriteManager;
 	@Inject
 	private ConfigManager configManager;
+	@Inject
+	private Gson gson;
 
 	public boolean loggedIn;
 	public boolean connected;
@@ -83,8 +85,6 @@ public class ArchipelagoPlugin extends Plugin
 	private DataPackage dataPackage;
 	private long lastItemReceivedIndex = 0;
 
-	private Gson gson;
-
 	@Provides
 	ArchipelagoConfig provideConfig(ConfigManager configManager)
 	{
@@ -97,10 +97,6 @@ public class ArchipelagoPlugin extends Plugin
 		plugin = this;
 		panel = new ArchipelagoPanel(this, config);
 		apClient = new APClient(this);
-
-		GsonBuilder builder = new GsonBuilder()
-				.setPrettyPrinting();
-		gson = builder.create();
 
 		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
 
