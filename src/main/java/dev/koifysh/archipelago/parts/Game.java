@@ -2,11 +2,10 @@ package dev.koifysh.archipelago.parts;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Game implements Serializable {
+public class Game {
 
 
 
