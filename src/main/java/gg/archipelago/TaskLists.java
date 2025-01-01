@@ -7,6 +7,7 @@ import net.runelite.client.game.SpriteManager;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -19,6 +20,9 @@ public class TaskLists {
     public static final long base_id = 0x070000;
     public static int taskCount = 0;
     private static final String repository_address = "https://raw.githubusercontent.com/digiholic/osrs-archipelago-logic/";
+
+    private static final boolean DEBUG = false;
+    private static final String debugDataSource = "C:\\Users\\digiholic\\git\\osrs-archipelago\\src\\main\\resources\\gg\\archipelago\\tasks.csv";
 
     private static List<APTask> allTasksCached = new ArrayList<>();
     public static List<APTask> GetAllTasks(String data_version){
@@ -64,24 +68,17 @@ public class TaskLists {
         String taggedRepoAddress = repository_address+dataVersion;
         List<LocationData> tasks = new ArrayList<>();
         try {
-            URL repo = new URL(taggedRepoAddress+"/locations.csv");
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(repo.openStream()));
+            BufferedReader in = null;
+            if (DEBUG){
+                FileReader fileIn = new FileReader(debugDataSource);
+                in = new BufferedReader(fileIn);
+            } else {
+                URL repo = new URL(taggedRepoAddress+"/locations.csv");
+                in = new BufferedReader(
+                        new InputStreamReader(repo.openStream()));
 
-            String inputLine;
-            while ((inputLine = in.readLine()) != null){
-                List<String> row = new ArrayList<>();
-                // Gnarly regex to capture CSV pattern without splitting on commas in quotes
-                Matcher m = Pattern.compile("(?:,|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*|(?:\\n|$))")
-                        .matcher(inputLine);
-                while (m.find()){
-                    String match = m.group();
-                    if (match.startsWith(",")) match = match.substring(1);
-                    match = match.replace("\"","");
-                    row.add(match);
-                }
-                tasks.add(new LocationData(row));
             }
+            parse_csv_file(tasks, in);
             in.close();
         }
         catch (IOException e) {
@@ -89,6 +86,26 @@ public class TaskLists {
             return null;
         }
         return tasks;
+    }
+
+    private static void parse_csv_file(List<LocationData> tasks, BufferedReader in) throws IOException {
+        String inputLine;
+        while ((inputLine = in.readLine()) != null){
+            // If the line is the optional header, skip it
+            if (inputLine.startsWith("Location Name")) continue;
+
+            List<String> row = new ArrayList<>();
+            // Gnarly regex to capture CSV pattern without splitting on commas in quotes
+            Matcher m = Pattern.compile("(?:,|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*|(?:\\n|$))")
+                    .matcher(inputLine);
+            while (m.find()){
+                String match = m.group();
+                if (match.startsWith(",")) match = match.substring(1);
+                match = match.replace("\"","");
+                row.add(match);
+            }
+            tasks.add(new LocationData(row));
+        }
     }
 
 
