@@ -78,9 +78,10 @@ public abstract class APTask {
                     case "Open a Simple Lockbox": return new OpenLockboxTask(locationId, ItemID.SIMPLE_LOCKBOX);
                     case "Open an Elaborate Lockbox": return new OpenLockboxTask(locationId, ItemID.ELABORATE_LOCKBOX);
                     case "Open an Ornate Lockbox": return new OpenLockboxTask(locationId, ItemID.ORNATE_LOCKBOX);
+                    default: return new ManualTask(locationId, row.getLocationName());
                 }
         }
-        return null;
+
     }
 
     // The Enum just doesn't exist at runtime. We have to make this map

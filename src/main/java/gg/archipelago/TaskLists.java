@@ -21,7 +21,7 @@ public class TaskLists {
     public static int taskCount = 0;
     private static final String repository_address = "https://raw.githubusercontent.com/digiholic/osrs-archipelago-logic/";
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final String debugDataSource = "C:\\Users\\digiholic\\git\\osrs-archipelago\\src\\main\\resources\\gg\\archipelago\\tasks.csv";
 
     private static List<APTask> allTasksCached = new ArrayList<>();

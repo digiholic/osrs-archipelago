@@ -12,6 +12,8 @@ import javax.swing.*;
 import dev.koifysh.archipelago.ClientStatus;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
+import net.runelite.api.coords.LocalPoint;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
@@ -59,7 +61,7 @@ public class ArchipelagoPlugin extends Plugin
 	@Inject
 	private Gson gson;
 
-	public boolean loggedIn;
+	public boolean currentlyLoggedIn;
 	public boolean connected;
 
 	protected List<APTask> activeTasks = new ArrayList<>();
@@ -146,14 +148,16 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
 		{
-			loggedIn = true;
+			dataPackageLocation = RuneLite.RUNELITE_DIR + "/APData/" + client.getAccountHash() + ".save";
+			loadDataPackage();
+			currentlyLoggedIn = true;
 			justLoggedIn = true;
-			if (!apClient.isConnected()){
-				ConnectToAPServer();
+			if (!apClient.isConnected() && !dataPackage.slotName.isEmpty()) {
+				ConnectToAPServer(dataPackage.slotName);
 			}
 		}
 		else if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN){
-			loggedIn = false;
+			currentlyLoggedIn = false;
 			if (connected){
 				connected = false;
 				apClient.disconnect();
@@ -171,19 +175,9 @@ public class ArchipelagoPlugin extends Plugin
 	public void onClientTick(ClientTick t)
 	{
 		if (justLoggedIn && client.getLocalPlayer().getName() != null){
-			//If we've just logged in with a character that's stored as our autoreconnect, connect immediately.
-			if (!connected && dataPackage.characterHash == client.getAccountHash()){
-				log.info("Detected log in of autoreconnect, connecting to AP server");
-			}
-			//If there is no autoreconnect set, and we're already connected to the AP server, set autoreconnect
-			else if (dataPackage.characterHash == 0 && connected){
-				dataPackage.characterHash = client.getAccountHash();
-				log.info("Detected first log in or connection, setting autoreconnect");
-				saveDataPackage();
-			}
-			//If there _is_ an autoreconnect, we are currently connected, and the player we log in isn't the reconnect
-			//IMMEDIATELY disconnect, do not pass go, do not collect $200
-			else if (connected && dataPackage.characterHash != client.getAccountHash()){
+			// If we just logged in, and the data package's stored seed doesn't match the one we're connected to,
+			// Disconnect immediately before checks get sent
+			if (connected && !dataPackage.seed.equals(apClient.getRoomInfo().seedName)){
 				apClient.disconnect();
 				log.info("Detected log in of a non-auto-reconnect player. Disconnecting from server to avoid mixing checks");
 				DisplayNetworkMessage("This Archipelago Slot is not associated with this Character. " +
@@ -192,7 +186,7 @@ public class ArchipelagoPlugin extends Plugin
 			}
 			justLoggedIn = false;
 		}
-		if (loggedIn && connected){
+		if (currentlyLoggedIn && connected){
 			checkStatus();
 			SendChecks();
 
@@ -255,6 +249,38 @@ public class ArchipelagoPlugin extends Plugin
 
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event){
+		/*
+		int z = client.getPlane();
+
+		WorldPoint wp = client.getLocalPlayer().getWorldLocation();
+		LocalPoint lp = client.getLocalPlayer().getLocalLocation();
+
+		int p0 = event.getParam0();
+		int p1 = event.getParam1();
+		int l0 = lp.getSceneX();
+		int l1 = lp.getSceneY();
+
+		WorldPoint ewp = WorldPoint.fromLocal(client.getTopLevelWorldView(), p0, p1, 0);
+		WorldPoint ewp2 = WorldPoint.fromLocalInstance(client, new LocalPoint(p0, p1));
+
+		LocalPoint elp = LocalPoint.fromScene(p0, p1, client.getTopLevelWorldView());
+		Tile tile = client.getSelectedSceneTile();
+		Point ssp = tile.getSceneLocation();
+		WorldPoint swp = tile.getWorldLocation();
+		LocalPoint slp = tile.getLocalLocation();
+
+		int tileX = wp.getX();
+		int tileY = wp.getY();
+		final int chunkTileX = tileX % 8;
+		final int chunkTileY = tileY % 8;
+		//int[][][] instanceTemplateChunks = client.getInstanceTemplateChunks();
+
+		//LocalPoint localPoint = client.getLocalPlayer().getLocalLocation();
+		//int chunkData = instanceTemplateChunks[z][localPoint.getSceneX() / 8][localPoint.getSceneY() / 8];
+
+		//tileX = (chunkData >> 14 & 0x3FF) * 8 + chunkTileX;
+		//tileY = (chunkData >> 3 & 0x7FF) * 8 + chunkTileY;
+		*/
 		if (connected){
 			if (event.getMenuOption().equals("Wear") || event.getMenuOption().equals("Wield")){
 				//If we are equipping an item
@@ -266,6 +292,8 @@ public class ArchipelagoPlugin extends Plugin
 				}
 			}
 		}
+		LocalPoint point = client.getLocalDestinationLocation();
+		System.out.println(point);
 		for (APTask task : activeTasks){
 			task.OnMenuOption(event);
 		}
@@ -323,10 +351,8 @@ public class ArchipelagoPlugin extends Plugin
 	public void SetConnectionState(boolean newConnectionState){
 		// If we've just reconnected, check all our tasks and items
 		if (newConnectionState){
-
-			dataPackageLocation = RuneLite.RUNELITE_DIR + "/APData/" + apClient.getRoomInfo().seedName + "_" + apClient.getSlot() + ".save";
-			loadDataPackage();
-
+			dataPackage.slotName = apClient.getMyName();
+			dataPackage.seed = apClient.getRoomInfo().seedName;
 			activeTasks = new ArrayList<>();
 			for(long id : apClient.getLocationManager().getCheckedLocations()){
 				APTask task = TaskLists.GetTaskByID(id);
@@ -335,12 +361,14 @@ public class ArchipelagoPlugin extends Plugin
 					activeTasks.add(task);
 				}
 			}
+
 			for(long id : apClient.getLocationManager().getMissingLocations()){
 				APTask task = TaskLists.GetTaskByID(id);
 				if (task != null){
 					activeTasks.add(task);
 				}
 			}
+
 			activeTasks = activeTasks.stream().sorted(Comparator.comparing(APTask::GetID)).collect(Collectors.toList());
 		}
 
@@ -348,9 +376,10 @@ public class ArchipelagoPlugin extends Plugin
 			panel.ConnectionStateChanged(newConnectionState);
 		connected = newConnectionState;
 
-		if (dataPackage.characterHash == 0 && connected && loggedIn){
-			dataPackage.characterHash = client.getAccountHash();
-			log.info("Detected first log in or connection, setting autoreconnect");
+		if (dataPackage != null && dataPackage.slotName.isEmpty() && connected && currentlyLoggedIn){
+			dataPackage.slotName = apClient.getMyName();
+			dataPackage.seed = apClient.getRoomInfo().seedName;;
+			log.info("Detected first log in or connection, storing data");
 			saveDataPackage();
 		}
 	}
@@ -393,11 +422,15 @@ public class ArchipelagoPlugin extends Plugin
 		}
 	}
 
-	public void ConnectToAPServer()
+	public void ConnectToAPServer(){
+		ConnectToAPServer(config.slotname());
+	}
+
+	public void ConnectToAPServer(String slotName)
 	{
 		String uri = config.address()+":"+config.port();
 		log.info(uri);
-		apClient.newConnection(this, uri, config.slotname(), config.password());
+		apClient.newConnection(this, uri, slotName, config.password());
 	}
 
 	private String extractCommand(String message)
