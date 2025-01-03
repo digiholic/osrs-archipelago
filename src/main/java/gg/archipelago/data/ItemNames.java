@@ -13,7 +13,7 @@ public class ItemNames {
     public static final String South_Of_Varrock = "Area: South of Varrock";
     public static final String Central_Varrock = "Area: Central Varrock";
     public static final String Varrock_Palace = "Area: Varrock Palace";
-    public static final String East_Of_Varrock = "Area: East of Varrock";
+    public static final String Lumberyard = "Area: Lumberyard";
     public static final String West_Varrock = "Area: West Varrock";
     public static final String Edgeville = "Area: Edgeville";
     public static final String Barbarian_Village = "Area: Barbarian Village";

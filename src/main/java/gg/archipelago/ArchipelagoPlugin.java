@@ -29,6 +29,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 
@@ -60,6 +61,10 @@ public class ArchipelagoPlugin extends Plugin
 	private ConfigManager configManager;
 	@Inject
 	private Gson gson;
+	@Inject
+	private OverlayManager overlayManager;
+	@Inject
+	private IllegalRegionOverlay overlay;
 
 	public boolean currentlyLoggedIn;
 	public boolean connected;
@@ -112,6 +117,7 @@ public class ArchipelagoPlugin extends Plugin
 
 		loadSprites();
 		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
+		overlayManager.add(overlay);
 	}
 
 	@Override
@@ -124,6 +130,7 @@ public class ArchipelagoPlugin extends Plugin
 			apClient.disconnect();
 		}
 		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
+		overlayManager.remove(overlay);
 	}
 
 	@Subscribe
@@ -249,38 +256,6 @@ public class ArchipelagoPlugin extends Plugin
 
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event){
-		/*
-		int z = client.getPlane();
-
-		WorldPoint wp = client.getLocalPlayer().getWorldLocation();
-		LocalPoint lp = client.getLocalPlayer().getLocalLocation();
-
-		int p0 = event.getParam0();
-		int p1 = event.getParam1();
-		int l0 = lp.getSceneX();
-		int l1 = lp.getSceneY();
-
-		WorldPoint ewp = WorldPoint.fromLocal(client.getTopLevelWorldView(), p0, p1, 0);
-		WorldPoint ewp2 = WorldPoint.fromLocalInstance(client, new LocalPoint(p0, p1));
-
-		LocalPoint elp = LocalPoint.fromScene(p0, p1, client.getTopLevelWorldView());
-		Tile tile = client.getSelectedSceneTile();
-		Point ssp = tile.getSceneLocation();
-		WorldPoint swp = tile.getWorldLocation();
-		LocalPoint slp = tile.getLocalLocation();
-
-		int tileX = wp.getX();
-		int tileY = wp.getY();
-		final int chunkTileX = tileX % 8;
-		final int chunkTileY = tileY % 8;
-		//int[][][] instanceTemplateChunks = client.getInstanceTemplateChunks();
-
-		//LocalPoint localPoint = client.getLocalPlayer().getLocalLocation();
-		//int chunkData = instanceTemplateChunks[z][localPoint.getSceneX() / 8][localPoint.getSceneY() / 8];
-
-		//tileX = (chunkData >> 14 & 0x3FF) * 8 + chunkTileX;
-		//tileY = (chunkData >> 3 & 0x7FF) * 8 + chunkTileY;
-		*/
 		if (connected){
 			if (event.getMenuOption().equals("Wear") || event.getMenuOption().equals("Wield")){
 				//If we are equipping an item
@@ -476,6 +451,10 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	public void addCollectedItem(ItemData item){
+		if (item == null){
+			log.warn("Null Item received");
+			return;
+		}
 		log.info("Received item: "+item.name);
 		collectedItems.add(item);
 		panel.UpdateItems();
@@ -540,7 +519,7 @@ public class ArchipelagoPlugin extends Plugin
 		clientThread.invoke(() -> TaskLists.LoadImages(spriteManager));
 		clientThread.invoke(() -> ItemHandler.LoadImages(spriteManager));
 	}
-	
+
 	/////////// SPRITES ///////////
 	private void loadSprites()
 	{
