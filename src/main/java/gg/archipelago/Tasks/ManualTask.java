@@ -38,9 +38,7 @@ public class ManualTask extends APTask {
     public void SetCompleted() { _isCompleted = true; }
 
     @Override
-    public int GetSpriteID() {
-        return SpriteID.QUESTS_PAGE_ICON_PURPLE_KOUREND;
-    }
+    public int GetSpriteID() { return SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET; }
 
     @Override
     public boolean ShouldDisplayPanel() {

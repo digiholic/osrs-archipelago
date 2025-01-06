@@ -181,6 +181,8 @@ public class ArchipelagoPlugin extends Plugin
 	@Subscribe
 	public void onClientTick(ClientTick t)
 	{
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", client.getSelectedWidget().getName(), null);
+
 		if (justLoggedIn && client.getLocalPlayer().getName() != null){
 			// If we just logged in, and the data package's stored seed doesn't match the one we're connected to,
 			// Disconnect immediately before checks get sent
@@ -256,6 +258,11 @@ public class ArchipelagoPlugin extends Plugin
 
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event){
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuOption()+" on "+event.getMenuTarget(), null);
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuAction()+" widget: "+event.getWidget().getName(), null);
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Item ID: "+event.getItemId()+" "+event.isItemOp(), null);
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Param0: "+event.getParam0()+" Param1: "+event.getParam1(), null);
+
 		if (connected){
 			if (event.getMenuOption().equals("Wear") || event.getMenuOption().equals("Wield")){
 				//If we are equipping an item
@@ -266,9 +273,34 @@ public class ArchipelagoPlugin extends Plugin
 					}
 				}
 			}
+
+			if (event.getWidget() != null){
+				String widgetName = Text.removeTags(event.getWidget().getName());
+
+				//Disallow teleports to locked areas
+				if (widgetName.equalsIgnoreCase("Varrock Teleport")){
+					if (getCollectedItems().stream().noneMatch(it -> it.name.equals("Area: Central Varrock"))){
+						event.consume();
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "You have not unlocked that map region yet.", null);
+					}
+				}
+
+				if (widgetName.equalsIgnoreCase("Lumbridge Teleport") || widgetName.equalsIgnoreCase("Lumbridge Home Teleport")){
+					if (getCollectedItems().stream().noneMatch(it -> it.name.equals("Area: Lumbridge"))){
+						event.consume();
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "You have not unlocked that map region yet.", null);
+					}
+				}
+
+				if (widgetName.equalsIgnoreCase("Falador Teleport")){
+					if (getCollectedItems().stream().noneMatch(it -> it.name.equals("Area: Falador"))){
+						event.consume();
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "You have not unlocked that map region yet.", null);
+					}
+				}
+			}
 		}
-		LocalPoint point = client.getLocalDestinationLocation();
-		System.out.println(point);
+
 		for (APTask task : activeTasks){
 			task.OnMenuOption(event);
 		}

@@ -76,6 +76,11 @@ public class  BurnLogsTask extends StateTrackingTask{
     }
 
     @Override
+    boolean CheckResetCondition(Client client) {
+        return true;
+    }
+
+    @Override
     boolean CheckInitialStateOK(Client client) {
         // Check for Firemaking level requirement
         if (!(client.getRealSkillLevel(Skill.FIREMAKING) >= _required_level)) return false;

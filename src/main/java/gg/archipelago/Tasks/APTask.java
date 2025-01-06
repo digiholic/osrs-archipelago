@@ -49,8 +49,7 @@ public abstract class APTask {
                         Integer.parseInt(args.get(2)));
             case SPELL:
                 return new CastSpellTask(locationId, row.getLocationName(),
-                        Integer.parseInt(args.get(0)),
-                        Integer.parseInt(args.get(1)));
+                        args.get(0));
             case CRAFT_RUNES:
                 return new CraftRunesTask(locationId, row.getLocationName(),
                         Integer.parseInt(args.get(0)),

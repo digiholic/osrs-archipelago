@@ -72,6 +72,12 @@ public class CraftRunesTask extends StateTrackingTask{
     public int GetSpriteID() { return SpriteID.SKILL_RUNECRAFT; }
     @Override
     public boolean ShouldDisplayPanel() { return true; }
+
+    @Override
+    boolean CheckResetCondition(Client client) {
+        return true;
+    }
+
     @Override
     boolean CheckInitialStateOK(Client client) {
         if (!(client.getRealSkillLevel(Skill.RUNECRAFT) >= _required_level)){

@@ -62,6 +62,11 @@ public class OpenLockboxTask extends StateTrackingTask{
     }
 
     @Override
+    boolean CheckResetCondition(Client client) {
+        return true;
+    }
+
+    @Override
     boolean CheckInitialStateOK(Client client) {
         _previousLockboxCount = 0;
         ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);

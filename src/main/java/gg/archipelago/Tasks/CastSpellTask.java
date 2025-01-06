@@ -1,52 +1,31 @@
 package gg.archipelago.Tasks;
 
-import net.runelite.api.Client;
-import net.runelite.api.NPC;
-import net.runelite.api.Skill;
-import net.runelite.api.SpriteID;
+import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.*;
 import net.runelite.api.events.MenuOptionClicked;
+import net.runelite.client.util.Text;
 
+@Slf4j
 public class CastSpellTask extends StateTrackingTask{
 
     private final long _ID;
 
     private String _name;
-    private int _required_level;
-    private int _xp_gained;
+    private String _spell_name;
+
     private int _previousMagicXP;
+    private boolean shouldCancel = false;
 
-    public CastSpellTask(Long ID, SpellToCast spell){
+    public CastSpellTask(Long ID, String spell){
         _ID = ID;
-
-        switch(spell){
-            case BONES_TO_BANANAS:
-                _name = "Cast Bones to Bananas";
-                _required_level = 15;
-                _xp_gained = 25;
-                break;
-            case VARROCK_TELE:
-                _name = "Teleport to Varrock";
-                _required_level = 25;
-                _xp_gained = 35;
-                break;
-            case LUMBRIDGE_TELE:
-                _name = "Teleport to Lumbridge";
-                _required_level = 31;
-                _xp_gained = 41;
-                break;
-            case FALADOR_TELE:
-                _name = "Teleport to Falador";
-                _required_level = 37;
-                _xp_gained = 48;
-                break;
-        }
+        _name = "Cast "+spell;
+        _spell_name = spell;
     }
 
-    public CastSpellTask(Long ID, String name, int required_level, int xp_gained){
+    public CastSpellTask(Long ID, String name, String spell){
         _ID = ID;
         _name = name;
-        _required_level = required_level;
-        _xp_gained = xp_gained;
+        _spell_name = spell;
     }
 
     @Override
@@ -57,9 +36,25 @@ public class CastSpellTask extends StateTrackingTask{
     public void CheckPlayerStatus(Client client) { }
     @Override
     public void OnMenuOption(MenuOptionClicked event) {
-        // Check for cast action
-        if (event.getMenuOption().equalsIgnoreCase("Cast")){
-            checkTriggered = true;
+        if (checkTriggered){
+            MenuAction action = event.getMenuAction();
+            // If we're pending a check and we do any menu options that aren't "Targetting a spell", un-set the trigger next tick
+            if (action != MenuAction.WIDGET_TARGET &&
+                action != MenuAction.WIDGET_TARGET_ON_GAME_OBJECT &&
+                action != MenuAction.WIDGET_TARGET_ON_NPC &&
+                action != MenuAction.WIDGET_TARGET_ON_GROUND_ITEM &&
+                action != MenuAction.WIDGET_TARGET_ON_PLAYER &&
+                action != MenuAction.WIDGET_TARGET_ON_WIDGET) {
+                shouldCancel = true;
+            }
+        }
+        // Spells always have a widget set
+        if (event.getWidget() != null){
+            String widgetName = Text.removeTags(event.getWidget().getName());
+            if (widgetName.equalsIgnoreCase(_spell_name)){
+                checkTriggered = true;
+                shouldCancel = false;
+            }
         }
     }
 
@@ -84,23 +79,19 @@ public class CastSpellTask extends StateTrackingTask{
     }
 
     @Override
+    boolean CheckResetCondition(Client client) {
+        return shouldCancel;
+    }
+
+    @Override
     boolean CheckInitialStateOK(Client client) {
-        // Check to make sure you have the level for the spell
-        if (!(client.getRealSkillLevel(Skill.MAGIC) >= _required_level)) return false;
         _previousMagicXP = client.getSkillExperience(Skill.MAGIC);
         return true;
     }
 
     @Override
     boolean CheckPostTriggerStateOK(Client client) {
-        // Check if you've gained enough XP for the spell after casting
-        return client.getSkillExperience(Skill.MAGIC) == _previousMagicXP + _xp_gained;
-    }
-
-    public enum SpellToCast{
-        BONES_TO_BANANAS,
-        VARROCK_TELE,
-        LUMBRIDGE_TELE,
-        FALADOR_TELE
+        //If you've gained magic XP and nothing has broken the condition yet, you've done it.
+        return client.getSkillExperience(Skill.MAGIC) > _previousMagicXP;
     }
 }
