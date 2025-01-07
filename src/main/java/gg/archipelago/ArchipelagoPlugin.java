@@ -261,10 +261,10 @@ public class ArchipelagoPlugin extends Plugin
 
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event){
-		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuOption()+" on "+event.getMenuTarget(), null);
-		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuAction()+" widget: "+event.getWidget().getName(), null);
-		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Item ID: "+event.getItemId()+" "+event.isItemOp(), null);
-		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Param0: "+event.getParam0()+" Param1: "+event.getParam1(), null);
+		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuOption()+" on "+event.getMenuTarget(), null);
+		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuAction()+" widget: "+event.getWidget(), null);
+		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Item ID: "+event.getItemId()+" "+event.isItemOp(), null);
+		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Param0: "+event.getParam0()+" Param1: "+event.getParam1(), null);
 
 		if (connected){
 			if (event.getMenuOption().equals("Wear") || event.getMenuOption().equals("Wield")){
