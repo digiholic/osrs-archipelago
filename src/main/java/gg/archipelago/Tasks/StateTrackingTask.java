@@ -17,7 +17,6 @@ public abstract class StateTrackingTask extends APTask {
     //One a triggering event (casting a spell, using an item, etc.) is fired, this is set to true, to check the next tick's state
 
     protected boolean checkTriggered = false;
-    protected boolean isOpen = false;
 
     @Override
     public void OnGameTick(Client client){

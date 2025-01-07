@@ -153,7 +153,10 @@ public class ArchipelagoPlugin extends Plugin
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Changed to State: "+gameStateChanged.getGameState().name(), null);
+		log.debug("Changed to State: "+gameStateChanged.getGameState().name());
+
+		if (gameStateChanged.getGameState() == GameState.LOGGED_IN && !currentlyLoggedIn)
 		{
 			dataPackageLocation = RuneLite.RUNELITE_DIR + "/APData/" + client.getAccountHash() + ".save";
 			loadDataPackage();
@@ -269,7 +272,7 @@ public class ArchipelagoPlugin extends Plugin
 				if (event.getItemId() != -1){
 					if (!IsItemAllowed((event.getItemId()))){
 						event.consume();
-						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "You have not unlocked the ability to equip this item", null);
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "<img=" + modIconIndex + ">"+"You have not unlocked the ability to equip this item", null);
 					}
 				}
 			}
@@ -281,21 +284,21 @@ public class ArchipelagoPlugin extends Plugin
 				if (widgetName.equalsIgnoreCase("Varrock Teleport")){
 					if (getCollectedItems().stream().noneMatch(it -> it.name.equals("Area: Central Varrock"))){
 						event.consume();
-						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "You have not unlocked that map region yet.", null);
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "<img=" + modIconIndex + ">"+"You have not unlocked that map region yet.", null);
 					}
 				}
 
 				if (widgetName.equalsIgnoreCase("Lumbridge Teleport") || widgetName.equalsIgnoreCase("Lumbridge Home Teleport")){
 					if (getCollectedItems().stream().noneMatch(it -> it.name.equals("Area: Lumbridge"))){
 						event.consume();
-						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "You have not unlocked that map region yet.", null);
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "<img=" + modIconIndex + ">"+"You have not unlocked that map region yet.", null);
 					}
 				}
 
 				if (widgetName.equalsIgnoreCase("Falador Teleport")){
 					if (getCollectedItems().stream().noneMatch(it -> it.name.equals("Area: Falador"))){
 						event.consume();
-						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "You have not unlocked that map region yet.", null);
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "<img=" + modIconIndex + ">"+"You have not unlocked that map region yet.", null);
 					}
 				}
 			}
@@ -579,7 +582,6 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		try
 		{
-			log.debug("Loading: {}", "chat_icon.png");
 			BufferedImage image = ImageUtil.loadImageResource(this.getClass(), "chat_icon.png");
 			return ImageUtil.getImageIndexedSprite(image, client);
 		}

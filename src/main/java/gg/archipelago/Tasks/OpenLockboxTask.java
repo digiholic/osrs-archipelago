@@ -1,12 +1,13 @@
 package gg.archipelago.Tasks;
 
+import gg.archipelago.Tasks.StateTrackingTask;
 import net.runelite.api.*;
 import net.runelite.api.events.MenuOptionClicked;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-public class OpenLockboxTask extends StateTrackingTask{
+public class OpenLockboxTask extends StateTrackingTask {
 
     private final long _ID;
     private final int _lockboxItemID;

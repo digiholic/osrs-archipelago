@@ -1,12 +1,13 @@
 package gg.archipelago.Tasks;
 
+import gg.archipelago.Tasks.APTask;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.Skill;
 import net.runelite.api.SpriteID;
 import net.runelite.api.events.MenuOptionClicked;
 
-public class EdgevilleMonasteryTask extends APTask{
+public class EdgevilleMonasteryTask extends APTask {
     private final long _ID;
     private boolean _isCompleted;
 

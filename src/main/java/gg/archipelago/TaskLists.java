@@ -1,6 +1,8 @@
 package gg.archipelago;
 
 import gg.archipelago.Tasks.*;
+import gg.archipelago.Tasks.EdgevilleMonasteryTask;
+import gg.archipelago.Tasks.OpenLockboxTask;
 import gg.archipelago.data.LocationData;
 import net.runelite.api.*;
 import net.runelite.client.game.SpriteManager;
@@ -10,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;

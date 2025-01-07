@@ -35,6 +35,8 @@ public abstract class APTask {
     private static final String XP = "TotalXPTask";
     private static final String COMBAT = "CombatLevelTask";
     private static final String TOTAL = "TotalLevelTask";
+    private static final String STAND = "StandInPositionTask";
+
     public static APTask CreateFromLocationCSVRow(LocationData row, long locationId){
         List<String> args = row.getPluginTaskArgs();
         switch(row.getPluginTaskType()){
@@ -70,6 +72,10 @@ public abstract class APTask {
                 return new CombatLevelTask(locationId, Integer.parseInt(args.get(0)));
             case TOTAL:
                 return new TotalLevelTask(locationId, Integer.parseInt(args.get(0)));
+            case STAND:
+                return new StandInPositionTask(locationId, row.getLocationName(),
+                        Integer.parseInt(args.get(0)), Integer.parseInt(args.get(1)),
+                        Integer.parseInt(args.get(2)), Integer.parseInt(args.get(3)));
             default:
                 // If it's nothing above, it's a unique task we have to check by name.
                 switch(row.getLocationName()){
