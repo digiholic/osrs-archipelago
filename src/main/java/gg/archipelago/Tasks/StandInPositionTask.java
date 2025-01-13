@@ -12,20 +12,33 @@ public class StandInPositionTask extends APTask {
     private final String _name;
     private boolean _isCompleted;
     private final int _spriteID;
-    private final WorldPoint _locationPoint;
+    private final WorldPoint[] _locationPoints;
 
     public StandInPositionTask(long ID, String name, int spriteID, int x, int y, int plane){
         _ID = ID;
         _name = name;
         _spriteID = spriteID;
-        _locationPoint = new WorldPoint(x, y, plane);
+        _locationPoints = new WorldPoint[] { new WorldPoint(x, y, plane) };
+    }
+
+    public StandInPositionTask(long ID, String name, int spriteID, int[] positions){
+        _ID = ID;
+        _name = name;
+        _spriteID = spriteID;
+        _locationPoints = new WorldPoint[positions.length / 3];
+        for (int i=0; i < positions.length; i = i+3){
+            _locationPoints[i / 3] = new WorldPoint(positions[i], positions[i+1], positions[i+2]);
+        }
     }
 
     @Override
     public void OnGameTick(Client client) {
         WorldPoint point = client.getLocalPlayer().getWorldLocation();
-        if (point.equals(_locationPoint)){
-            SetCompleted();
+        for (WorldPoint p : _locationPoints) {
+            if (point.equals(p)){
+                SetCompleted();
+                return;
+            }
         }
     }
 

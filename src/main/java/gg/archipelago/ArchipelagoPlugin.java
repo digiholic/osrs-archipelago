@@ -21,6 +21,7 @@ import net.runelite.api.widgets.WidgetModalMode;
 import net.runelite.client.RuneLite;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ChatboxInput;
 import net.runelite.client.events.NpcLootReceived;
@@ -49,6 +50,8 @@ public class ArchipelagoPlugin extends Plugin
 
 	@Inject
 	private Client client;
+	@Inject
+	private EventBus eventBus;
 	@Inject
 	private ClientThread clientThread;
 	@Inject
@@ -118,6 +121,8 @@ public class ArchipelagoPlugin extends Plugin
 		loadSprites();
 		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
 		overlayManager.add(overlay);
+
+		panel.RegisterListeners(eventBus);
 	}
 
 	@Override
@@ -131,6 +136,8 @@ public class ArchipelagoPlugin extends Plugin
 		}
 		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
 		overlayManager.remove(overlay);
+
+		panel.UnregisterListeners(eventBus);
 	}
 
 	@Subscribe
@@ -171,6 +178,8 @@ public class ArchipelagoPlugin extends Plugin
 			if (connected){
 				connected = false;
 				apClient.disconnect();
+
+				panel.ConnectionStateChanged(false);
 			}
 		}
 	}

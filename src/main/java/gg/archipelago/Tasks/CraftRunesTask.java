@@ -13,36 +13,19 @@ public class CraftRunesTask extends StateTrackingTask{
     private final long _ID;
 
     private String _name;
-    private int _required_level;
+
+    private int _rune_id;
+    //if any essence is acceptable, pass -1 for "Any"
     private int _essence_id;
-    private int _previousEssenceCount;
+
     private int _previousRunecraftXP;
+    private int _previousRuneCount;
+    private boolean _shouldCancel = false;
 
-    public CraftRunesTask(Long ID, RuneType runeType){
-        _ID = ID;
-
-        switch (runeType){
-            case AIR_RUNE:
-                _name = "Craft some Air Runes";
-                _required_level = 1;
-                _essence_id = ItemID.RUNE_ESSENCE;
-                break;
-            case MIND_RUNE:
-                _name = "Craft some Mind Runes using a Mind Core";
-                _required_level = 2;
-                _essence_id = ItemID.MIND_CORE;
-                break;
-            case BODY_RUNE:
-                _name = "Craft some Body Runes using a Body Core";
-                _required_level = 20;
-                _essence_id = ItemID.BODY_CORE;
-                break;
-        }
-    }
-    public CraftRunesTask(Long ID, String name, int required_level, int essence_id){
+    public CraftRunesTask(Long ID, String name, int rune_id, int essence_id ){
         _ID = ID;
         _name = name;
-        _required_level = required_level;
+        _rune_id = rune_id;
         _essence_id = essence_id;
     }
 
@@ -57,7 +40,12 @@ public class CraftRunesTask extends StateTrackingTask{
         //Check for Runecraft option
         if (event.getMenuOption().equalsIgnoreCase("Craft-rune")){
             checkTriggered = true;
-            //log.info("Runecraft task is primed.");
+            _shouldCancel = false;
+            log.info("Runecraft task is primed.");
+        } else {
+            _shouldCancel = true;
+            _previousRunecraftXP = 0;
+            _previousRuneCount = 0;
         }
     }
 
@@ -75,59 +63,40 @@ public class CraftRunesTask extends StateTrackingTask{
 
     @Override
     boolean CheckResetCondition(Client client) {
-        return true;
+        return _shouldCancel;
     }
 
     @Override
     boolean CheckInitialStateOK(Client client) {
-        if (!(client.getRealSkillLevel(Skill.RUNECRAFT) >= _required_level)){
-            //log.info(GetName()+" - Runecraft level below requirements. Initial State not OK");
-            return false;
-        }
+        //If the essence ID is -1, it means "Any essence" and we don't need to check for it
+        boolean hasEssence = _essence_id == -1 || CheckInventoryFor(client, _essence_id) > 0;
         _previousRunecraftXP = client.getSkillExperience(Skill.RUNECRAFT);
-        ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);
-        if (inventory != null) {
-            Item[] currentItems = inventory.getItems();
-            final int finalItem_id = _essence_id;
-            final int[] item_count = {0}; //anti lambda capture shenanigans
-            Object[] items = Arrays.stream(currentItems).filter(item -> item.getId() == finalItem_id).toArray();
+        _previousRuneCount = CheckInventoryFor(client, _rune_id);
 
-            Arrays.stream(currentItems).filter(item -> item.getId() == finalItem_id)
-                    .forEach(item -> item_count[0] += item.getQuantity());
-            _previousEssenceCount = item_count[0];
-        }
-        if (_previousEssenceCount <= 0){
-            //log.info(GetName()+" - Not enough essence. Initial State not OK");
-        }
-        //Check for level, presence of essence, optional presence of core
-        return _previousEssenceCount > 0;
+        return hasEssence;
     }
 
     @Override
     boolean CheckPostTriggerStateOK(Client client) {
         boolean hasGainedXP = client.getSkillExperience(Skill.RUNECRAFT) > _previousRunecraftXP;
-        int currentEssenceCount = 0;
+        boolean hasGainedRunes = CheckInventoryFor(client, _rune_id) > _previousRuneCount;
+
+        //Check for any increase in RC XP and increase in item count for rune
+        return hasGainedXP && hasGainedRunes;
+    }
+
+    private int CheckInventoryFor(Client client, int itemID) {
         ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);
         if (inventory != null) {
             Item[] currentItems = inventory.getItems();
-            final int finalItem_id = _essence_id;
-            Optional<Item> essenceStack =
-                    Arrays.stream(currentItems).filter(item -> item.getId() == finalItem_id).findFirst();
-            currentEssenceCount = essenceStack.map(Item::getQuantity).orElse(0);
+            final int finalItem_id = itemID;
+            final int[] item_count = {0}; //anti lambda capture shenanigans
+            Object[] items = Arrays.stream(currentItems).filter(item -> item.getId() == finalItem_id).toArray();
+
+            Arrays.stream(currentItems).filter(item -> item.getId() == finalItem_id)
+                    .forEach(item -> item_count[0] += item.getQuantity());
+            return item_count[0];
         }
-
-        boolean hasSpentEssence = currentEssenceCount < _previousEssenceCount;
-
-        //if (!hasGainedXP) log.info(GetName()+" - Did not gain RC XP. Second state not OK");
-        //if (!hasSpentEssence) log.info(GetName()+" - Did not spend essence. Second state not OK");
-        //if (hasGainedXP && hasSpentEssence) log.info(GetName()+" - Successfully completed task");
-        //Check for any increase in RC XP and increase in item count for rune
-        return hasGainedXP && hasSpentEssence;
-    }
-
-    public enum RuneType {
-        AIR_RUNE,
-        MIND_RUNE,
-        BODY_RUNE
+        return 0;
     }
 }

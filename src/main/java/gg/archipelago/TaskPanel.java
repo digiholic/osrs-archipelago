@@ -34,6 +34,49 @@ public class TaskPanel extends JPanel {
         setAlignmentX(Component.LEFT_ALIGNMENT);
     }
 
+    public void UpdateTaskStatus(){
+        for (APTask task : plugin.activeTasks){
+            TaskRow taskPanel = locationPanels.getOrDefault(task, null);
+            if (taskPanel != null){
+                taskPanel.UpdateCompleted(task.IsCompleted());
+                taskPanel.UpdateDisplay();
+            }
+        }
+    }
+
+    private void AddOrUpdateTaskRow(APTask task){
+        //boolean completed = plugin.LocationCheckStates.getOrDefault(loc,false);
+        if (locationPanels.containsKey(task)){
+            locationPanels.get(task).UpdateCompleted(task.IsCompleted());
+            locationPanels.get(task).UpdateDisplay();
+        } else {
+            TaskRow taskPanel = new TaskRow(task);
+            locationPanels.put(task, taskPanel);
+            add(taskPanel);
+        }
+    }
+
+    public void ConnectionStateChanged(boolean connectionSuccessful) {
+        if (connectionSuccessful){
+            setVisible(true);
+
+            for (APTask task : plugin.activeTasks){
+                if (task.ShouldDisplayPanel()){
+                    SwingUtilities.invokeLater(() -> {
+                        AddOrUpdateTaskRow(task);
+                    });
+                }
+            }
+            revalidate();
+            repaint();
+        } else {
+            setVisible(false);
+            //Empty the panel, but put the checkbox back for later
+            removeAll();
+            add(displayCompleted);
+        }
+    }
+
     private class TaskRow extends JPanel{
         private JComponent taskName;
         private boolean isIconReady = false;
@@ -108,49 +151,6 @@ public class TaskPanel extends JPanel {
                 log.info("Completed task "+task.GetName());
                 task.SetCompleted();
             }
-        }
-    }
-
-    public void UpdateTaskStatus(){
-        for (APTask task : plugin.activeTasks){
-            TaskRow taskPanel = locationPanels.getOrDefault(task, null);
-            if (taskPanel != null){
-                taskPanel.UpdateCompleted(task.IsCompleted());
-                taskPanel.UpdateDisplay();
-            }
-        }
-    }
-
-    private void AddOrUpdateTaskRow(APTask task){
-        //boolean completed = plugin.LocationCheckStates.getOrDefault(loc,false);
-        if (locationPanels.containsKey(task)){
-            locationPanels.get(task).UpdateCompleted(task.IsCompleted());
-            locationPanels.get(task).UpdateDisplay();
-        } else {
-            TaskRow taskPanel = new TaskRow(task);
-            locationPanels.put(task, taskPanel);
-            add(taskPanel);
-        }
-    }
-
-    public void ConnectionStateChanged(boolean connectionSuccessful) {
-        if (connectionSuccessful){
-            setVisible(true);
-
-            for (APTask task : plugin.activeTasks){
-                if (task.ShouldDisplayPanel()){
-                    SwingUtilities.invokeLater(() -> {
-                        AddOrUpdateTaskRow(task);
-                    });
-                }
-            }
-            revalidate();
-            repaint();
-        } else {
-            setVisible(false);
-            //Empty the panel, but put the checkbox back for later
-            removeAll();
-            add(displayCompleted);
         }
     }
 }

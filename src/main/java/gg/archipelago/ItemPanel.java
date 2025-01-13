@@ -1,31 +1,48 @@
 package gg.archipelago;
 
+import gg.archipelago.Tasks.APTask;
 import gg.archipelago.data.ItemData;
 import gg.archipelago.data.ItemNames;
+import net.runelite.api.Client;
+import net.runelite.api.GameState;
+import net.runelite.api.events.ClientTick;
+import net.runelite.api.events.GameStateChanged;
+import net.runelite.client.RuneLite;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.ui.ColorScheme;
 
+import javax.inject.Inject;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.security.DigestException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ItemPanel extends JPanel {
+    @Inject
+    private Client client;
+
     private final ArchipelagoPlugin plugin;
 
     private final HashMap<ItemData, ItemRow> itemPanels = new HashMap<>();
 
-    private final JPanel inventoryPanel;
+    private final JPanel equipmentPanel;
+    private final JPanel carePackPanel;
     private final JPanel areaPanel;
+    private final JPanel junkPanel;
+
+
+    private boolean isPanelInitialized;
 
     public ItemPanel(ArchipelagoPlugin plugin){
         this.plugin = plugin;
 
-        setLayout(new BorderLayout());
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         setBackground(ColorScheme.DARKER_GRAY_COLOR);
         setBorder(new EmptyBorder(5, 5, 5, 10));
@@ -33,17 +50,60 @@ public class ItemPanel extends JPanel {
 
         setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        inventoryPanel = new JPanel();
-        inventoryPanel.setLayout(new BoxLayout(inventoryPanel, BoxLayout.Y_AXIS));
-        add(inventoryPanel, BorderLayout.NORTH);
+        equipmentPanel = new JPanel();
+        equipmentPanel.setLayout(new BoxLayout(equipmentPanel, BoxLayout.Y_AXIS));
+        add(equipmentPanel);
+
+        carePackPanel = new JPanel();
+        carePackPanel.setLayout(new BoxLayout(carePackPanel, BoxLayout.Y_AXIS));
+        add(carePackPanel);
 
         areaPanel = new JPanel();
         areaPanel.setLayout(new BoxLayout(areaPanel, BoxLayout.Y_AXIS));
-        add(areaPanel, BorderLayout.SOUTH);
+        add(areaPanel);
+
+        junkPanel = new JPanel();
+        junkPanel.setLayout(new BoxLayout(junkPanel, BoxLayout.Y_AXIS));
+        add(junkPanel);
+    }
+
+    @Subscribe
+    public void onGameStateChanged(GameStateChanged gameStateChanged)
+    {
+        if (gameStateChanged.getGameState() == GameState.LOGGED_IN && !isPanelInitialized)
+        {
+            SetConnectionState(true);
+        }
+        else if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN && isPanelInitialized)
+        {
+            SetConnectionState(false);
+        }
+    }
+
+    @Subscribe
+    public void onClientTick(ClientTick t){
+        if (plugin.connected && isPanelInitialized){
+            UpdateItems();
+        }
+    }
+
+    public void SetConnectionState(boolean connectionStatus){
+        if (connectionStatus){
+            setVisible(true);
+            isPanelInitialized = true;
+            UpdateItems();
+        } else {
+            setVisible(false);
+            isPanelInitialized = false;
+            itemPanels.clear();
+            equipmentPanel.removeAll();
+            carePackPanel.removeAll();
+            areaPanel.removeAll();
+            junkPanel.removeAll();
+        }
     }
 
     public void UpdateItems(){
-        setVisible(true);
         List<ItemData> items = ItemHandler.GetItems();
         if (items == null) return;
         for (ItemData item : items){
@@ -90,21 +150,29 @@ public class ItemPanel extends JPanel {
             SwingUtilities.invokeLater(() -> {
                 ItemRow itemPanel = new ItemRow(text, item);
                 itemPanels.put(item, itemPanel);
-                if (item.getItemType().equals("Area")){
-                    areaPanel.add(itemPanel);
-                } else {
-                    inventoryPanel.add(itemPanel);
+                switch(item.getItemType()) {
+                    case "Area":
+                        areaPanel.add(itemPanel);
+                        break;
+                    case "Item":
+                        equipmentPanel.add(itemPanel);
+                        break;
+                    case "CarePack":
+                        carePackPanel.add(itemPanel);
+                        break;
+                    default:
+                        junkPanel.add(itemPanel);
+                        break;
                 }
             });
         }
     }
 
     private static class ItemRow extends JPanel {
-
         private final JLabel labelText;
         private final JLabel icon;
         private boolean isIconReady;
-        private ItemData itemData;
+        private final ItemData itemData;
         public ItemRow(String text, ItemData item){
             super();
             itemData = item;
@@ -136,6 +204,18 @@ public class ItemPanel extends JPanel {
                     icon.setIcon(new ImageIcon(image));
                     isIconReady = true;
                 }
+            }
+        }
+
+        public void ClaimCarePack(){
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            int result = JOptionPane.showConfirmDialog(
+                    frame,
+                    "Claim this care pack?", "Claim Care Pack",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (result == JOptionPane.OK_OPTION){
+                itemData.Claim();
             }
         }
     }

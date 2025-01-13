@@ -1,5 +1,6 @@
 package gg.archipelago;
 
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
 import javax.swing.*;
@@ -98,5 +99,13 @@ public class ArchipelagoPanel extends PluginPanel {
     public void DisplayNetworkMessage(String message){
         String formattedMessage = String.format("<html><body style=\"text-align: justify;  text-justify: inter-word;\">%s</body></html>",message);
         messageLabel.setText(formattedMessage);
+    }
+
+    public void RegisterListeners(EventBus eventBus){
+        eventBus.register(itemListPanel);
+    }
+
+    public void UnregisterListeners(EventBus eventBus){
+        eventBus.unregister(itemListPanel);
     }
 }
