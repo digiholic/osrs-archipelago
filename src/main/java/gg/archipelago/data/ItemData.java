@@ -14,8 +14,4 @@ public class ItemData {
     public int icon_id;
     public int icon_file;
     public String itemType;
-
-    public void Claim(){
-
-    }
 }

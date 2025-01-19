@@ -7,13 +7,10 @@ import gg.archipelago.data.ItemData;
 import gg.archipelago.data.ItemNames;
 import com.google.inject.Provides;
 import javax.inject.Inject;
-import javax.swing.*;
 
 import dev.koifysh.archipelago.ClientStatus;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
-import net.runelite.api.coords.LocalPoint;
-import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
@@ -543,6 +540,15 @@ public class ArchipelagoPlugin extends Plugin
 		}
 	}
 
+	public void ClaimCarePack(long itemId){
+		dataPackage.claimedCarePacks.add(itemId);
+		saveDataPackage();
+	}
+
+	public int CheckClaimedCarePacks(long itemId){
+		return Collections.frequency(dataPackage.claimedCarePacks, itemId);
+	}
+
 	public List<ItemData> getCollectedItems() {
 		return collectedItems;
 	}
@@ -582,7 +588,6 @@ public class ArchipelagoPlugin extends Plugin
 			client.setModIcons(newAry);
 		});
 	}
-
 	private IndexedSprite getIndexedSpriteEmbedded()
 	{
 		try
