@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ItemPanel extends JPanel {
-    @Inject
-    private Client client;
-
     private final ArchipelagoPlugin plugin;
 
     private final HashMap<ItemData, ItemRow> itemPanels = new HashMap<>();
@@ -35,6 +32,7 @@ public class ItemPanel extends JPanel {
     private final JPanel carePackPanel;
     private final JPanel areaPanel;
     private final JPanel junkPanel;
+    private final JPanel claimedPackPanel;
 
 
     private boolean isPanelInitialized;
@@ -65,6 +63,10 @@ public class ItemPanel extends JPanel {
         junkPanel = new JPanel();
         junkPanel.setLayout(new BoxLayout(junkPanel, BoxLayout.Y_AXIS));
         add(junkPanel);
+
+        claimedPackPanel = new JPanel();
+        claimedPackPanel.setLayout(new BoxLayout(claimedPackPanel, BoxLayout.Y_AXIS));
+        add(claimedPackPanel);
     }
 
     @Subscribe

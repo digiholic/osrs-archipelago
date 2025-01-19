@@ -489,9 +489,6 @@ public class ArchipelagoPlugin extends Plugin
 		if (apClient != null && apClient.isConnected()){
 			apClient.checkLocations(checkedLocations);
 		}
-
-		SwingUtilities.invokeLater(panel::UpdateTaskStatus);
-		SwingUtilities.invokeLater(panel::UpdateItems);
 	}
 
 	public void addCollectedItem(ItemData item){
@@ -501,7 +498,6 @@ public class ArchipelagoPlugin extends Plugin
 		}
 		log.info("Received item: "+item.name);
 		collectedItems.add(item);
-		panel.UpdateItems();
 		UpdateAvailableChunks();
 	}
 

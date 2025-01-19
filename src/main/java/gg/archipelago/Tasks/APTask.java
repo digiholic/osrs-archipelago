@@ -28,7 +28,7 @@ public abstract class APTask {
     private static final String QUEST = "QuestTask";
     private static final String VARBIT = "VarbitTask";
     private static final String SPELL = "SpellTask";
-    private static final String CRAFT_RUNES = "CraftRuneTask";
+    private static final String CRAFT_RUNES = "CraftRunesTask";
     private static final String CHAT = "ChatMessageTask";
     private static final String BURN = "BurnLogsTask";
     private static final String KILL = "KillTask";

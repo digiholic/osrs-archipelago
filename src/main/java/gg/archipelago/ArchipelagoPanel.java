@@ -80,20 +80,12 @@ public class ArchipelagoPanel extends PluginPanel {
     }
 
     public void ConnectionStateChanged(boolean connectionSuccessful) {
-        taskListPanel.ConnectionStateChanged(connectionSuccessful);
         UpdateStatusButton(connectionSuccessful);
     }
 
     public void UpdateStatusButton(boolean connectionSuccessful){
         connectButton.setEnabled(!connectionSuccessful);
         connectButton.setText(connectionSuccessful ? "Connected!" : "Connect");
-    }
-    public void UpdateTaskStatus(){
-        taskListPanel.UpdateTaskStatus();
-    }
-
-    public void UpdateItems(){
-        itemListPanel.UpdateItems();
     }
 
     public void DisplayNetworkMessage(String message){
@@ -102,10 +94,12 @@ public class ArchipelagoPanel extends PluginPanel {
     }
 
     public void RegisterListeners(EventBus eventBus){
+        eventBus.register(taskListPanel);
         eventBus.register(itemListPanel);
     }
 
     public void UnregisterListeners(EventBus eventBus){
+        eventBus.unregister(taskListPanel);
         eventBus.unregister(itemListPanel);
     }
 }
