@@ -35,6 +35,7 @@ public abstract class APTask {
     private static final String XP = "TotalXPTask";
     private static final String COMBAT = "CombatLevelTask";
     private static final String TOTAL = "TotalLevelTask";
+    private static final String MILESTONE = "LevelMilestoneTask";
     private static final String STAND = "StandInPositionTask";
     private static final String ITEM = "ItemOperationTask";
 
@@ -74,6 +75,8 @@ public abstract class APTask {
                 return new CombatLevelTask(locationId, Integer.parseInt(args.get(0)));
             case TOTAL:
                 return new TotalLevelTask(locationId, Integer.parseInt(args.get(0)));
+            case MILESTONE:
+                return new LevelMilestoneTask(locationId, Integer.parseInt(args.get(0)));
             case STAND:
                 return new StandInPositionTask(locationId, row.getLocationName(),
                         Integer.parseInt(args.get(0)), Integer.parseInt(args.get(1)),
