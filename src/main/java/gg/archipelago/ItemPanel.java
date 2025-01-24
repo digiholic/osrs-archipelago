@@ -205,6 +205,8 @@ public class ItemPanel extends JPanel {
         private final JLabel icon;
         private boolean isIconReady;
         private final ItemData itemData;
+        private String previousText;
+
         public ItemRow(String text, ItemData item){
             super();
             itemData = item;
@@ -212,7 +214,7 @@ public class ItemPanel extends JPanel {
             setBackground(ColorScheme.DARKER_GRAY_COLOR);
             setPreferredSize(new Dimension(0, 40));
             setAlignmentX(Component.LEFT_ALIGNMENT);
-
+            previousText = text;
             icon = new JLabel();
             add(icon, BorderLayout.WEST);
 
@@ -223,12 +225,12 @@ public class ItemPanel extends JPanel {
             }
 
             if (item.getItemType().equalsIgnoreCase("CarePack")){
-                JButton taskButton = new JButton("<html><div style='text-align:center'>"+item.name+"</div></html>");
+                JButton taskButton = new JButton("<html><div style='text-align:center'>"+text+"</div></html>");
                 taskButton.setHorizontalAlignment(SwingConstants.CENTER);
                 taskButton.addActionListener(e -> ClaimCarePack());
                 itemName = taskButton;
             } else {
-                itemName = new JLabel("<html><div style='text-align:center'>"+item.name+"</div></html>", SwingConstants.CENTER);
+                itemName = new JLabel("<html><div style='text-align:center'>"+text+"</div></html>", SwingConstants.CENTER);
             }
 
             itemName.setForeground(Color.WHITE);
@@ -237,15 +239,16 @@ public class ItemPanel extends JPanel {
         }
 
         public void SetText(String text){
-            // Despite the fact that both JButton and JLabel have SetText, they don't actually have that through a shared class.
-            // So I have to do this shit.
-            if (itemName instanceof JButton){
-                ((JButton)itemName).setText("<html><div style='text-align:center'>"+text.replace("Care Pack:","")+"</div></html>");
+            if (!previousText.equals(text)) {
+                // Despite the fact that both JButton and JLabel have SetText, they don't actually have that through a shared class.
+                // So I have to do this shit.
+                if (itemName instanceof JButton) {
+                    ((JButton) itemName).setText("<html><div style='text-align:center'>" + text.replace("Care Pack:", "") + "</div></html>");
+                }
+                if (itemName instanceof JLabel) {
+                    ((JLabel) itemName).setText("<html><div style='text-align:center'>" + text.replace("Care Pack:", "") + "</div></html>");
+                }
             }
-            if (itemName instanceof JLabel){
-                ((JLabel)itemName).setText("<html><div style='text-align:center'>"+text.replace("Care Pack:","")+"</div></html>");
-            }
-
 
             if (!isIconReady){
                 BufferedImage image = ItemHandler.loadedSprites.get(itemData);
