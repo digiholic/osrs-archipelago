@@ -49,7 +49,7 @@ tasks.withType(JavaCompile).configureEach {
 tasks.register('shadowJar', Jar) {
 	dependsOn configurations.testRuntimeClasspath
 	manifest {
-		attributes('Main-Class': '${package}.${plugin_prefix}PluginTest', 'Multi-Release': true)
+		attributes('Main-Class': 'gg.archipelago.ArchipelagoPluginTest', 'Multi-Release': true)
 	}
 
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
