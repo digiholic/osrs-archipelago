@@ -27,6 +27,7 @@ public abstract class APTask {
     // Task Parser Constructor
     private static final String QUEST = "QuestTask";
     private static final String VARBIT = "VarbitTask";
+    private static final String VARBIT_CHANGED = "VarbitChangedTask";
     private static final String SPELL = "SpellTask";
     private static final String CRAFT_RUNES = "CraftRunesTask";
     private static final String CHAT = "ChatMessageTask";
@@ -36,7 +37,9 @@ public abstract class APTask {
     private static final String COMBAT = "CombatLevelTask";
     private static final String TOTAL = "TotalLevelTask";
     private static final String MILESTONE = "LevelMilestoneTask";
-    private static final String STAND = "StandInPositionTask";
+    private static final String STAND_POSITION = "StandInPositionTask";
+    private static final String STAND_AREA = "StandInAreaTask";
+    private static final String EMOTE_AREA = "EmoteInAreaTask";
     private static final String ITEM = "ItemOperationTask";
 
 
@@ -52,6 +55,10 @@ public abstract class APTask {
                         Integer.parseInt(args.get(0)),
                         Integer.parseInt(args.get(1)),
                         Integer.parseInt(args.get(2)));
+            case VARBIT_CHANGED:
+                return new VarbitChangedTask(locationId, row.getLocationName(),
+                        Integer.parseInt(args.get(0)),
+                        Integer.parseInt(args.get(1)));
             case SPELL:
                 return new CastSpellTask(locationId, row.getLocationName(),
                         args.get(0));
@@ -77,10 +84,18 @@ public abstract class APTask {
                 return new TotalLevelTask(locationId, Integer.parseInt(args.get(0)));
             case MILESTONE:
                 return new LevelMilestoneTask(locationId, Integer.parseInt(args.get(0)));
-            case STAND:
+            case STAND_POSITION:
                 return new StandInPositionTask(locationId, row.getLocationName(),
                         Integer.parseInt(args.get(0)), Integer.parseInt(args.get(1)),
                         Integer.parseInt(args.get(2)), Integer.parseInt(args.get(3)));
+            case STAND_AREA:
+                return new StandInAreaTask(locationId, row.getLocationName(), Integer.parseInt(args.get(0)),
+                        Integer.parseInt(args.get(1)),Integer.parseInt(args.get(2)),Integer.parseInt(args.get(3)),
+                        Integer.parseInt(args.get(4)),Integer.parseInt(args.get(5)),Integer.parseInt(args.get(6)));
+            case EMOTE_AREA:
+                return new EmoteInAreaTask(locationId, row.getLocationName(), Integer.parseInt(args.get(0)), args.get(1),
+                        Integer.parseInt(args.get(2)),Integer.parseInt(args.get(3)),Integer.parseInt(args.get(4)),
+                        Integer.parseInt(args.get(5)),Integer.parseInt(args.get(6)),Integer.parseInt(args.get(7)));
             case ITEM:
                 return new ItemOperationTask(locationId, row.getLocationName(),
                         Integer.parseInt(args.get(0)), args.get(1),
@@ -92,6 +107,8 @@ public abstract class APTask {
                     case "Open a Simple Lockbox": return new OpenLockboxTask(locationId, ItemID.SIMPLE_LOCKBOX);
                     case "Open an Elaborate Lockbox": return new OpenLockboxTask(locationId, ItemID.ELABORATE_LOCKBOX);
                     case "Open an Ornate Lockbox": return new OpenLockboxTask(locationId, ItemID.ORNATE_LOCKBOX);
+                    case "Have the Apothecary Make a Strength Potion": return new BuyPotionTask(locationId);
+                    case "Telegrab a Gold Bar from the Varrock Bank": return new TelegrabGoldBarTask(locationId);
                     default: return new ManualTask(locationId, row.getLocationName());
                 }
         }

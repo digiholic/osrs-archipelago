@@ -191,6 +191,7 @@ public class ItemPanel extends JPanel {
                     if (panel.getParent() == carePackPanel){
                         carePackPanel.remove(panel);
                         claimedPackPanel.add(panel);
+                        panel.ReplaceButtonWithLabel();
                     }
                     panel.SetText(String.format("%s <br/>(All claimed!)", item.name));
                 }
@@ -201,7 +202,7 @@ public class ItemPanel extends JPanel {
     }
 
     private static class ItemRow extends JPanel {
-        private final JComponent itemName;
+        private JComponent itemName;
         private final JLabel icon;
         private boolean isIconReady;
         private final ItemData itemData;
@@ -268,7 +269,16 @@ public class ItemPanel extends JPanel {
                     JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.OK_OPTION){
                 ArchipelagoPlugin.plugin.ClaimCarePack(itemData.id);
+                ReplaceButtonWithLabel();
             }
+        }
+
+        public void ReplaceButtonWithLabel(){
+            remove(itemName);
+            itemName = new JLabel("<html><div style='text-align:center'>"+ itemData.name+"</div></html>", SwingConstants.CENTER);
+            add(itemName, BorderLayout.CENTER);
+            revalidate();
+            repaint();
         }
     }
 }
