@@ -34,9 +34,9 @@ public class ArchipelagoPanel extends PluginPanel {
         final JPanel statusPanel = buildStatusPanel();
         layoutPanel.add(statusPanel);
         //layoutPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        JLabel versionLabel = new JLabel("plugin version 2.1");
-        versionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        layoutPanel.add(versionLabel);
+        //JLabel versionLabel = new JLabel("plugin version 2.1");
+        //versionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        //layoutPanel.add(versionLabel);
 
         messageLabel = new JLabel("");
         messageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
