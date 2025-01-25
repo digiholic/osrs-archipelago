@@ -2,6 +2,7 @@ package gg.archipelago.Tasks;
 
 import gg.archipelago.Tasks.StateTrackingTask;
 import net.runelite.api.*;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
 import java.util.Arrays;
@@ -20,7 +21,7 @@ public class OpenLockboxTask extends StateTrackingTask {
     }
 
     @Override
-    public void CheckChatMessage(String message) { }
+    public void CheckChatMessage(ChatMessage event) { }
     @Override
     public void CheckMobKill(NPC npc) { }
     @Override

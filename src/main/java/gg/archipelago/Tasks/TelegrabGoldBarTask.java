@@ -3,6 +3,7 @@ package gg.archipelago.Tasks;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.client.util.Text;
 
@@ -26,7 +27,7 @@ public class TelegrabGoldBarTask extends StateTrackingTask{
     }
 
     @Override
-    public void CheckChatMessage(String message) { }
+    public void CheckChatMessage(ChatMessage event) { }
     @Override
     public void CheckMobKill(NPC npc) { }
     @Override

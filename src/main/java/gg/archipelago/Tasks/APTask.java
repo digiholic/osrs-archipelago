@@ -2,6 +2,7 @@ package gg.archipelago.Tasks;
 
 import gg.archipelago.data.LocationData;
 import net.runelite.api.*;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public abstract class APTask {
     public abstract int GetSpriteID();
     public abstract boolean ShouldDisplayPanel();
 
-    public abstract void CheckChatMessage(String message);
+    public abstract void CheckChatMessage(ChatMessage event);
     public abstract void CheckMobKill(NPC npc);
     public abstract void CheckPlayerStatus(Client client);
     public abstract void OnGameTick(Client client);
@@ -31,6 +32,7 @@ public abstract class APTask {
     private static final String SPELL = "SpellTask";
     private static final String CRAFT_RUNES = "CraftRunesTask";
     private static final String CHAT = "ChatMessageTask";
+    private static final String MENU = "MenuActionTask";
     private static final String BURN = "BurnLogsTask";
     private static final String KILL = "KillTask";
     private static final String XP = "TotalXPTask";
@@ -70,6 +72,10 @@ public abstract class APTask {
                 return new ChatMessageTask(locationId, row.getLocationName(),
                         Integer.parseInt(args.get(0)),
                         args.get(1));
+            case MENU:
+                return new MenuActionTask(locationId, row.getLocationName(),
+                        Integer.parseInt(args.get(0)),
+                        args.get(1), args.get(2));
             case BURN:
                 return new BurnLogsTask(locationId, row.getLocationName(),
                         Integer.parseInt(args.get(0)),

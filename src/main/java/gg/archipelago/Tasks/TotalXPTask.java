@@ -3,6 +3,7 @@ package gg.archipelago.Tasks;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.SpriteID;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
 public class TotalXPTask extends APTask{
@@ -32,7 +33,7 @@ public class TotalXPTask extends APTask{
     }
 
     @Override
-    public void CheckChatMessage(String message) { }
+    public void CheckChatMessage(ChatMessage event) { }
     @Override
     public void CheckMobKill(NPC npc) { }
     @Override

@@ -1,7 +1,10 @@
 package gg.archipelago.Tasks;
 
+import gg.archipelago.ArchipelagoPlugin;
+import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
 public class ChatMessageTask extends APTask{
@@ -16,15 +19,13 @@ public class ChatMessageTask extends APTask{
         _name = name;
         _spriteID = spriteID;
         _messageToCheck = messageToCheck;
-
     }
 
     @Override
-    public void CheckChatMessage(String message) {
-
-        String[] splitMessages = message.split("<br>");
+    public void CheckChatMessage(ChatMessage event) {
+        String[] splitMessages = event.getMessage().split("<br>");
         for (String msg : splitMessages) {
-            if (msg.equalsIgnoreCase(_messageToCheck)){
+            if (msg.equalsIgnoreCase(_messageToCheck.replace("<player>", ArchipelagoPlugin.plugin.getCurrentPlayerName()))){
                 _isCompleted = true;
             }
         }

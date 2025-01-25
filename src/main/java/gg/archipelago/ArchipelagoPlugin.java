@@ -232,9 +232,8 @@ public class ArchipelagoPlugin extends Plugin
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
-		var message = event.getMessage();
 		for (APTask task : activeTasks){
-			task.CheckChatMessage(message);
+			task.CheckChatMessage(event);
 		}
 
 		if (event.getName() == null || client.getLocalPlayer() == null
@@ -267,10 +266,10 @@ public class ArchipelagoPlugin extends Plugin
 
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event){
-		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuOption()+" on "+event.getMenuTarget(), null);
-		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuAction()+" widget: "+event.getWidget(), null);
-		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Item ID: "+event.getItemId()+" "+event.isItemOp(), null);
-		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Param0: "+event.getParam0()+" Param1: "+event.getParam1(), null);
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuOption()+" on "+event.getMenuTarget(), null);
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuAction()+" widget: "+event.getWidget(), null);
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Item ID: "+event.getItemId()+" "+event.isItemOp(), null);
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Param0: "+event.getParam0()+" Param1: "+event.getParam1(), null);
 
 		if (connected){
 			if (event.getMenuOption().equals("Wear") || event.getMenuOption().equals("Wield")){
@@ -564,6 +563,11 @@ public class ArchipelagoPlugin extends Plugin
 		//loadSprites();
 		clientThread.invoke(() -> TaskLists.LoadImages(spriteManager));
 		clientThread.invoke(() -> ItemHandler.LoadImages(spriteManager));
+	}
+
+	public String getCurrentPlayerName(){
+		if (client.getLocalPlayer() == null) return "";
+		return client.getLocalPlayer().getName();
 	}
 
 	/////////// SPRITES ///////////

@@ -2,6 +2,7 @@ package gg.archipelago.Tasks;
 
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
 public class VarbitChangedTask extends APTask{
@@ -37,7 +38,7 @@ public class VarbitChangedTask extends APTask{
     @Override
     public void OnMenuOption(MenuOptionClicked event) { }
     @Override
-    public void CheckChatMessage(String message) { }
+    public void CheckChatMessage(ChatMessage event) { }
     @Override
     public void CheckMobKill(NPC npc) { }
     @Override

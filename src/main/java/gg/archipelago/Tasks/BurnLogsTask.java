@@ -6,6 +6,7 @@ import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.Skill;
 import net.runelite.api.SpriteID;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.client.plugins.PluginDescriptor;
 
@@ -42,9 +43,9 @@ public class  BurnLogsTask extends StateTrackingTask{
         _xp_gained = xp_gained;
     }
     @Override
-    public void CheckChatMessage(String message) {
+    public void CheckChatMessage(ChatMessage event) {
         // Check for burning log message
-        if (message.equalsIgnoreCase(logs_burning_message)){
+        if (event.getMessage().equalsIgnoreCase(logs_burning_message)){
             checkTriggered = true;
         }
     }

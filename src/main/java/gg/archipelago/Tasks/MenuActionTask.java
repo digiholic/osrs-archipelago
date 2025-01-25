@@ -1,33 +1,31 @@
 package gg.archipelago.Tasks;
 
+import gg.archipelago.ArchipelagoPlugin;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
+import net.runelite.client.util.Text;
 
-public class ItemOperationTask extends APTask {
+public class MenuActionTask extends APTask{
     private final long _ID;
-    private final int _itemID;
-    private final String _option;
     private boolean _isCompleted = false;
-    private final String _name;
-    private final int _spriteID;
+    private String _name;
+    private int _spriteID;
+    private final String _menuAction;
+    private final String _menuTarget;
 
-    public ItemOperationTask(long ID, String name, int spriteID, String option, int itemID){
+
+    public MenuActionTask(long ID, String name, int spriteID, String menuAction, String menuTarget){
         _ID = ID;
         _name = name;
         _spriteID = spriteID;
-        _itemID = itemID;
-        _option = option;
+        _menuAction = menuAction;
+        _menuTarget = menuTarget;
     }
 
     @Override
-    public void OnMenuOption(MenuOptionClicked event) {
-        if (event.getMenuOption().equalsIgnoreCase(_option) && event.getItemId() == _itemID && event.isItemOp()){
-            _isCompleted = true;
-        }
-    }
-
+    public void CheckChatMessage(ChatMessage event) { }
     @Override
     public void CheckMobKill(NPC npc) { }
     @Override
@@ -35,7 +33,12 @@ public class ItemOperationTask extends APTask {
     @Override
     public void OnGameTick(Client client) { }
     @Override
-    public void CheckChatMessage(ChatMessage event) { }
+    public void OnMenuOption(MenuOptionClicked event) {
+        if (event.getMenuOption().equalsIgnoreCase(_menuAction) &&
+                Text.removeTags(event.getMenuTarget()).equalsIgnoreCase(_menuTarget)){
+            SetCompleted();
+        }
+    }
 
     @Override
     public boolean IsCompleted() {

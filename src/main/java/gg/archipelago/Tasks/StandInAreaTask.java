@@ -4,6 +4,7 @@ import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.World;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
 public class StandInAreaTask extends APTask {
@@ -51,7 +52,7 @@ public class StandInAreaTask extends APTask {
     public boolean CanManuallyActivate() { return true; }
 
     @Override
-    public void CheckChatMessage(String message) { }
+    public void CheckChatMessage(ChatMessage event) { }
 
     @Override
     public void CheckMobKill(NPC npc) { }

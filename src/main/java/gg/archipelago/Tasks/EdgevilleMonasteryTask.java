@@ -3,6 +3,7 @@ package gg.archipelago.Tasks;
 import gg.archipelago.Tasks.APTask;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
 public class EdgevilleMonasteryTask extends APTask {
@@ -32,11 +33,11 @@ public class EdgevilleMonasteryTask extends APTask {
     public boolean CanManuallyActivate() { return true; }
 
     @Override
-    public void CheckChatMessage(String message) {
+    public void CheckChatMessage(ChatMessage event) {
         // If the player is not currently in the monastery chunk, exit without checking.
         if (_currentRegionID != 12086) return;
 
-        String[] splitMessages = message.split("<br>");
+        String[] splitMessages = event.getMessage().split("<br>");
         for (String msg : splitMessages) {
             String _message_B = "You boost your Prayer points.";
             String _message_A = "You recharge your Prayer points.";
