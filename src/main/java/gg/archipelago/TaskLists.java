@@ -1,15 +1,17 @@
 package gg.archipelago;
 
 import gg.archipelago.Tasks.*;
+import gg.archipelago.Tasks.EdgevilleMonasteryTask;
+import gg.archipelago.Tasks.OpenLockboxTask;
 import gg.archipelago.data.LocationData;
 import net.runelite.api.*;
 import net.runelite.client.game.SpriteManager;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -19,6 +21,9 @@ public class TaskLists {
     public static final long base_id = 0x070000;
     public static int taskCount = 0;
     private static final String repository_address = "https://raw.githubusercontent.com/digiholic/osrs-archipelago-logic/";
+
+    private static final boolean DEBUG = false;
+    private static final String debugDataSource = "";
 
     private static List<APTask> allTasksCached = new ArrayList<>();
     public static List<APTask> GetAllTasks(String data_version){
@@ -64,24 +69,17 @@ public class TaskLists {
         String taggedRepoAddress = repository_address+dataVersion;
         List<LocationData> tasks = new ArrayList<>();
         try {
-            URL repo = new URL(taggedRepoAddress+"/locations.csv");
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(repo.openStream()));
+            BufferedReader in = null;
+            if (DEBUG){
+                FileReader fileIn = new FileReader(debugDataSource);
+                in = new BufferedReader(fileIn);
+            } else {
+                URL repo = new URL(taggedRepoAddress+"/locations.csv");
+                in = new BufferedReader(
+                        new InputStreamReader(repo.openStream()));
 
-            String inputLine;
-            while ((inputLine = in.readLine()) != null){
-                List<String> row = new ArrayList<>();
-                // Gnarly regex to capture CSV pattern without splitting on commas in quotes
-                Matcher m = Pattern.compile("(?:,|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*|(?:\\n|$))")
-                        .matcher(inputLine);
-                while (m.find()){
-                    String match = m.group();
-                    if (match.startsWith(",")) match = match.substring(1);
-                    match = match.replace("\"","");
-                    row.add(match);
-                }
-                tasks.add(new LocationData(row));
             }
+            parse_csv_file(tasks, in);
             in.close();
         }
         catch (IOException e) {
@@ -89,6 +87,26 @@ public class TaskLists {
             return null;
         }
         return tasks;
+    }
+
+    private static void parse_csv_file(List<LocationData> tasks, BufferedReader in) throws IOException {
+        String inputLine;
+        while ((inputLine = in.readLine()) != null){
+            // If the line is the optional header, skip it
+            if (inputLine.startsWith("Location Name")) continue;
+
+            List<String> row = new ArrayList<>();
+            // Gnarly regex to capture CSV pattern without splitting on commas in quotes
+            Matcher m = Pattern.compile("(?:,|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*|(?:\\n|$))")
+                    .matcher(inputLine);
+            while (m.find()){
+                String match = m.group();
+                if (match.startsWith(",")) match = match.substring(1);
+                match = match.replace("\"","");
+                row.add(match);
+            }
+            tasks.add(new LocationData(row));
+        }
     }
 
 
@@ -118,13 +136,13 @@ public class TaskLists {
             new VarbitTask(base_id + taskCount++, "Activate the Rock Skin Prayer", SpriteID.SKILL_PRAYER, Prayer.ROCK_SKIN.getVarbit(), 1),
             new VarbitTask(base_id + taskCount++,"Activate the Protect Item Prayer", SpriteID.SKILL_PRAYER, Prayer.PROTECT_ITEM.getVarbit(), 1),
             new EdgevilleMonasteryTask(base_id + taskCount++),
-            new CastSpellTask(base_id + taskCount++, CastSpellTask.SpellToCast.BONES_TO_BANANAS),
-            new CastSpellTask(base_id + taskCount++, CastSpellTask.SpellToCast.VARROCK_TELE),
-            new CastSpellTask(base_id + taskCount++, CastSpellTask.SpellToCast.LUMBRIDGE_TELE),
-            new CastSpellTask(base_id + taskCount++, CastSpellTask.SpellToCast.FALADOR_TELE),
-            new CraftRunesTask(base_id + taskCount++, CraftRunesTask.RuneType.AIR_RUNE),
-            new CraftRunesTask(base_id + taskCount++, CraftRunesTask.RuneType.MIND_RUNE),
-            new CraftRunesTask(base_id + taskCount++, CraftRunesTask.RuneType.BODY_RUNE),
+            new CastSpellTask(base_id + taskCount++, "Bones To Bananas"),
+            new CastSpellTask(base_id + taskCount++, "Varrock Teleport"),
+            new CastSpellTask(base_id + taskCount++, "Lumbridge Teleport"),
+            new CastSpellTask(base_id + taskCount++, "Falador Teleport"),
+            new CraftRunesTask(base_id + taskCount++, "Craft some Air Runes", ItemID.AIR_RUNE, -1),
+            new CraftRunesTask(base_id + taskCount++, "Craft some runes with a Mind Core", ItemID.MIND_RUNE, ItemID.MIND_CORE),
+            new CraftRunesTask(base_id + taskCount++, "Craft some runes with a Body Core", ItemID.BODY_RUNE, ItemID.BODY_CORE),
             new ChatMessageTask(base_id + taskCount++,"Craft an Unblessed Holy Symbol",SpriteID.SKILL_CRAFTING, "You put some string on your holy symbol."),
             new ChatMessageTask(base_id + taskCount++,"Cut a Sapphire",SpriteID.SKILL_CRAFTING,"You cut the sapphire."),
             new ChatMessageTask(base_id + taskCount++,"Cut an Emerald",SpriteID.SKILL_CRAFTING, "You cut the emerald."),

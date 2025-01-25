@@ -4,30 +4,23 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
+import net.runelite.client.util.Text;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 @Slf4j
-public class CraftRunesTask extends StateTrackingTask{
+public class BuyPotionTask extends StateTrackingTask{
 
     private final long _ID;
 
-    private String _name;
+    private final String _name = "Have the Apothecary Make a Strength Potion";
 
-    private int _rune_id;
-    //if any essence is acceptable, pass -1 for "Any"
-    private int _essence_id;
-
-    private int _previousRunecraftXP;
-    private int _previousRuneCount;
     private boolean _shouldCancel = false;
 
-    public CraftRunesTask(Long ID, String name, int rune_id, int essence_id ){
+    private int _previousPotionCount = 0;
+
+    public BuyPotionTask(Long ID){
         _ID = ID;
-        _name = name;
-        _rune_id = rune_id;
-        _essence_id = essence_id;
     }
 
     @Override
@@ -39,14 +32,13 @@ public class CraftRunesTask extends StateTrackingTask{
     @Override
     public void OnMenuOption(MenuOptionClicked event) {
         //Check for Runecraft option
-        if (event.getMenuOption().equalsIgnoreCase("Craft-rune")){
+        if (event.getMenuOption().startsWith("Buy-") &&
+                Text.removeTags(event.getMenuTarget()).equalsIgnoreCase("Strength potion")){
             checkTriggered = true;
             _shouldCancel = false;
-            log.info("Runecraft task is primed.");
+            log.info("BuyPotion task is primed.");
         } else {
             _shouldCancel = true;
-            _previousRunecraftXP = 0;
-            _previousRuneCount = 0;
         }
     }
 
@@ -58,7 +50,7 @@ public class CraftRunesTask extends StateTrackingTask{
     @Override
     public long GetID() { return _ID; }
     @Override
-    public int GetSpriteID() { return SpriteID.SKILL_RUNECRAFT; }
+    public int GetSpriteID() { return SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET; }
     @Override
     public boolean ShouldDisplayPanel() { return true; }
 
@@ -69,21 +61,15 @@ public class CraftRunesTask extends StateTrackingTask{
 
     @Override
     boolean CheckInitialStateOK(Client client) {
-        //If the essence ID is -1, it means "Any essence" and we don't need to check for it
-        boolean hasEssence = _essence_id == -1 || CheckInventoryFor(client, _essence_id) > 0;
-        _previousRunecraftXP = client.getSkillExperience(Skill.RUNECRAFT);
-        _previousRuneCount = CheckInventoryFor(client, _rune_id);
+        _previousPotionCount = CheckInventoryFor(client, ItemID.STRENGTH_POTION4);
 
-        return hasEssence;
+        return true;
     }
 
     @Override
     boolean CheckPostTriggerStateOK(Client client) {
-        boolean hasGainedXP = client.getSkillExperience(Skill.RUNECRAFT) > _previousRunecraftXP;
-        boolean hasGainedRunes = CheckInventoryFor(client, _rune_id) > _previousRuneCount;
-
-        //Check for any increase in RC XP and increase in item count for rune
-        return hasGainedXP && hasGainedRunes;
+        int currentPotionCount = CheckInventoryFor(client, ItemID.STRENGTH_POTION4);
+        return currentPotionCount > _previousPotionCount;
     }
 
     private int CheckInventoryFor(Client client, int itemID) {

@@ -3,6 +3,7 @@ package gg.archipelago.Tasks;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.SpriteID;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
 public class KillTask extends APTask{
@@ -31,7 +32,7 @@ public class KillTask extends APTask{
     @Override
     public void OnMenuOption(MenuOptionClicked event) { }
     @Override
-    public void CheckChatMessage(String message) { }
+    public void CheckChatMessage(ChatMessage event) { }
     @Override
     public boolean IsCompleted() {
         return _isCompleted;

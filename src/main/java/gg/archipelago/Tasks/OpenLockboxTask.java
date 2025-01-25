@@ -1,12 +1,14 @@
 package gg.archipelago.Tasks;
 
+import gg.archipelago.Tasks.StateTrackingTask;
 import net.runelite.api.*;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-public class OpenLockboxTask extends StateTrackingTask{
+public class OpenLockboxTask extends StateTrackingTask {
 
     private final long _ID;
     private final int _lockboxItemID;
@@ -19,7 +21,7 @@ public class OpenLockboxTask extends StateTrackingTask{
     }
 
     @Override
-    public void CheckChatMessage(String message) { }
+    public void CheckChatMessage(ChatMessage event) { }
     @Override
     public void CheckMobKill(NPC npc) { }
     @Override
@@ -58,6 +60,11 @@ public class OpenLockboxTask extends StateTrackingTask{
 
     @Override
     public boolean ShouldDisplayPanel() {
+        return true;
+    }
+
+    @Override
+    boolean CheckResetCondition(Client client) {
         return true;
     }
 

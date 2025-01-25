@@ -2,32 +2,35 @@ package gg.archipelago.Tasks;
 
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
-import net.runelite.api.Varbits;
+import net.runelite.api.Skill;
+import net.runelite.api.SpriteID;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
-public class VarbitTask extends APTask{
+public class LevelMilestoneTask extends APTask{
     private final long _ID;
-    private final int _varbitToCheck;
-    private final int _valueToCheck;
+    private final int _milestoneLevelRequired;
     private boolean _isCompleted = false;
-    private String _name;
-    private int _spriteID;
 
-    public VarbitTask(long ID, String name, int SpriteID,  int varbitToCheck, int valueToCheck){
+
+    public LevelMilestoneTask(long ID, int milestoneLevelRequired){
         _ID = ID;
-        _name = name;
-        _spriteID = SpriteID;
-        _varbitToCheck = varbitToCheck;
-        _valueToCheck = valueToCheck;
-    }
+        _milestoneLevelRequired = milestoneLevelRequired;
 
+    }
     @Override
     public void CheckPlayerStatus(Client client) {
-        if (client.getServerVarbitValue(_varbitToCheck) == _valueToCheck)
-            _isCompleted = true;
-    }
+        for (Skill skill : Skill.values()){
+            if (skill == Skill.OVERALL) continue; //Depracated, skip it
+            if (skill == Skill.HITPOINTS && _milestoneLevelRequired <= 10) continue; //HP doesn't count for your first level 10
 
+            // We only need one skill to be valid, if we get it, then we can exit early.
+            if (client.getRealSkillLevel(skill) >= _milestoneLevelRequired) {
+                _isCompleted = true;
+                return;
+            }
+        }
+    }
     @Override
     public void OnGameTick(Client client) { }
     @Override
@@ -43,19 +46,19 @@ public class VarbitTask extends APTask{
 
     @Override
     public int GetSpriteID() {
-        return _spriteID;
+        return SpriteID.SKILL_TOTAL;
     }
-    @Override
-    public void SetCompleted() { _isCompleted = true; }
 
     @Override
     public boolean ShouldDisplayPanel() {
         return true;
     }
+    @Override
+    public void SetCompleted() { _isCompleted = true; }
 
     @Override
     public String GetName() {
-        return _name;
+        return String.format("Achieve your first Level %d",_milestoneLevelRequired);
     }
 
     @Override
@@ -65,6 +68,6 @@ public class VarbitTask extends APTask{
 
     @Override
     public boolean CanManuallyActivate() {
-        return true;
+        return false;
     }
 }

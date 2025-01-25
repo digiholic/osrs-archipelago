@@ -7,7 +7,6 @@ import gg.archipelago.data.ItemData;
 import gg.archipelago.data.ItemNames;
 import com.google.inject.Provides;
 import javax.inject.Inject;
-import javax.swing.*;
 
 import dev.koifysh.archipelago.ClientStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +18,7 @@ import net.runelite.api.widgets.WidgetModalMode;
 import net.runelite.client.RuneLite;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ChatboxInput;
 import net.runelite.client.events.NpcLootReceived;
@@ -27,6 +27,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 
@@ -47,6 +48,8 @@ public class ArchipelagoPlugin extends Plugin
 	@Inject
 	private Client client;
 	@Inject
+	private EventBus eventBus;
+	@Inject
 	private ClientThread clientThread;
 	@Inject
 	private ArchipelagoConfig config;
@@ -58,8 +61,12 @@ public class ArchipelagoPlugin extends Plugin
 	private ConfigManager configManager;
 	@Inject
 	private Gson gson;
+	@Inject
+	private OverlayManager overlayManager;
+	@Inject
+	private IllegalRegionOverlay overlay;
 
-	public boolean loggedIn;
+	public boolean currentlyLoggedIn;
 	public boolean connected;
 
 	protected List<APTask> activeTasks = new ArrayList<>();
@@ -110,6 +117,9 @@ public class ArchipelagoPlugin extends Plugin
 
 		loadSprites();
 		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
+		overlayManager.add(overlay);
+
+		panel.RegisterListeners(eventBus);
 	}
 
 	@Override
@@ -122,6 +132,9 @@ public class ArchipelagoPlugin extends Plugin
 			apClient.disconnect();
 		}
 		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
+		overlayManager.remove(overlay);
+
+		panel.UnregisterListeners(eventBus);
 	}
 
 	@Subscribe
@@ -144,19 +157,26 @@ public class ArchipelagoPlugin extends Plugin
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Changed to State: "+gameStateChanged.getGameState().name(), null);
+		log.debug("Changed to State: "+gameStateChanged.getGameState().name());
+
+		if (gameStateChanged.getGameState() == GameState.LOGGED_IN && !currentlyLoggedIn)
 		{
-			loggedIn = true;
+			dataPackageLocation = RuneLite.RUNELITE_DIR + "/APData/" + client.getAccountHash() + ".save";
+			loadDataPackage();
+			currentlyLoggedIn = true;
 			justLoggedIn = true;
-			if (!apClient.isConnected()){
-				ConnectToAPServer();
+			if (!apClient.isConnected() && !dataPackage.slotName.isEmpty()) {
+				ConnectToAPServer(dataPackage.slotName);
 			}
 		}
 		else if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN){
-			loggedIn = false;
+			currentlyLoggedIn = false;
 			if (connected){
 				connected = false;
 				apClient.disconnect();
+
+				panel.ConnectionStateChanged(false);
 			}
 		}
 	}
@@ -170,20 +190,12 @@ public class ArchipelagoPlugin extends Plugin
 	@Subscribe
 	public void onClientTick(ClientTick t)
 	{
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", client.getSelectedWidget().getName(), null);
+		
 		if (justLoggedIn && client.getLocalPlayer().getName() != null){
-			//If we've just logged in with a character that's stored as our autoreconnect, connect immediately.
-			if (!connected && dataPackage.characterHash == client.getAccountHash()){
-				log.info("Detected log in of autoreconnect, connecting to AP server");
-			}
-			//If there is no autoreconnect set, and we're already connected to the AP server, set autoreconnect
-			else if (dataPackage.characterHash == 0 && connected){
-				dataPackage.characterHash = client.getAccountHash();
-				log.info("Detected first log in or connection, setting autoreconnect");
-				saveDataPackage();
-			}
-			//If there _is_ an autoreconnect, we are currently connected, and the player we log in isn't the reconnect
-			//IMMEDIATELY disconnect, do not pass go, do not collect $200
-			else if (connected && dataPackage.characterHash != client.getAccountHash()){
+			// If we just logged in, and the data package's stored seed doesn't match the one we're connected to,
+			// Disconnect immediately before checks get sent
+			if (connected && !dataPackage.seed.equals(apClient.getRoomInfo().seedName)){
 				apClient.disconnect();
 				log.info("Detected log in of a non-auto-reconnect player. Disconnecting from server to avoid mixing checks");
 				DisplayNetworkMessage("This Archipelago Slot is not associated with this Character. " +
@@ -192,7 +204,7 @@ public class ArchipelagoPlugin extends Plugin
 			}
 			justLoggedIn = false;
 		}
-		if (loggedIn && connected){
+		if (currentlyLoggedIn && connected){
 			checkStatus();
 			SendChecks();
 
@@ -220,9 +232,8 @@ public class ArchipelagoPlugin extends Plugin
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
-		var message = event.getMessage();
 		for (APTask task : activeTasks){
-			task.CheckChatMessage(message);
+			task.CheckChatMessage(event);
 		}
 
 		if (event.getName() == null || client.getLocalPlayer() == null
@@ -255,17 +266,49 @@ public class ArchipelagoPlugin extends Plugin
 
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event){
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuOption()+" on "+event.getMenuTarget(), null);
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuAction()+" widget: "+event.getWidget(), null);
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Item ID: "+event.getItemId()+" "+event.isItemOp(), null);
+		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Param0: "+event.getParam0()+" Param1: "+event.getParam1(), null);
+
 		if (connected){
 			if (event.getMenuOption().equals("Wear") || event.getMenuOption().equals("Wield")){
 				//If we are equipping an item
 				if (event.getItemId() != -1){
 					if (!IsItemAllowed((event.getItemId()))){
 						event.consume();
-						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "You have not unlocked the ability to equip this item", null);
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "<img=" + modIconIndex + ">"+"You have not unlocked the ability to equip this item", null);
+					}
+				}
+			}
+
+			if (event.getWidget() != null){
+				String widgetName = Text.removeTags(event.getWidget().getName());
+
+				//Disallow teleports to locked areas
+				if (widgetName.equalsIgnoreCase("Varrock Teleport")){
+					if (getCollectedItems().stream().noneMatch(it -> it.name.equals("Area: Central Varrock"))){
+						event.consume();
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "<img=" + modIconIndex + ">"+"You have not unlocked that map region yet.", null);
+					}
+				}
+
+				if (widgetName.equalsIgnoreCase("Lumbridge Teleport") || widgetName.equalsIgnoreCase("Lumbridge Home Teleport")){
+					if (getCollectedItems().stream().noneMatch(it -> it.name.equals("Area: Lumbridge"))){
+						event.consume();
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "<img=" + modIconIndex + ">"+"You have not unlocked that map region yet.", null);
+					}
+				}
+
+				if (widgetName.equalsIgnoreCase("Falador Teleport")){
+					if (getCollectedItems().stream().noneMatch(it -> it.name.equals("Area: Falador"))){
+						event.consume();
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "<img=" + modIconIndex + ">"+"You have not unlocked that map region yet.", null);
 					}
 				}
 			}
 		}
+
 		for (APTask task : activeTasks){
 			task.OnMenuOption(event);
 		}
@@ -323,10 +366,8 @@ public class ArchipelagoPlugin extends Plugin
 	public void SetConnectionState(boolean newConnectionState){
 		// If we've just reconnected, check all our tasks and items
 		if (newConnectionState){
-
-			dataPackageLocation = RuneLite.RUNELITE_DIR + "/APData/" + apClient.getRoomInfo().seedName + "_" + apClient.getSlot() + ".save";
-			loadDataPackage();
-
+			dataPackage.slotName = apClient.getMyName();
+			dataPackage.seed = apClient.getRoomInfo().seedName;
 			activeTasks = new ArrayList<>();
 			for(long id : apClient.getLocationManager().getCheckedLocations()){
 				APTask task = TaskLists.GetTaskByID(id);
@@ -335,12 +376,14 @@ public class ArchipelagoPlugin extends Plugin
 					activeTasks.add(task);
 				}
 			}
+
 			for(long id : apClient.getLocationManager().getMissingLocations()){
 				APTask task = TaskLists.GetTaskByID(id);
 				if (task != null){
 					activeTasks.add(task);
 				}
 			}
+
 			activeTasks = activeTasks.stream().sorted(Comparator.comparing(APTask::GetID)).collect(Collectors.toList());
 		}
 
@@ -348,9 +391,10 @@ public class ArchipelagoPlugin extends Plugin
 			panel.ConnectionStateChanged(newConnectionState);
 		connected = newConnectionState;
 
-		if (dataPackage.characterHash == 0 && connected && loggedIn){
-			dataPackage.characterHash = client.getAccountHash();
-			log.info("Detected first log in or connection, setting autoreconnect");
+		if (dataPackage != null && dataPackage.slotName.isEmpty() && connected && currentlyLoggedIn){
+			dataPackage.slotName = apClient.getMyName();
+			dataPackage.seed = apClient.getRoomInfo().seedName;;
+			log.info("Detected first log in or connection, storing data");
 			saveDataPackage();
 		}
 	}
@@ -393,11 +437,15 @@ public class ArchipelagoPlugin extends Plugin
 		}
 	}
 
-	public void ConnectToAPServer()
+	public void ConnectToAPServer(){
+		ConnectToAPServer(config.slotname());
+	}
+
+	public void ConnectToAPServer(String slotName)
 	{
 		String uri = config.address()+":"+config.port();
 		log.info(uri);
-		apClient.newConnection(this, uri, config.slotname(), config.password());
+		apClient.newConnection(this, uri, slotName, config.password());
 	}
 
 	private String extractCommand(String message)
@@ -437,15 +485,15 @@ public class ArchipelagoPlugin extends Plugin
 		if (apClient != null && apClient.isConnected()){
 			apClient.checkLocations(checkedLocations);
 		}
-
-		SwingUtilities.invokeLater(panel::UpdateTaskStatus);
-		SwingUtilities.invokeLater(panel::UpdateItems);
 	}
 
 	public void addCollectedItem(ItemData item){
+		if (item == null){
+			log.warn("Null Item received");
+			return;
+		}
 		log.info("Received item: "+item.name);
 		collectedItems.add(item);
-		panel.UpdateItems();
 		UpdateAvailableChunks();
 	}
 
@@ -491,6 +539,15 @@ public class ArchipelagoPlugin extends Plugin
 		}
 	}
 
+	public void ClaimCarePack(long itemId){
+		dataPackage.claimedCarePacks.add(itemId);
+		saveDataPackage();
+	}
+
+	public int CheckClaimedCarePacks(long itemId){
+		return Collections.frequency(dataPackage.claimedCarePacks, itemId);
+	}
+
 	public List<ItemData> getCollectedItems() {
 		return collectedItems;
 	}
@@ -507,7 +564,12 @@ public class ArchipelagoPlugin extends Plugin
 		clientThread.invoke(() -> TaskLists.LoadImages(spriteManager));
 		clientThread.invoke(() -> ItemHandler.LoadImages(spriteManager));
 	}
-	
+
+	public String getCurrentPlayerName(){
+		if (client.getLocalPlayer() == null) return "";
+		return client.getLocalPlayer().getName();
+	}
+
 	/////////// SPRITES ///////////
 	private void loadSprites()
 	{
@@ -530,12 +592,10 @@ public class ArchipelagoPlugin extends Plugin
 			client.setModIcons(newAry);
 		});
 	}
-
 	private IndexedSprite getIndexedSpriteEmbedded()
 	{
 		try
 		{
-			log.debug("Loading: {}", "chat_icon.png");
 			BufferedImage image = ImageUtil.loadImageResource(this.getClass(), "chat_icon.png");
 			return ImageUtil.getImageIndexedSprite(image, client);
 		}

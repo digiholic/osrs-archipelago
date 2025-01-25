@@ -2,6 +2,10 @@ package gg.archipelago;
 
 import gg.archipelago.Tasks.APTask;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.GameState;
+import net.runelite.api.events.ClientTick;
+import net.runelite.api.events.GameStateChanged;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.ui.ColorScheme;
 
 import javax.swing.*;
@@ -19,6 +23,8 @@ public class TaskPanel extends JPanel {
     private final JCheckBox displayCompleted;
     private final HashMap<APTask, TaskRow> locationPanels = new HashMap<APTask, TaskRow>();
 
+    private boolean isPanelInitialized = false;
+
     public TaskPanel(ArchipelagoPlugin plugin){
         this.plugin = plugin;
 
@@ -32,6 +38,62 @@ public class TaskPanel extends JPanel {
 
         add(displayCompleted);
         setAlignmentX(Component.LEFT_ALIGNMENT);
+    }
+
+    @Subscribe
+    public void onGameStateChanged(GameStateChanged gameStateChanged)
+    {
+        if (gameStateChanged.getGameState() == GameState.LOGGED_IN && !isPanelInitialized)
+        {
+            SetConnectionState(true);
+        }
+        else if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN && isPanelInitialized)
+        {
+            SetConnectionState(false);
+        }
+    }
+
+    @Subscribe
+    public void onClientTick(ClientTick t){
+        if (plugin.connected && isPanelInitialized){
+            UpdateTaskStatus();
+        }
+    }
+
+    public void SetConnectionState(boolean connectionStatus) {
+        if (connectionStatus){
+            setVisible(true);
+            isPanelInitialized = true;
+            UpdateTaskStatus();
+        } else {
+            setVisible(false);
+            isPanelInitialized = false;
+            removeAll();
+            add(displayCompleted);
+        }
+    }
+
+    public void UpdateTaskStatus(){
+        for (APTask task : plugin.activeTasks){
+            if (task.ShouldDisplayPanel()){
+                AddOrUpdateTaskRow(task);
+            }
+        }
+
+        revalidate();
+        repaint();
+    }
+
+    private void AddOrUpdateTaskRow(APTask task){
+        //boolean completed = plugin.LocationCheckStates.getOrDefault(loc,false);
+        if (locationPanels.containsKey(task)){
+            locationPanels.get(task).UpdateCompleted(task.IsCompleted());
+            locationPanels.get(task).UpdateDisplay();
+        } else {
+            TaskRow taskPanel = new TaskRow(task);
+            locationPanels.put(task, taskPanel);
+            add(taskPanel);
+        }
     }
 
     private class TaskRow extends JPanel{
@@ -108,49 +170,6 @@ public class TaskPanel extends JPanel {
                 log.info("Completed task "+task.GetName());
                 task.SetCompleted();
             }
-        }
-    }
-
-    public void UpdateTaskStatus(){
-        for (APTask task : plugin.activeTasks){
-            TaskRow taskPanel = locationPanels.getOrDefault(task, null);
-            if (taskPanel != null){
-                taskPanel.UpdateCompleted(task.IsCompleted());
-                taskPanel.UpdateDisplay();
-            }
-        }
-    }
-
-    private void AddOrUpdateTaskRow(APTask task){
-        //boolean completed = plugin.LocationCheckStates.getOrDefault(loc,false);
-        if (locationPanels.containsKey(task)){
-            locationPanels.get(task).UpdateCompleted(task.IsCompleted());
-            locationPanels.get(task).UpdateDisplay();
-        } else {
-            TaskRow taskPanel = new TaskRow(task);
-            locationPanels.put(task, taskPanel);
-            add(taskPanel);
-        }
-    }
-
-    public void ConnectionStateChanged(boolean connectionSuccessful) {
-        if (connectionSuccessful){
-            setVisible(true);
-
-            for (APTask task : plugin.activeTasks){
-                if (task.ShouldDisplayPanel()){
-                    SwingUtilities.invokeLater(() -> {
-                        AddOrUpdateTaskRow(task);
-                    });
-                }
-            }
-            revalidate();
-            repaint();
-        } else {
-            setVisible(false);
-            //Empty the panel, but put the checkbox back for later
-            removeAll();
-            add(displayCompleted);
         }
     }
 }

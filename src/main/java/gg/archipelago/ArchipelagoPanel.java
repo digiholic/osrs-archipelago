@@ -1,5 +1,6 @@
 package gg.archipelago;
 
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
 import javax.swing.*;
@@ -33,6 +34,9 @@ public class ArchipelagoPanel extends PluginPanel {
         final JPanel statusPanel = buildStatusPanel();
         layoutPanel.add(statusPanel);
         //layoutPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        //JLabel versionLabel = new JLabel("plugin version 2.1");
+        //versionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        //layoutPanel.add(versionLabel);
 
         messageLabel = new JLabel("");
         messageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -76,7 +80,6 @@ public class ArchipelagoPanel extends PluginPanel {
     }
 
     public void ConnectionStateChanged(boolean connectionSuccessful) {
-        taskListPanel.ConnectionStateChanged(connectionSuccessful);
         UpdateStatusButton(connectionSuccessful);
     }
 
@@ -84,16 +87,19 @@ public class ArchipelagoPanel extends PluginPanel {
         connectButton.setEnabled(!connectionSuccessful);
         connectButton.setText(connectionSuccessful ? "Connected!" : "Connect");
     }
-    public void UpdateTaskStatus(){
-        taskListPanel.UpdateTaskStatus();
-    }
-
-    public void UpdateItems(){
-        itemListPanel.UpdateItems();
-    }
 
     public void DisplayNetworkMessage(String message){
         String formattedMessage = String.format("<html><body style=\"text-align: justify;  text-justify: inter-word;\">%s</body></html>",message);
         messageLabel.setText(formattedMessage);
+    }
+
+    public void RegisterListeners(EventBus eventBus){
+        eventBus.register(taskListPanel);
+        eventBus.register(itemListPanel);
+    }
+
+    public void UnregisterListeners(EventBus eventBus){
+        eventBus.unregister(taskListPanel);
+        eventBus.unregister(itemListPanel);
     }
 }

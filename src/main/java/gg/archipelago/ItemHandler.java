@@ -9,6 +9,7 @@ import net.runelite.client.game.SpriteManager;
 import javax.swing.plaf.synth.Region;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -20,7 +21,8 @@ public class ItemHandler {
     public static final long base_id = 0x070000;
     public static int itemCount = 0;
     private static final String repository_address = "https://raw.githubusercontent.com/digiholic/osrs-archipelago-logic/";
-
+    private static final boolean DEBUG = false;
+    private static final String debugDataSource = "";
     private static List<ItemData> cachedAllItems = new ArrayList<>();
     public static List<ItemData> GetItems() {
         return cachedAllItems;
@@ -35,6 +37,14 @@ public class ItemHandler {
         if (data_version == null || data_version.isEmpty() || items == null){
             cachedAllItems = defaultItems;
             RegionNamesToChunkIdString = defaultChunkRegions;
+            for(Map.Entry<String, String> entry : RegionNamesToChunkIdString.entrySet()){
+                String name = entry.getKey();
+                String chunks = entry.getValue();
+                for(String chunk : chunks.split(",")){
+                    ChunkIDStringToRegionNames.put(chunk, name);
+                }
+            }
+
             for (ItemData item : defaultItems){
                 ItemsById.put(item.id, item);
             }
@@ -51,8 +61,13 @@ public class ItemHandler {
                         String name = itemRow.get(0);
                         String chunks = itemRow.get(4);
                         RegionNamesToChunkIdString.put(name, chunks);
+                        for(String chunk : chunks.split(",")){
+                            ChunkIDStringToRegionNames.put(chunk, name);
+                        }
                         break;
                     case "Item":
+                    case "Junk":
+                    case "CarePack":
                         icon_id = Integer.parseInt(itemRow.get(4));
                         icon_file = Integer.parseInt(itemRow.get(5));
                         break;
@@ -71,12 +86,19 @@ public class ItemHandler {
         String taggedRepoAddress = repository_address+dataVersion;
         List<List<String>> items = new ArrayList<>();
         try {
-            URL repo = new URL(taggedRepoAddress+"/items.csv");
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(repo.openStream()));
+            BufferedReader in = null;
+            if (DEBUG){
+                FileReader fileIn = new FileReader(debugDataSource);
+                in = new BufferedReader(fileIn);
+            } else {
+                URL repo = new URL(taggedRepoAddress+"/items.csv");
+                in = new BufferedReader(new InputStreamReader(repo.openStream()));
+            }
 
             String inputLine;
             while ((inputLine = in.readLine()) != null){
+                if (inputLine.startsWith("Name")) continue;
+
                 List<String> row = new ArrayList<>();
                 // Gnarly regex to capture CSV pattern without splitting on commas in quotes
                 Matcher m = Pattern.compile("(?:,|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*|(?:\\n|$))")
@@ -102,7 +124,7 @@ public class ItemHandler {
             new ItemData(base_id + 2, ItemNames.HAM_Hideout, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
             new ItemData(base_id + 3, ItemNames.Lumbridge_Farms, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
             new ItemData(base_id + 4, ItemNames.South_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 5, ItemNames.East_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
+            new ItemData(base_id + 5, ItemNames.Lumberyard, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
             new ItemData(base_id + 6, ItemNames.Central_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
             new ItemData(base_id + 7, ItemNames.Varrock_Palace, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
             new ItemData(base_id + 8, ItemNames.West_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
@@ -135,7 +157,7 @@ public class ItemHandler {
     );
 
     public static Map<String, String> RegionNamesToChunkIdString = new HashMap<>();
-
+    public static Map<String, String> ChunkIDStringToRegionNames = new HashMap<>();
     private static Map<String, String> defaultChunkRegions = Map.ofEntries(
             Map.entry(ItemNames.Lumbridge, "12850"),
             Map.entry(ItemNames.Lumbridge_Swamp, "12849,12593"),
@@ -149,7 +171,7 @@ public class ItemHandler {
             Map.entry(ItemNames.South_Of_Varrock, "13108,12852,12596"),
             Map.entry(ItemNames.Central_Varrock, "12853"),
             Map.entry(ItemNames.Varrock_Palace, "12854"),
-            Map.entry(ItemNames.East_Of_Varrock, "13109,13110"),
+            Map.entry(ItemNames.Lumberyard, "13109,13110"),
             Map.entry(ItemNames.West_Varrock, "12598,12597"),
             Map.entry(ItemNames.Edgeville, "12342"),
             Map.entry(ItemNames.Barbarian_Village, "12341"),

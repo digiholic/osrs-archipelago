@@ -2,29 +2,34 @@ package gg.archipelago.Tasks;
 
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
-import net.runelite.api.Varbits;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
-public class VarbitTask extends APTask{
+public class VarbitChangedTask extends APTask{
     private final long _ID;
     private final int _varbitToCheck;
-    private final int _valueToCheck;
     private boolean _isCompleted = false;
     private String _name;
     private int _spriteID;
+    private boolean _isInitialized;
+    private int _previousVarbitValue;
 
-    public VarbitTask(long ID, String name, int SpriteID,  int varbitToCheck, int valueToCheck){
+    public VarbitChangedTask(long ID, String name, int SpriteID, int varbitToCheck){
         _ID = ID;
         _name = name;
         _spriteID = SpriteID;
         _varbitToCheck = varbitToCheck;
-        _valueToCheck = valueToCheck;
     }
 
     @Override
     public void CheckPlayerStatus(Client client) {
-        if (client.getServerVarbitValue(_varbitToCheck) == _valueToCheck)
+        if (!_isInitialized){
+            _previousVarbitValue = client.getServerVarbitValue(_varbitToCheck);
+            _isInitialized = true;
+        }
+
+
+        if (client.getServerVarbitValue(_varbitToCheck) != _previousVarbitValue)
             _isCompleted = true;
     }
 

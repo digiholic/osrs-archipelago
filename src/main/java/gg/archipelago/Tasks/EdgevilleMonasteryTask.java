@@ -1,23 +1,26 @@
 package gg.archipelago.Tasks;
 
-import net.runelite.api.Client;
-import net.runelite.api.NPC;
-import net.runelite.api.Skill;
-import net.runelite.api.SpriteID;
+import gg.archipelago.Tasks.APTask;
+import net.runelite.api.*;
+import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
-public class EdgevilleMonasteryTask extends APTask{
+public class EdgevilleMonasteryTask extends APTask {
     private final long _ID;
     private boolean _isCompleted;
 
+    private int _currentRegionID;
     public EdgevilleMonasteryTask(long ID){
         _ID = ID;
     }
     @Override
     public void CheckPlayerStatus(Client client) {
-        int prayerLevel = client.getRealSkillLevel(Skill.PRAYER);
-        if (prayerLevel > 31 && client.getBoostedSkillLevel(Skill.PRAYER) == prayerLevel+2){
-            _isCompleted = true;
+        Player player = client.getLocalPlayer();
+        if (player == null) {
+            _currentRegionID = -1;
+        } else {
+            _currentRegionID = WorldPoint.fromLocalInstance(client, player.getLocalLocation()).getRegionID();
         }
     }
 
@@ -30,7 +33,19 @@ public class EdgevilleMonasteryTask extends APTask{
     public boolean CanManuallyActivate() { return true; }
 
     @Override
-    public void CheckChatMessage(String message) { }
+    public void CheckChatMessage(ChatMessage event) {
+        // If the player is not currently in the monastery chunk, exit without checking.
+        if (_currentRegionID != 12086) return;
+
+        String[] splitMessages = event.getMessage().split("<br>");
+        for (String msg : splitMessages) {
+            String _message_B = "You boost your Prayer points.";
+            String _message_A = "You recharge your Prayer points.";
+            if (msg.equalsIgnoreCase(_message_A) || msg.equals(_message_B)){
+                _isCompleted = true;
+            }
+        }
+    }
     @Override
     public void CheckMobKill(NPC npc) { }
     @Override

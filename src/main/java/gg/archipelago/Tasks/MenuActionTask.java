@@ -1,36 +1,31 @@
 package gg.archipelago.Tasks;
 
 import gg.archipelago.ArchipelagoPlugin;
-import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
+import net.runelite.client.util.Text;
 
-public class ChatMessageTask extends APTask{
+public class MenuActionTask extends APTask{
     private final long _ID;
-    private final String _messageToCheck;
     private boolean _isCompleted = false;
     private String _name;
     private int _spriteID;
+    private final String _menuAction;
+    private final String _menuTarget;
 
-    public ChatMessageTask(long ID, String name, int spriteID, String messageToCheck){
+
+    public MenuActionTask(long ID, String name, int spriteID, String menuAction, String menuTarget){
         _ID = ID;
         _name = name;
         _spriteID = spriteID;
-        _messageToCheck = messageToCheck;
+        _menuAction = menuAction;
+        _menuTarget = menuTarget;
     }
 
     @Override
-    public void CheckChatMessage(ChatMessage event) {
-        String[] splitMessages = event.getMessage().split("<br>");
-        for (String msg : splitMessages) {
-            if (msg.equalsIgnoreCase(_messageToCheck.replace("<player>", ArchipelagoPlugin.plugin.getCurrentPlayerName()))){
-                _isCompleted = true;
-            }
-        }
-    }
-
+    public void CheckChatMessage(ChatMessage event) { }
     @Override
     public void CheckMobKill(NPC npc) { }
     @Override
@@ -39,7 +34,10 @@ public class ChatMessageTask extends APTask{
     public void OnGameTick(Client client) { }
     @Override
     public void OnMenuOption(MenuOptionClicked event) {
-
+        if (event.getMenuOption().equalsIgnoreCase(_menuAction) &&
+                Text.removeTags(event.getMenuTarget()).equalsIgnoreCase(_menuTarget)){
+            SetCompleted();
+        }
     }
 
     @Override
