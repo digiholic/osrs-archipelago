@@ -191,7 +191,7 @@ public class ArchipelagoPlugin extends Plugin
 	public void onClientTick(ClientTick t)
 	{
 		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", client.getSelectedWidget().getName(), null);
-
+		
 		if (justLoggedIn && client.getLocalPlayer().getName() != null){
 			// If we just logged in, and the data package's stored seed doesn't match the one we're connected to,
 			// Disconnect immediately before checks get sent

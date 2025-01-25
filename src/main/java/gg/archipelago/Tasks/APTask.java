@@ -4,6 +4,7 @@ import gg.archipelago.data.LocationData;
 import net.runelite.api.*;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
+import net.runelite.api.widgets.Widget;
 
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ public abstract class APTask {
     private static final String STAND_AREA = "StandInAreaTask";
     private static final String EMOTE_AREA = "EmoteInAreaTask";
     private static final String ITEM = "ItemOperationTask";
+    private static final String WIDGET = "WidgetOpenTask";
 
 
     public static APTask CreateFromLocationCSVRow(LocationData row, long locationId){
@@ -106,6 +108,10 @@ public abstract class APTask {
                 return new ItemOperationTask(locationId, row.getLocationName(),
                         Integer.parseInt(args.get(0)), args.get(1),
                         Integer.parseInt(args.get(2)));
+            case WIDGET:
+                return new WidgetOpenTask(locationId, row.getLocationName(),
+                        Integer.parseInt(args.get(0)),
+                        Integer.parseInt(args.get(1)));
             default:
                 // If it's nothing above, it's a unique task we have to check by name.
                 switch(row.getLocationName()){
