@@ -9,6 +9,7 @@ import dev.koifysh.archipelago.parts.DataPackage;
 import dev.koifysh.archipelago.parts.NetworkSlot;
 import dev.koifysh.archipelago.parts.Version;
 import dev.koifysh.archipelago.network.client.*;
+import net.runelite.client.eventbus.EventBus;
 
 import java.io.*;
 import java.net.URI;
@@ -39,7 +40,8 @@ public abstract class Client {
 
     private final LocationManager locationManager;
     private final ItemManager itemManager;
-    private final EventManager eventManager;
+    //private final EventManager eventManager;
+    private EventBus eventBus;
 
     public static final Version protocolVersion = new Version(0, 4, 7);
 
@@ -56,7 +58,7 @@ public abstract class Client {
 
     // Parameters modified for OSRS usage. Original data package location and non-gson serialization not allowed.
     // If you're looking at this for reference on how to implement an AP game, don't look at this bit
-    public Client(String dataPackageLocation, Gson gson) {
+    public Client(String dataPackageLocation, Gson gson, EventBus bus) {
         this.dataPackageLocation = dataPackageLocation;
         this.gson = gson;
 
@@ -64,7 +66,7 @@ public abstract class Client {
 
         UUID = dataPackage.getUUID();
 
-        eventManager = new EventManager();
+        eventBus = bus;
         locationManager = new LocationManager(this);
         itemManager = new ItemManager(this);
         client = this;
@@ -470,8 +472,8 @@ public abstract class Client {
     /**
      * @return the event manager.
      */
-    public EventManager getEventManager() {
-        return eventManager;
+    public EventBus getEventBus() {
+        return eventBus;
     }
 
     /**

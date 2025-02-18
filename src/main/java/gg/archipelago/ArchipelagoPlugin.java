@@ -102,7 +102,7 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		plugin = this;
 		panel = new ArchipelagoPanel(this, config);
-		apClient = new APClient(this, gson);
+		apClient = new APClient(this, gson, eventBus);
 
 		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
 

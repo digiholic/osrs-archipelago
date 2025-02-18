@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Primitives;
 import com.google.gson.internal.bind.JsonTreeReader;
+import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.HashMap;
 
 public class RetrievedEvent implements Event {
@@ -56,8 +56,8 @@ public class RetrievedEvent implements Event {
         return Primitives.wrap(classOfT).cast(value);
     }
 
-    public <T> T getValueAsObject(String key, Type typeOfT) {
-        return jsonValue == null ? null : gson.fromJson(new JsonTreeReader(jsonValue.get(key)), typeOfT);
+    public <T> T getValueAsObject(String key, TypeToken<T> typeOfT) {
+        return jsonValue == null ? null : gson.fromJson(new JsonTreeReader(jsonValue.get(key)), typeOfT.getType());
     }
 
     public int getRequestID() {

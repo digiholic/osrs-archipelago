@@ -46,6 +46,7 @@ class WebSocket extends WebSocketClient {
     private String seedName;
     private static Timer reconnectTimer;
     private boolean downgrade = false;
+    private JsonParser parser;
 
     public WebSocket(URI serverUri, Client client, Gson gson) {
         super(serverUri);
@@ -55,6 +56,7 @@ class WebSocket extends WebSocketClient {
             reconnectTimer.cancel();
         }
         reconnectTimer = new Timer();
+        parser = new JsonParser();
     }
 
     @Override
@@ -65,8 +67,7 @@ class WebSocket extends WebSocketClient {
     public void onMessage(String message) {
         try {
             LOGGER.fine("Got Packet: " + message);
-            JsonElement element = JsonParser.parseString(message);
-
+            JsonElement element = parser.parse(message);
             JsonArray cmdList = element.getAsJsonArray();
 
             for (int commandNumber = 0; cmdList.size() > commandNumber; ++commandNumber) {
@@ -123,7 +124,7 @@ class WebSocket extends WebSocketClient {
                         JsonElement slotData = packet.getAsJsonObject().get("slot_data");
 
                         ConnectionAttemptEvent attemptConnectionEvent = new ConnectionAttemptEvent(connectedPacket.team, connectedPacket.slot, seedName, slotData, gson);
-                        client.getEventManager().callEvent(attemptConnectionEvent);
+                        client.getEventBus().post(attemptConnectionEvent);
 
                         if (!attemptConnectionEvent.isCanceled()) {
                             authenticated = true;
@@ -133,7 +134,7 @@ class WebSocket extends WebSocketClient {
                             client.getLocationManager().sendIfChecked(connectedPacket.missingLocations);
 
                             ConnectionResultEvent connectionResultEvent = new ConnectionResultEvent(ConnectionResult.Success, connectedPacket.team, connectedPacket.slot, seedName, slotData, gson);
-                            client.getEventManager().callEvent(connectionResultEvent);
+                            client.getEventBus().post(connectionResultEvent);
                         } else {
                             this.close();
                             //close out of this loop because we are no longer interested in further commands from the server.
@@ -142,7 +143,7 @@ class WebSocket extends WebSocketClient {
                         break;
                     case ConnectionRefused:
                         ConnectionRefusedPacket error = gson.fromJson(cmdList.get(commandNumber), ConnectionRefusedPacket.class);
-                        client.getEventManager().callEvent(new ConnectionResultEvent(error.errors[0], gson));
+                        client.getEventBus().post(new ConnectionResultEvent(error.errors[0], gson));
                         break;
                     case DataPackage:
                         JsonElement data = packet.getAsJsonObject().get("data");
@@ -180,7 +181,7 @@ class WebSocket extends WebSocketClient {
                             print.item.playerName = client.getRoomInfo().getPlayer(client.getTeam(), print.item.playerID).alias;
                         }
 
-                        client.getEventManager().callEvent(new PrintJSONEvent(print, print.type, print.receiving, print.item));
+                        client.getEventBus().post(new PrintJSONEvent(print, print.type, print.receiving, print.item));
 
                         break;
                     case RoomUpdate:
@@ -197,7 +198,7 @@ class WebSocket extends WebSocketClient {
                         if (bounced.tags.contains("DeathLink"))
                             DeathLink.receiveDeathLink(bounced);
                         else
-                            client.getEventManager().callEvent(new BouncedEvent(bounced.games, bounced.tags, bounced.slots, bounced.data));
+                            client.getEventBus().post(new BouncedEvent(bounced.games, bounced.tags, bounced.slots, bounced.data));
                         break;
                     case LocationInfo:
                         LocationInfoPacket locations = gson.fromJson(packet, LocationInfoPacket.class);
@@ -206,19 +207,19 @@ class WebSocket extends WebSocketClient {
                             item.locationName = client.getDataPackage().getLocation(item.locationID, client.getSlotInfo().get(client.getSlot()).game);
                             item.playerName = client.getRoomInfo().getPlayer(client.getTeam(), item.playerID).alias;
                         }
-                        client.getEventManager().callEvent(new LocationInfoEvent(locations.locations));
+                        client.getEventBus().post(new LocationInfoEvent(locations.locations));
                         break;
                     case Retrieved:
                         RetrievedPacket retrievedPacket = gson.fromJson(packet, RetrievedPacket.class);
-                        client.getEventManager().callEvent(new RetrievedEvent(retrievedPacket.keys, packet.getAsJsonObject().get("keys").getAsJsonObject(), retrievedPacket.requestID, gson));
+                        client.getEventBus().post(new RetrievedEvent(retrievedPacket.keys, packet.getAsJsonObject().get("keys").getAsJsonObject(), retrievedPacket.requestID, gson));
                         break;
                     case SetReply:
                         SetReplyPacket setReplyPacket = gson.fromJson(packet, SetReplyPacket.class);
-                        client.getEventManager().callEvent(new SetReplyEvent(setReplyPacket.key, setReplyPacket.value, setReplyPacket.original_Value, packet.getAsJsonObject().get("value"), setReplyPacket.requestID, gson));
+                        client.getEventBus().post(new SetReplyEvent(setReplyPacket.key, setReplyPacket.value, setReplyPacket.original_Value, packet.getAsJsonObject().get("value"), setReplyPacket.requestID, gson));
                         break;
                     case InvalidPacket:
                         InvalidPacket invalidPacket = gson.fromJson(packet, InvalidPacket.class);
-                        client.getEventManager().callEvent(new InvalidPacketEvent(invalidPacket.type, invalidPacket.Original_cmd, invalidPacket.text));
+                        client.getEventBus().post(new InvalidPacketEvent(invalidPacket.type, invalidPacket.Original_cmd, invalidPacket.text));
                     default:
 
                 }
@@ -237,7 +238,7 @@ class WebSocket extends WebSocketClient {
         client.setHintPoints(updateRoomPacket.hintPoints);
         client.setAlias(client.getRoomInfo().getPlayer(client.getTeam(), client.getSlot()).alias);
 
-        client.getEventManager().callEvent(new CheckedLocationsEvent(updateRoomPacket.checkedLocations));
+        client.getEventBus().post(new CheckedLocationsEvent(updateRoomPacket.checkedLocations));
     }
 
 

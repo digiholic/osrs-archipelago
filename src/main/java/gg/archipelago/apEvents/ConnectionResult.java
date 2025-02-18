@@ -1,14 +1,14 @@
 package gg.archipelago.apEvents;
 
 import gg.archipelago.ArchipelagoPlugin;
-import dev.koifysh.archipelago.events.ArchipelagoEventListener;
 import dev.koifysh.archipelago.events.ConnectionResultEvent;
 import gg.archipelago.SlotData;
+import net.runelite.client.eventbus.Subscribe;
 
 public class ConnectionResult {
 
-    @ArchipelagoEventListener
-    public void onConnectionResult(ConnectionResultEvent event) {
+    @Subscribe
+    public void onConnectionResultEvent(ConnectionResultEvent event) {
         if (event.getResult() == null) return;
 
         String msg;

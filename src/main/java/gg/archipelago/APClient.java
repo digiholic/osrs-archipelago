@@ -9,6 +9,7 @@ import dev.koifysh.archipelago.Client;
 
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.RuneLite;
+import net.runelite.client.eventbus.EventBus;
 
 import java.net.URISyntaxException;
 
@@ -17,8 +18,8 @@ public class APClient extends Client {
 
     private ArchipelagoPlugin plugin;
 
-    public APClient(ArchipelagoPlugin plugin, Gson gson){
-        super(RuneLite.RUNELITE_DIR + "/APData/DataPackage.ser", gson);
+    public APClient(ArchipelagoPlugin plugin, Gson gson, EventBus bus){
+        super(RuneLite.RUNELITE_DIR + "/APData/DataPackage.ser", gson, bus);
         this.setGame("Old School Runescape");
         this.plugin = plugin;
     }
@@ -36,9 +37,9 @@ public class APClient extends Client {
         itemListener = new ReceiveItem();
         printListener = new PrintJson();
 
-        getEventManager().registerListener(connectionListener);
-        getEventManager().registerListener(itemListener);
-        getEventManager().registerListener(printListener);
+        getEventBus().register(connectionListener);
+        getEventBus().register(itemListener);
+        getEventBus().register(printListener);
 
         try {
             connect(address);
@@ -61,9 +62,9 @@ public class APClient extends Client {
     public void disconnect(){
         super.disconnect();
         plugin.SetConnectionState(false);
-        getEventManager().unRegisterListener(connectionListener);
-        getEventManager().registerListener(itemListener);
-        getEventManager().registerListener(printListener);
+        getEventBus().unregister(connectionListener);
+        getEventBus().unregister(itemListener);
+        getEventBus().unregister(printListener);
 
     }
 }

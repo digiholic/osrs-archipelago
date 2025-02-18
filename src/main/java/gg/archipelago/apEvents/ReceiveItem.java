@@ -1,14 +1,13 @@
 package gg.archipelago.apEvents;
 
 import gg.archipelago.ArchipelagoPlugin;
-import gg.archipelago.ItemHandler;
-import dev.koifysh.archipelago.events.ArchipelagoEventListener;
 import dev.koifysh.archipelago.events.ReceiveItemEvent;
+import net.runelite.client.eventbus.Subscribe;
 
 public class ReceiveItem {
 
-    @ArchipelagoEventListener
-    public void onReceiveItem(ReceiveItemEvent event) {
+    @Subscribe
+    public void onReceiveItemEvent(ReceiveItemEvent event) {
         ArchipelagoPlugin.plugin.ReceiveItem(event);
     }
 }
