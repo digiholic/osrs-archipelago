@@ -25,7 +25,7 @@ public class DeathLink {
             DeathLinkEvent dl = new DeathLinkEvent((String)bounced.data.get("source"), (String)bounced.data.get("cause"), (Double)bounced.data.get("time"));
             client.getEventBus().post(dl);
         } catch (ClassCastException ex) {
-            System.out.println("Error Receiving DeathLink, possible malformed bounce packet");
+            //System.out.println("Error Receiving DeathLink, possible malformed bounce packet");
         }
     }
 
