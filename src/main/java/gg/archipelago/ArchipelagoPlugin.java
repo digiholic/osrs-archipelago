@@ -343,7 +343,7 @@ public class ArchipelagoPlugin extends Plugin
 			}
 			return false;
 		} else if (ItemHandler.RangeWeaponItemIds.contains(itemId)){
-			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Range_Weapon)).count();
+			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Range_Weapon) || it.name.equals(ItemNames.Progressive_Range_Weapon_Legacy)).count();
 			for (int i=0; i <= itemTier; i++){
 				if (Arrays.asList(ItemHandler.RangeWeaponsPermittedByTier.get(i)).contains(itemId)){
 					return true;

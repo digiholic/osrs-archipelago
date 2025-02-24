@@ -125,10 +125,13 @@ public class ItemPanel extends JPanel {
                 case ItemNames.Progressive_Range_Armor:
                     addOrUpdateItemPanel(item, ItemHandler.RangeArmorTierByCount(countInCollection));
                     break;
+                //Since there cannot possibly be a case where a datapackage is both a legacy run and not, whichever one these conditions trip will have the proper count
                 case ItemNames.Progressive_Range_Weapon:
+                case ItemNames.Progressive_Range_Weapon_Legacy:
                     addOrUpdateItemPanel(item, ItemHandler.RangeWeaponTierByCount(countInCollection));
                     break;
                 case ItemNames.Progressive_Magic:
+                case ItemNames.Progressive_Magic_Legacy:
                     addOrUpdateItemPanel(item, ItemHandler.MagicTierByCount(countInCollection));
                     break;
                 default:

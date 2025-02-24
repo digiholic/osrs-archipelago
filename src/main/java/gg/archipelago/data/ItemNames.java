@@ -35,5 +35,7 @@ public class ItemNames {
     public static final String Progressive_Tools = "Progressive Tools";
     public static final String Progressive_Range_Armor = "Progressive Ranged Armor";
     public static final String Progressive_Range_Weapon = "Progressive Ranged Weapon";
+    public static final String Progressive_Range_Weapon_Legacy = "Progressive Ranged Weapons";
     public static final String Progressive_Magic = "Progressive Magic Spell";
+    public static final String Progressive_Magic_Legacy = "Progressive Magic";
 }
