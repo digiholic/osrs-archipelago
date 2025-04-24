@@ -51,11 +51,13 @@ public class APClient extends Client {
     @Override
     public void onError(Exception e) {
         ArchipelagoPlugin.plugin.DisplayNetworkMessage("Server Error: " + e.getMessage());
+        disconnect();
     }
 
     @Override
     public void onClose(String message, int i) {
         //ArchipelagoPanel.apPanel.statusText.setText("Connection Closed NL " + message);
+        disconnect();
     }
 
     @Override

@@ -31,9 +31,10 @@ public class ConnectionResult {
             default:
                 msg = "Unknown Error";
         }
-
-        ArchipelagoPlugin.plugin.SetSlotData(event.getSlotData(SlotData.class));
         ArchipelagoPlugin.plugin.DisplayNetworkMessage(msg);
+        if (event.getSlotData(SlotData.class) != null){
+            ArchipelagoPlugin.plugin.SetSlotData(event.getSlotData(SlotData.class));
+        }
         ArchipelagoPlugin.plugin.SetConnectionState(event.getResult() == dev.koifysh.archipelago.network.ConnectionResult.Success);
     }
 }

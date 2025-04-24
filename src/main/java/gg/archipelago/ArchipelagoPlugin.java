@@ -68,6 +68,7 @@ public class ArchipelagoPlugin extends Plugin
 
 	public boolean currentlyLoggedIn;
 	public boolean connected;
+	private boolean pendingConnection;
 
 	protected List<APTask> activeTasks = new ArrayList<>();
 
@@ -163,11 +164,14 @@ public class ArchipelagoPlugin extends Plugin
 		if (gameStateChanged.getGameState() == GameState.LOGGED_IN && !currentlyLoggedIn)
 		{
 			dataPackageLocation = RuneLite.RUNELITE_DIR + "/APData/" + client.getAccountHash() + ".save";
+			log.info("Logged in, checking for AP Save file at "+dataPackageLocation);
 			loadDataPackage();
 			currentlyLoggedIn = true;
 			justLoggedIn = true;
-			if (!apClient.isConnected() && !dataPackage.slotName.isEmpty()) {
-				ConnectToAPServer(dataPackage.slotName);
+			if (!apClient.isConnected() && !dataPackage.address.isEmpty() && !dataPackage.port.isEmpty() && !dataPackage.slotName.isEmpty()) {
+				ConnectToAPServer(dataPackage.address, dataPackage.port, dataPackage.slotName, dataPackage.password);
+			} else {
+				DisplayNetworkMessage("No automatic reconnect defined for this character, please connect manually");
 			}
 		}
 		else if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN){
@@ -266,11 +270,6 @@ public class ArchipelagoPlugin extends Plugin
 
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event){
-		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuOption()+" on "+event.getMenuTarget(), null);
-		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Clicked Option "+event.getMenuAction()+" widget: "+event.getWidget(), null);
-		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Item ID: "+event.getItemId()+" "+event.isItemOp(), null);
-		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "Param0: "+event.getParam0()+" Param1: "+event.getParam1(), null);
-
 		if (connected){
 			if (event.getMenuOption().equals("Wear") || event.getMenuOption().equals("Wield")){
 				//If we are equipping an item
@@ -364,10 +363,10 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	public void SetConnectionState(boolean newConnectionState){
+		// Whether it succeeds or fails, we are no longer waiting for an answer, so we can un-set this right away
+		pendingConnection = false;
 		// If we've just reconnected, check all our tasks and items
 		if (newConnectionState){
-			dataPackage.slotName = apClient.getMyName();
-			dataPackage.seed = apClient.getRoomInfo().seedName;
 			activeTasks = new ArrayList<>();
 			for(long id : apClient.getLocationManager().getCheckedLocations()){
 				APTask task = TaskLists.GetTaskByID(id);
@@ -385,18 +384,26 @@ public class ArchipelagoPlugin extends Plugin
 			}
 
 			activeTasks = activeTasks.stream().sorted(Comparator.comparing(APTask::GetID)).collect(Collectors.toList());
+
+			if (dataPackage != null && dataPackage.slotName.isEmpty()){
+				String connectedAddress = apClient.getConnectedAddress();
+				String address = connectedAddress.substring(0, connectedAddress.lastIndexOf(':'));
+				String port = connectedAddress.substring(connectedAddress.lastIndexOf(':')+1);
+
+				dataPackage.address = address;
+				dataPackage.port = port;
+				dataPackage.slotName = apClient.getMyName();
+				dataPackage.password = apClient.getPassword();
+				dataPackage.seed = apClient.getRoomInfo().seedName;
+
+				log.info("Detected first log in or connection, storing data");
+				saveDataPackage();
+			}
 		}
 
 		if (connected != newConnectionState)
 			panel.ConnectionStateChanged(newConnectionState);
 		connected = newConnectionState;
-
-		if (dataPackage != null && dataPackage.slotName.isEmpty() && connected && currentlyLoggedIn){
-			dataPackage.slotName = apClient.getMyName();
-			dataPackage.seed = apClient.getRoomInfo().seedName;;
-			log.info("Detected first log in or connection, storing data");
-			saveDataPackage();
-		}
 	}
 
 	public void ReceiveItem(ReceiveItemEvent event){
@@ -438,14 +445,17 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	public void ConnectToAPServer(){
-		ConnectToAPServer(config.slotname());
+		if (pendingConnection) return;
+		DisplayNetworkMessage("Connecting...");
+		pendingConnection = true;
+		ConnectToAPServer(config.address(), config.port(), config.slotname(), config.password());
 	}
 
-	public void ConnectToAPServer(String slotName)
+	public void ConnectToAPServer(String address, String port, String slotName, String password)
 	{
-		String uri = config.address()+":"+config.port();
+		String uri = address+":"+port;
 		log.info(uri);
-		apClient.newConnection(this, uri, slotName, config.password());
+		apClient.newConnection(this, uri, slotName, password);
 	}
 
 	private String extractCommand(String message)
