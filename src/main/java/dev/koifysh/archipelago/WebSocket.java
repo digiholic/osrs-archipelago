@@ -239,7 +239,6 @@ class WebSocket extends WebSocketClient {
             }
         } catch (Exception e) {
             LOGGER.warning("Error proccessing incoming packet: " + e.getMessage());
-            //e.printStackTrace();
         }
     }
 
@@ -349,7 +348,6 @@ class WebSocket extends WebSocketClient {
         }
         client.onError(ex);
         LOGGER.log(Level.WARNING, "Error in websocket connection: " + ex.getMessage());
-        //ex.printStackTrace();
     }
 
     public void connect(boolean allowDowngrade) {

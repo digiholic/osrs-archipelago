@@ -44,7 +44,7 @@ public class APClient extends Client {
         try {
             connect(address);
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+
         }
     }
 
