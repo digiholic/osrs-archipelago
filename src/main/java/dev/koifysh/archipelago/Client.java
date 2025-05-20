@@ -10,6 +10,7 @@ import dev.koifysh.archipelago.parts.NetworkSlot;
 import dev.koifysh.archipelago.parts.Version;
 import dev.koifysh.archipelago.network.client.*;
 import net.runelite.client.eventbus.EventBus;
+import org.apache.hc.core5.net.URIBuilder;
 
 import java.io.*;
 import java.net.URI;
@@ -23,6 +24,10 @@ public abstract class Client {
     private final static Logger LOGGER = Logger.getLogger(Client.class.getName());
 
     private final String dataPackageLocation;
+
+    protected Map<String,String> versions;
+
+    protected ArrayList<String> games;
 
     private int hintPoints;
 
@@ -43,7 +48,7 @@ public abstract class Client {
     //private final EventManager eventManager;
     private EventBus eventBus;
 
-    public static final Version protocolVersion = new Version(0, 4, 7);
+    public static final Version protocolVersion = new Version(0, 6, 1);
 
     private int team;
     private int slot;
@@ -127,7 +132,7 @@ public abstract class Client {
     }
 
 
-    private void loadDataPackage() {
+    protected void loadDataPackage() {
         try {
             FileInputStream fileInput = new FileInputStream(dataPackageLocation);
             dataPackage = gson.fromJson(new InputStreamReader(fileInput, StandardCharsets.UTF_8), dev.koifysh.archipelago.parts.DataPackage.class);
@@ -159,6 +164,7 @@ public abstract class Client {
             LOGGER.warning("unable to save DataPackage.");
         }
     }
+
 
     /**
      * Returns true only if connected to an Archipelago server.
@@ -248,28 +254,23 @@ public abstract class Client {
      * @throws URISyntaxException on malformed address
      */
     public void connect(String address) throws URISyntaxException {
+        URIBuilder builder = new URIBuilder((!address.contains("//")) ? "//" + address : address);
+        if (builder.getPort() == -1) { //set default port if not included
+            builder.setPort(38281);
+        }
+
         if (webSocket != null && webSocket.isOpen()) {
             LOGGER.fine("previous WebSocket is open, closing.");
             webSocket.close();
         }
 
-        address = (!address.contains("//")) ? "//" + address : address;
-        URI uri = new URI(address);
-
-        if (uri.getPort() == -1) { //set default port if not included
-            // sigh, the things we do to avoid an apache dependency
-            uri = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), 38281,
-                    uri.getPath(), uri.getQuery(), uri.getFragment());
-        }
-
-        if (uri.getScheme() == null) {
-            uri = new URI("wss", uri.getUserInfo(), uri.getHost(), uri.getPort(),
-                    uri.getPath(), uri.getQuery(), uri.getFragment());
-            connect(uri, true);
+        if (builder.getScheme() == null) {
+            builder.setScheme("wss");
+            connect(builder.build(), true);
             return;
         }
 
-        connect(uri);
+        connect(builder.build());
     }
 
     /**
@@ -523,6 +524,21 @@ public abstract class Client {
      *         <td> item_name_groups_{game_name} </td>
      *         <td> dict[str, list[str]] </td>
      *         <td> item_name_groups belonging to the requested game. </td>
+     *     </tr>
+     *     <tr>
+     *         <td> location_name_groups_{game_name} </td>
+     *         <td> dict[str, list[str]] </td>
+     *         <td> location_name_groups belonging to the requested game. </td>
+     *     </tr>
+     *     <tr>
+     *         <td> client_status_{team}_{slot} </td>
+     *         <td> ClientStatus </td>
+     *         <td> The current game status of the requested player. </td>
+     *     </tr>
+     *     <tr>
+     *         <td> race_mode </td>
+     *         <td> int </td>
+     *         <td> 0 if race mode is disabled, and 1 if it's enabled. </td>
      *     </tr>
      * </table>
      *
