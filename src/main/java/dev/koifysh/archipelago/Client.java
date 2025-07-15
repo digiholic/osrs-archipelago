@@ -10,7 +10,6 @@ import dev.koifysh.archipelago.parts.NetworkSlot;
 import dev.koifysh.archipelago.parts.Version;
 import dev.koifysh.archipelago.network.client.*;
 import net.runelite.client.eventbus.EventBus;
-import org.apache.hc.core5.net.URIBuilder;
 
 import java.io.*;
 import java.net.URI;
@@ -254,23 +253,24 @@ public abstract class Client {
      * @throws URISyntaxException on malformed address
      */
     public void connect(String address) throws URISyntaxException {
-        URIBuilder builder = new URIBuilder((!address.contains("//")) ? "//" + address : address);
-        if (builder.getPort() == -1) { //set default port if not included
-            builder.setPort(38281);
-        }
-
         if (webSocket != null && webSocket.isOpen()) {
             LOGGER.fine("previous WebSocket is open, closing.");
             webSocket.close();
         }
 
-        if (builder.getScheme() == null) {
-            builder.setScheme("wss");
-            connect(builder.build(), true);
+        URI uri = new URI(address);
+        int port = uri.getPort();
+        if (port == -1) port = 38281; //set default port if not included
+        String scheme = uri.getScheme();
+        if (scheme == null){
+            scheme = "wss";
+            URI updatedUri = new URI(String.format("%s://%s:%s", scheme, uri.getHost(), port));
+            connect(updatedUri, true);
             return;
         }
+        URI updatedUri = new URI(String.format("%s://%s:%s", scheme, uri.getHost(), port));
+        connect(updatedUri);
 
-        connect(builder.build());
     }
 
     /**
