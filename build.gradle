@@ -25,13 +25,12 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 
 	implementation 'org.java-websocket:Java-WebSocket:1.5.6'
-	implementation 'org.apache.httpcomponents.core5:httpcore5:5.2'
 
 	components {
-		withModule("org.apache.httpcomponents.core5:httpcore5") {
+		withModule("org.java-websocket:Java-WebSocket") {
 			allVariants {
 				withDependencies {
-					removeAll { it.group == "org.junit" && it.name == "junit-bom" }
+					removeAll { it.group == "org.slf4j" }
 				}
 			}
 		}
