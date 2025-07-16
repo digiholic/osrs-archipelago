@@ -21,7 +21,7 @@ public class TaskPanel extends JPanel {
     private final ArchipelagoPlugin plugin;
 
     private final JCheckBox displayCompleted;
-    private final HashMap<APTask, TaskRow> locationPanels = new HashMap<APTask, TaskRow>();
+    private final HashMap<Long, TaskRow> locationPanels = new HashMap<Long, TaskRow>();
 
     private boolean isPanelInitialized = false;
 
@@ -85,13 +85,16 @@ public class TaskPanel extends JPanel {
     }
 
     private void AddOrUpdateTaskRow(APTask task){
+
         //boolean completed = plugin.LocationCheckStates.getOrDefault(loc,false);
-        if (locationPanels.containsKey(task)){
-            locationPanels.get(task).UpdateCompleted(task.IsCompleted());
-            locationPanels.get(task).UpdateDisplay();
+        if (locationPanels.containsKey(task.GetID())){
+            TaskRow row = locationPanels.get(task.GetID());
+            row.task = task;
+            row.UpdateCompleted(task.IsCompleted());
+            row.UpdateDisplay();
         } else {
             TaskRow taskPanel = new TaskRow(task);
-            locationPanels.put(task, taskPanel);
+            locationPanels.put(task.GetID(), taskPanel);
             add(taskPanel);
         }
     }

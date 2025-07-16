@@ -258,6 +258,7 @@ public abstract class Client {
             webSocket.close();
         }
 
+        if (!address.contains("//")) address = "//" + address;
         URI uri = new URI(address);
         int port = uri.getPort();
         if (port == -1) port = 38281; //set default port if not included

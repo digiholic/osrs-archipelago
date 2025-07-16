@@ -202,15 +202,17 @@ public class ArchipelagoPlugin extends Plugin
 			if (connected && !dataPackage.seed.equals(apClient.getRoomInfo().seedName)){
 				apClient.disconnect();
 				log.info("Detected log in of a non-auto-reconnect player. Disconnecting from server to avoid mixing checks");
-				DisplayNetworkMessage("This Archipelago Slot is not associated with this Character. " +
-						"Please use the proper character or update connection information, or press \"Connect\" "+
-						"to update this slot to this character");
+				DisplayNetworkMessage("This Character is associated with a different Archipelago Seed. The slot has been " +
+						"disconnected to avoid erroneously completing tasks based on this character's state. "+
+						"If you wish to use this character for this Archipelago Seed, click \"Connect\" above to "+
+						"reconnect to this slot and associate this character with that seed");
 			}
 			justLoggedIn = false;
 		}
-		if (currentlyLoggedIn && connected){
+		if (!justLoggedIn && currentlyLoggedIn && connected){
 			checkStatus();
 			SendChecks();
+			UpdateSlotData();
 
 			if (!isDisplayingPopup && queuedMessages.size() > 0 && client.getWidget((161 << 16) | 13) != null){
 				String[] msg = queuedMessages.poll();
@@ -386,24 +388,29 @@ public class ArchipelagoPlugin extends Plugin
 			activeTasks = activeTasks.stream().sorted(Comparator.comparing(APTask::GetID)).collect(Collectors.toList());
 
 			if (dataPackage != null && dataPackage.slotName.isEmpty()){
-				String connectedAddress = apClient.getConnectedAddress();
-				String address = connectedAddress.substring(0, connectedAddress.lastIndexOf(':'));
-				String port = connectedAddress.substring(connectedAddress.lastIndexOf(':')+1);
-
-				dataPackage.address = address;
-				dataPackage.port = port;
-				dataPackage.slotName = apClient.getMyName();
-				dataPackage.password = apClient.getPassword();
-				dataPackage.seed = apClient.getRoomInfo().seedName;
-
 				log.info("Detected first log in or connection, storing data");
-				saveDataPackage();
+				UpdateSlotData();
 			}
 		}
 
 		if (connected != newConnectionState)
 			panel.ConnectionStateChanged(newConnectionState);
 		connected = newConnectionState;
+	}
+
+	private void UpdateSlotData(){
+		String connectedAddress = apClient.getConnectedAddress();
+		String address = connectedAddress.substring(0, connectedAddress.lastIndexOf(':'));
+		String port = connectedAddress.substring(connectedAddress.lastIndexOf(':')+1);
+
+		dataPackage.address = address;
+		dataPackage.port = port;
+		dataPackage.slotName = apClient.getMyName();
+		dataPackage.password = apClient.getPassword();
+		dataPackage.seed = apClient.getRoomInfo().seedName;
+
+
+		saveDataPackage();
 	}
 
 	public void ReceiveItem(ReceiveItemEvent event){
