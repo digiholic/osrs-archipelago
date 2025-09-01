@@ -1,9 +1,8 @@
 package gg.archipelago.Tasks;
 
-import gg.archipelago.Tasks.APTask;
+import gg.archipelago.data.NameOrIDDataSource;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
-import net.runelite.api.World;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
@@ -12,13 +11,14 @@ public class StandInPositionTask extends APTask {
     private final long _ID;
     private final String _name;
     private boolean _isCompleted;
-    private final int _spriteID;
+    private final NameOrIDDataSource _sprite;
     private final WorldPoint[] _locationPoints;
-
-    public StandInPositionTask(long ID, String name, int spriteID, int x, int y, int plane){
+    private final String _category;
+    public StandInPositionTask(long ID, String name, String category, NameOrIDDataSource sprite, int x, int y, int plane){
         _ID = ID;
         _name = name;
-        _spriteID = spriteID;
+        _category = category;
+        _sprite = sprite;
         _locationPoints = new WorldPoint[] { new WorldPoint(x, y, plane) };
     }
 
@@ -38,13 +38,20 @@ public class StandInPositionTask extends APTask {
     public String GetName() { return _name; }
     @Override
     public long GetID() { return _ID; }
+
+    @Override
+    public String GetCategory() { return _category; }
     @Override
     public boolean IsCompleted() { return _isCompleted; }
     @Override
     public void SetCompleted() { _isCompleted = true; }
 
     @Override
-    public int GetSpriteID() { return _spriteID; }
+    public int GetSpriteID() {
+        if (_sprite.isID)
+            return _sprite.idValue;
+        else return APTask.IconByName(_sprite.nameValue);
+    }
 
     @Override
     public boolean ShouldDisplayPanel() { return true; }
@@ -53,15 +60,15 @@ public class StandInPositionTask extends APTask {
     public boolean CanManuallyActivate() { return true; }
 
     @Override
-    public void CheckChatMessage(ChatMessage event) { }
+    public void CheckChatMessage(Client client, ChatMessage event) { }
 
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
 
     @Override
     public void CheckPlayerStatus(Client client) { }
 
     @Override
-    public void OnMenuOption(MenuOptionClicked event) { }
+    public void OnMenuOption(Client client, MenuOptionClicked event) { }
 
 }

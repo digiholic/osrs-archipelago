@@ -12,31 +12,34 @@ public class CastSpellTask extends StateTrackingTask{
     private final long _ID;
 
     private String _name;
+    private final String _category;
     private String _spell_name;
 
     private int _previousMagicXP;
     private boolean shouldCancel = false;
 
-    public CastSpellTask(Long ID, String spell){
+    public CastSpellTask(Long ID, String category, String spell){
         _ID = ID;
         _name = "Cast "+spell;
+        _category = category;
         _spell_name = spell;
     }
 
-    public CastSpellTask(Long ID, String name, String spell){
+    public CastSpellTask(Long ID, String name, String category, String spell){
         _ID = ID;
         _name = name;
+        _category = category;
         _spell_name = spell;
     }
 
     @Override
-    public void CheckChatMessage(ChatMessage event) { }
+    public void CheckChatMessage(Client client, ChatMessage event) { }
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
     @Override
     public void CheckPlayerStatus(Client client) { }
     @Override
-    public void OnMenuOption(MenuOptionClicked event) {
+    public void OnMenuOption(Client client, MenuOptionClicked event) {
         if (checkTriggered){
             MenuAction action = event.getMenuAction();
             // If we're pending a check and we do any menu options that aren't "Targetting a spell", un-set the trigger next tick
@@ -69,6 +72,9 @@ public class CastSpellTask extends StateTrackingTask{
     public long GetID() {
         return _ID;
     }
+
+    @Override
+    public String GetCategory() { return _category; }
 
     @Override
     public int GetSpriteID() {

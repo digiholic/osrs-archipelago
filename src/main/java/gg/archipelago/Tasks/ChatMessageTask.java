@@ -1,7 +1,7 @@
 package gg.archipelago.Tasks;
 
 import gg.archipelago.ArchipelagoPlugin;
-import net.runelite.api.ChatMessageType;
+import gg.archipelago.data.NameOrIDDataSource;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.events.ChatMessage;
@@ -12,17 +12,19 @@ public class ChatMessageTask extends APTask{
     private final String _messageToCheck;
     private boolean _isCompleted = false;
     private String _name;
-    private int _spriteID;
+    private final String _category;
+    private NameOrIDDataSource _sprite;
 
-    public ChatMessageTask(long ID, String name, int spriteID, String messageToCheck){
+    public ChatMessageTask(long ID, String name, String category, NameOrIDDataSource sprite, String messageToCheck){
         _ID = ID;
         _name = name;
-        _spriteID = spriteID;
+        _category = category;
+        _sprite = sprite;
         _messageToCheck = messageToCheck;
     }
 
     @Override
-    public void CheckChatMessage(ChatMessage event) {
+    public void CheckChatMessage(Client client, ChatMessage event) {
         String[] splitMessages = event.getMessage().split("<br>");
         for (String msg : splitMessages) {
             if (msg.equalsIgnoreCase(_messageToCheck.replace("<player>", ArchipelagoPlugin.plugin.getCurrentPlayerName()))){
@@ -32,13 +34,13 @@ public class ChatMessageTask extends APTask{
     }
 
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
     @Override
     public void CheckPlayerStatus(Client client) { }
     @Override
     public void OnGameTick(Client client) { }
     @Override
-    public void OnMenuOption(MenuOptionClicked event) {
+    public void OnMenuOption(Client client, MenuOptionClicked event) {
 
     }
 
@@ -51,7 +53,9 @@ public class ChatMessageTask extends APTask{
 
     @Override
     public int GetSpriteID() {
-        return _spriteID;
+        if (_sprite.isID)
+            return _sprite.idValue;
+        else return APTask.IconByName(_sprite.nameValue);
     }
 
     @Override
@@ -68,6 +72,9 @@ public class ChatMessageTask extends APTask{
     public long GetID() {
         return _ID;
     }
+
+    @Override
+    public String GetCategory() { return _category; }
 
 
     @Override

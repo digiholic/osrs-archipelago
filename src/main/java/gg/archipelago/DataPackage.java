@@ -7,6 +7,8 @@ import java.util.List;
 public class DataPackage {
     public long lastItemReceivedIndex = -1;
 
+    public long accountHash = 0;
+    public String accountName = "";
     public String address = "";
     public String port = "";
     public String slotName = "";

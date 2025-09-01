@@ -9,10 +9,12 @@ import net.runelite.api.events.MenuOptionClicked;
 public class EdgevilleMonasteryTask extends APTask {
     private final long _ID;
     private boolean _isCompleted;
-
+    private final String _category;
     private int _currentRegionID;
-    public EdgevilleMonasteryTask(long ID){
+    public EdgevilleMonasteryTask(long ID, String category)
+    {
         _ID = ID;
+        _category = category;
     }
     @Override
     public void CheckPlayerStatus(Client client) {
@@ -27,13 +29,13 @@ public class EdgevilleMonasteryTask extends APTask {
     @Override
     public void OnGameTick(Client client) { }
     @Override
-    public void OnMenuOption(MenuOptionClicked event) { }
+    public void OnMenuOption(Client client, MenuOptionClicked event) { }
 
     @Override
     public boolean CanManuallyActivate() { return true; }
 
     @Override
-    public void CheckChatMessage(ChatMessage event) {
+    public void CheckChatMessage(Client client, ChatMessage event) {
         // If the player is not currently in the monastery chunk, exit without checking.
         if (_currentRegionID != 12086) return;
 
@@ -47,7 +49,7 @@ public class EdgevilleMonasteryTask extends APTask {
         }
     }
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
     @Override
     public boolean IsCompleted() {
         return _isCompleted;
@@ -74,4 +76,7 @@ public class EdgevilleMonasteryTask extends APTask {
     public long GetID() {
         return _ID;
     }
+
+    @Override
+    public String GetCategory() { return _category; }
 }

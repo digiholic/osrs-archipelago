@@ -8,12 +8,12 @@ public class QuestTask extends APTask{
     private final long _ID;
     private final Quest _questToCheck;
     private boolean _isCompleted = false;
+    private final String _category;
 
-
-    public QuestTask(long ID, Quest questToCheck){
+    public QuestTask(long ID, String category, Quest questToCheck){
         _ID = ID;
+        _category = category;
         _questToCheck = questToCheck;
-
     }
     @Override
     public void CheckPlayerStatus(Client client) {
@@ -24,11 +24,11 @@ public class QuestTask extends APTask{
     @Override
     public void OnGameTick(Client client) { }
     @Override
-    public void OnMenuOption(MenuOptionClicked event) { }
+    public void OnMenuOption(Client client, MenuOptionClicked event) { }
     @Override
-    public void CheckChatMessage(ChatMessage event) { }
+    public void CheckChatMessage(Client client, ChatMessage event) { }
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
     @Override
     public boolean IsCompleted() {
         return _isCompleted;
@@ -55,7 +55,8 @@ public class QuestTask extends APTask{
     public long GetID() {
         return _ID;
     }
-
+    @Override
+    public String GetCategory() { return _category; }
     @Override
     public boolean CanManuallyActivate() {
         return false;

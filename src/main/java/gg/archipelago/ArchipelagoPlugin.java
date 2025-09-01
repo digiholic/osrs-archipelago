@@ -22,6 +22,7 @@ import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ChatboxInput;
 import net.runelite.client.events.NpcLootReceived;
+import net.runelite.client.game.SkillIconManager;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -58,6 +59,8 @@ public class ArchipelagoPlugin extends Plugin
 	@Inject
 	private SpriteManager spriteManager;
 	@Inject
+	private SkillIconManager skillIconManager;
+	@Inject
 	private ConfigManager configManager;
 	@Inject
 	private Gson gson;
@@ -70,7 +73,7 @@ public class ArchipelagoPlugin extends Plugin
 	public boolean connected;
 	private boolean pendingConnection;
 
-	protected List<APTask> activeTasks = new ArrayList<>();
+	protected ActiveTaskList activeTasks;
 
 	private ArchipelagoPanel panel;
 	private APClient apClient;
@@ -92,6 +95,10 @@ public class ArchipelagoPlugin extends Plugin
 	private DataPackage dataPackage;
 	private long lastItemReceivedIndex = 0;
 
+	public boolean displayAllTasks;
+	public boolean toggleCategoryOnXP;
+	public boolean goalCompleted;
+
 	@Provides
 	ArchipelagoConfig provideConfig(ConfigManager configManager)
 	{
@@ -102,9 +109,9 @@ public class ArchipelagoPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		plugin = this;
-		panel = new ArchipelagoPanel(this, config);
+		panel = new ArchipelagoPanel(this, config, skillIconManager, eventBus);
 		apClient = new APClient(this, gson, eventBus);
-
+		activeTasks = new ActiveTaskList(this, panel);
 		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
 
 		navButton = NavigationButton.builder()
@@ -119,8 +126,6 @@ public class ArchipelagoPlugin extends Plugin
 		loadSprites();
 		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
 		overlayManager.add(overlay);
-
-		panel.RegisterListeners(eventBus);
 	}
 
 	@Override
@@ -135,7 +140,7 @@ public class ArchipelagoPlugin extends Plugin
 		clientThread.invoke(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
 		overlayManager.remove(overlay);
 
-		panel.UnregisterListeners(eventBus);
+		panel.UnregisterListeners();
 	}
 
 	@Subscribe
@@ -186,7 +191,7 @@ public class ArchipelagoPlugin extends Plugin
 	}
 	@Subscribe
 	public void onGameTick(GameTick tick){
-		for (APTask task : activeTasks){
+		for (APTask task : activeTasks.GetActiveTasks()){
 			task.OnGameTick(client);
 		}
 	}
@@ -230,16 +235,16 @@ public class ArchipelagoPlugin extends Plugin
 	public void onNpcLootReceived(final NpcLootReceived npcLootReceived)
 	{
 		final NPC npc = npcLootReceived.getNpc();
-		for(APTask task : activeTasks){
-			task.CheckMobKill(npc);
+		for(APTask task : activeTasks.GetActiveTasks()){
+			task.CheckMobKill(client, npc);
 		}
 	}
 
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
-		for (APTask task : activeTasks){
-			task.CheckChatMessage(event);
+		for (APTask task : activeTasks.GetActiveTasks()){
+			task.CheckChatMessage(client, event);
 		}
 
 		if (event.getName() == null || client.getLocalPlayer() == null
@@ -310,8 +315,8 @@ public class ArchipelagoPlugin extends Plugin
 			}
 		}
 
-		for (APTask task : activeTasks){
-			task.OnMenuOption(event);
+		for (APTask task : activeTasks.GetActiveTasks()){
+			task.OnMenuOption(client, event);
 		}
 	}
 
@@ -323,6 +328,13 @@ public class ArchipelagoPlugin extends Plugin
 		if (container == client.getItemContainer(InventoryID.INVENTORY))
 		{
 			Item[] items = container.getItems();
+		}
+	}
+
+	@Subscribe
+	public void onStatChanged(StatChanged statChanged){
+		if (toggleCategoryOnXP){
+			panel.SetSelectedTaskCategory(statChanged.getSkill().getName().toLowerCase());
 		}
 	}
 
@@ -369,23 +381,21 @@ public class ArchipelagoPlugin extends Plugin
 		pendingConnection = false;
 		// If we've just reconnected, check all our tasks and items
 		if (newConnectionState){
-			activeTasks = new ArrayList<>();
+			activeTasks.ClearTaskList();
 			for(long id : apClient.getLocationManager().getCheckedLocations()){
 				APTask task = TaskLists.GetTaskByID(id);
 				if (task != null){
 					task.SetCompleted();
-					activeTasks.add(task);
+					activeTasks.AddActiveTask(task);
 				}
 			}
 
 			for(long id : apClient.getLocationManager().getMissingLocations()){
 				APTask task = TaskLists.GetTaskByID(id);
 				if (task != null){
-					activeTasks.add(task);
+					activeTasks.AddActiveTask(task);
 				}
 			}
-
-			activeTasks = activeTasks.stream().sorted(Comparator.comparing(APTask::GetID)).collect(Collectors.toList());
 
 			if (dataPackage != null && dataPackage.slotName.isEmpty()){
 				log.info("Detected first log in or connection, storing data");
@@ -403,12 +413,13 @@ public class ArchipelagoPlugin extends Plugin
 		String address = connectedAddress.substring(0, connectedAddress.lastIndexOf(':'));
 		String port = connectedAddress.substring(connectedAddress.lastIndexOf(':')+1);
 
+		dataPackage.accountHash = client.getAccountHash();
+		dataPackage.accountName = client.getLocalPlayer().getName();
 		dataPackage.address = address;
 		dataPackage.port = port;
 		dataPackage.slotName = apClient.getMyName();
 		dataPackage.password = apClient.getPassword();
 		dataPackage.seed = apClient.getRoomInfo().seedName;
-
 
 		saveDataPackage();
 	}
@@ -442,11 +453,11 @@ public class ArchipelagoPlugin extends Plugin
 
 	private void checkStatus()
 	{
-		for (APTask task : activeTasks){
+		for (APTask task : activeTasks.GetActiveTasks()){
 			task.CheckPlayerStatus(client);
 		}
 
-		if(Quest.DRAGON_SLAYER_I.getState(client) == QuestState.FINISHED){
+		if(goalCompleted){
 			apClient.setGameState(ClientStatus.CLIENT_GOAL);
 		}
 	}
@@ -494,7 +505,7 @@ public class ArchipelagoPlugin extends Plugin
 
 	private void SendChecks()
 	{
-		Collection<Long> checkedLocations = activeTasks.stream()
+		Collection<Long> checkedLocations = activeTasks.GetActiveTasks().stream()
 				.filter(APTask::IsCompleted)
 				.map(APTask::GetID)
 				.collect(Collectors.toList());
@@ -547,12 +558,56 @@ public class ArchipelagoPlugin extends Plugin
 		try {
 			FileInputStream fileInput = new FileInputStream(dataPackageLocation);
 			dataPackage = gson.fromJson(new InputStreamReader(fileInput, StandardCharsets.UTF_8), DataPackage.class);
+
 			fileInput.close();
 
 		} catch (IOException e) {
 			log.info("no dataPackage found creating a new one.");
 			dataPackage = new DataPackage();
 			saveDataPackage();
+		}
+	}
+
+	public List<DataPackage> getAllDataPackages() {
+		String dataPackageLocation = RuneLite.RUNELITE_DIR + "/APData/";
+		File dataPackageDir = new File(dataPackageLocation);
+		if (!dataPackageDir.exists()){
+			log.error("No DataPackage Directory!");
+			return null;
+		}
+
+		File[] saves = dataPackageDir.listFiles();
+		List<DataPackage> dataPackages = new ArrayList<>();
+		if (saves == null){
+			log.error("No DataPackage Save files found");
+			return null;
+		}
+
+		for (File save : saves){
+			if (!save.getAbsolutePath().endsWith(".save")) continue;
+			try {
+				FileInputStream fileInput = new FileInputStream(save.getAbsolutePath());
+				DataPackage dataPackage = gson.fromJson(new InputStreamReader(fileInput, StandardCharsets.UTF_8), DataPackage.class);
+				//Since the account hash wasn't always stored, we should set it here so it can be found by file name
+				if (dataPackage.accountHash == 0){
+					String hashString = save.getName().replaceFirst("[.][^.]+$", "");
+					dataPackage.accountHash = Long.parseLong(hashString);
+				}
+				dataPackages.add(dataPackage);
+				fileInput.close();
+
+			} catch (IOException e) {
+				log.info("Could not load DataPackage File "+save.getName());
+			}
+		}
+		return dataPackages;
+	}
+
+	public void DeleteDataPackage(long accountHash){
+		String pendingLocation = RuneLite.RUNELITE_DIR + "/APData/" + accountHash + ".save";
+		File saveFile = new File(pendingLocation);
+		if (saveFile.exists()){
+			saveFile.delete();
 		}
 	}
 
@@ -576,6 +631,7 @@ public class ArchipelagoPlugin extends Plugin
 		this.slotData = data;
 		TaskLists.GetAllTasks(slotData.data_csv_tag);
 		ItemHandler.GetAllItems(slotData.data_csv_tag);
+		panel.AddGoalPanel(slotData.goal_task);
 
 		//loadSprites();
 		clientThread.invoke(() -> TaskLists.LoadImages(spriteManager));

@@ -14,20 +14,21 @@ public class OpenLockboxTask extends StateTrackingTask {
     private final int _lockboxItemID;
 
     private int _previousLockboxCount = 0;
-
-    public OpenLockboxTask(Long ID, int lockboxItemID){
+    private final String _category;
+    public OpenLockboxTask(Long ID, String category, int lockboxItemID){
         _ID = ID;
+        _category = category;
         _lockboxItemID = lockboxItemID;
     }
 
     @Override
-    public void CheckChatMessage(ChatMessage event) { }
+    public void CheckChatMessage(Client client, ChatMessage event) { }
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
     @Override
     public void CheckPlayerStatus(Client client) { }
     @Override
-    public void OnMenuOption(MenuOptionClicked event) {
+    public void OnMenuOption(Client client, MenuOptionClicked event) {
         //Check for Runecraft option
         if (event.getMenuOption().equalsIgnoreCase("Open")){
             checkTriggered = true;
@@ -52,6 +53,9 @@ public class OpenLockboxTask extends StateTrackingTask {
     public long GetID() {
         return _ID;
     }
+
+    @Override
+    public String GetCategory() { return _category; }
 
     @Override
     public int GetSpriteID() {

@@ -11,6 +11,7 @@ import net.runelite.client.util.Text;
 public class TelegrabGoldBarTask extends StateTrackingTask{
 
     private final long _ID;
+    private final String _category;
 
     private final String _name = "Telegrab a Gold Bar from the Varrock Bank";
     private final String _spell_name = "Telekinetic Grab";
@@ -20,20 +21,21 @@ public class TelegrabGoldBarTask extends StateTrackingTask{
     private final WorldPoint _topleft_point;
     private final WorldPoint _bottomright_point;
     private boolean _in_area;
-    public TelegrabGoldBarTask(Long ID){
+    public TelegrabGoldBarTask(Long ID, String category){
         _ID = ID;
+        _category = category;
         _topleft_point = new WorldPoint(3187, 9834, 0);
         _bottomright_point = new WorldPoint(3196, 9818, 0);
     }
 
     @Override
-    public void CheckChatMessage(ChatMessage event) { }
+    public void CheckChatMessage(Client client, ChatMessage event) { }
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
     @Override
     public void CheckPlayerStatus(Client client) { }
     @Override
-    public void OnMenuOption(MenuOptionClicked event) {
+    public void OnMenuOption(Client client, MenuOptionClicked event) {
         if (checkTriggered){
             MenuAction action = event.getMenuAction();
             // If we're pending a check and we do any menu options that aren't "Targetting a spell", un-set the trigger next tick
@@ -71,6 +73,9 @@ public class TelegrabGoldBarTask extends StateTrackingTask{
     public long GetID() {
         return _ID;
     }
+
+    @Override
+    public String GetCategory() { return _category; }
 
     @Override
     public int GetSpriteID() {

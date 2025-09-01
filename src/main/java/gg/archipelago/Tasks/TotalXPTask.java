@@ -10,10 +10,11 @@ public class TotalXPTask extends APTask{
     private final long _ID;
     private final int _totalXPRequired;
     private boolean _isCompleted = false;
+    private final String _category;
 
-
-    public TotalXPTask(long ID, int totalXPRequired){
+    public TotalXPTask(long ID, String category, int totalXPRequired){
         _ID = ID;
+        _category = category;
         _totalXPRequired = totalXPRequired;
 
     }
@@ -25,7 +26,7 @@ public class TotalXPTask extends APTask{
     @Override
     public void OnGameTick(Client client) { }
     @Override
-    public void OnMenuOption(MenuOptionClicked event) { }
+    public void OnMenuOption(Client client, MenuOptionClicked event) { }
 
     @Override
     public boolean CanManuallyActivate() {
@@ -33,9 +34,9 @@ public class TotalXPTask extends APTask{
     }
 
     @Override
-    public void CheckChatMessage(ChatMessage event) { }
+    public void CheckChatMessage(Client client, ChatMessage event) { }
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
     @Override
     public boolean IsCompleted() {
         return _isCompleted;
@@ -61,4 +62,7 @@ public class TotalXPTask extends APTask{
     public long GetID() {
         return _ID;
     }
+
+    @Override
+    public String GetCategory() { return _category; }
 }

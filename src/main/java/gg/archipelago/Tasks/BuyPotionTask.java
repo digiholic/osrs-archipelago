@@ -14,23 +14,25 @@ public class BuyPotionTask extends StateTrackingTask{
     private final long _ID;
 
     private final String _name = "Have the Apothecary Make a Strength Potion";
-
+    private final String _category;
     private boolean _shouldCancel = false;
 
     private int _previousPotionCount = 0;
 
-    public BuyPotionTask(Long ID){
+    public BuyPotionTask(Long ID, String category)
+    {
         _ID = ID;
+        _category = category;
     }
 
     @Override
-    public void CheckChatMessage(ChatMessage event) { }
+    public void CheckChatMessage(Client client, ChatMessage event) { }
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
     @Override
     public void CheckPlayerStatus(Client client) { }
     @Override
-    public void OnMenuOption(MenuOptionClicked event) {
+    public void OnMenuOption(Client client, MenuOptionClicked event) {
         //Check for Runecraft option
         if (event.getMenuOption().startsWith("Buy-") &&
                 Text.removeTags(event.getMenuTarget()).equalsIgnoreCase("Strength potion")){
@@ -49,6 +51,10 @@ public class BuyPotionTask extends StateTrackingTask{
 
     @Override
     public long GetID() { return _ID; }
+
+    @Override
+    public String GetCategory() { return _category; }
+
     @Override
     public int GetSpriteID() { return SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET; }
     @Override

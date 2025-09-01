@@ -6,7 +6,6 @@ import net.runelite.api.ItemID;
 import net.runelite.api.SpriteID;
 import net.runelite.client.game.SpriteManager;
 
-import javax.swing.plaf.synth.Region;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -22,7 +21,8 @@ public class ItemHandler {
     public static int itemCount = 0;
     private static final String repository_address = "https://raw.githubusercontent.com/digiholic/osrs-archipelago-logic/";
     private static final boolean DEBUG = false;
-    private static final String debugDataSource = "";
+    private static final String debugItemDataSource = "";
+
     private static List<ItemData> cachedAllItems = new ArrayList<>();
     public static List<ItemData> GetItems() {
         return cachedAllItems;
@@ -88,7 +88,7 @@ public class ItemHandler {
         try {
             BufferedReader in = null;
             if (DEBUG){
-                FileReader fileIn = new FileReader(debugDataSource);
+                FileReader fileIn = new FileReader(debugItemDataSource);
                 in = new BufferedReader(fileIn);
             } else {
                 URL repo = new URL(taggedRepoAddress+"/items.csv");

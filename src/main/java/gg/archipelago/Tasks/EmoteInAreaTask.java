@@ -1,5 +1,6 @@
 package gg.archipelago.Tasks;
 
+import gg.archipelago.data.NameOrIDDataSource;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.coords.WorldPoint;
@@ -10,25 +11,27 @@ import net.runelite.client.util.Text;
 public class EmoteInAreaTask extends APTask {
     private final long _ID;
     private final String _name;
+    private final String _category;
     private boolean _isCompleted;
-    private final int _spriteID;
+    private final NameOrIDDataSource _sprite;
     private final WorldPoint _topleft_point;
     private final WorldPoint _bottomright_point;
     private final String _emote;
 
     private boolean _in_area;
 
-    public EmoteInAreaTask(long ID, String name, int spriteID, String emote, int tl_x, int tl_y, int tl_plane, int br_x, int br_y, int br_plane){
+    public EmoteInAreaTask(long ID, String name, String category, NameOrIDDataSource sprite, String emote, int tl_x, int tl_y, int tl_plane, int br_x, int br_y, int br_plane){
         _ID = ID;
         _name = name;
-        _spriteID = spriteID;
+        _category = category;
+        _sprite = sprite;
         _emote = emote;
         _topleft_point = new WorldPoint(tl_x, tl_y, tl_plane);
         _bottomright_point = new WorldPoint(br_x, br_y, br_plane);
     }
 
     @Override
-    public void OnMenuOption(MenuOptionClicked event) {
+    public void OnMenuOption(Client client, MenuOptionClicked event) {
         if (event.getMenuOption().equalsIgnoreCase("Perform") && Text.removeTags(event.getMenuTarget()).equalsIgnoreCase(_emote)){
             if (_in_area)
                 SetCompleted();
@@ -46,13 +49,21 @@ public class EmoteInAreaTask extends APTask {
     public String GetName() { return _name; }
     @Override
     public long GetID() { return _ID; }
+
+    @Override
+    public String GetCategory() { return _category; }
+
     @Override
     public boolean IsCompleted() { return _isCompleted; }
     @Override
     public void SetCompleted() { _isCompleted = true; }
 
     @Override
-    public int GetSpriteID() { return _spriteID; }
+    public int GetSpriteID() {
+        if (_sprite.isID)
+            return _sprite.idValue;
+        else return APTask.IconByName(_sprite.nameValue);
+    }
 
     @Override
     public boolean ShouldDisplayPanel() { return true; }
@@ -61,10 +72,10 @@ public class EmoteInAreaTask extends APTask {
     public boolean CanManuallyActivate() { return true; }
 
     @Override
-    public void CheckChatMessage(ChatMessage event) { }
+    public void CheckChatMessage(Client client, ChatMessage event) { }
 
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
 
     @Override
     public void CheckPlayerStatus(Client client) { }

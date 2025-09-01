@@ -1,8 +1,8 @@
 package gg.archipelago.Tasks;
 
+import gg.archipelago.data.NameOrIDDataSource;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
-import net.runelite.api.Varbits;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 
@@ -11,13 +11,15 @@ public class VarbitTask extends APTask{
     private final int _varbitToCheck;
     private final int _valueToCheck;
     private boolean _isCompleted = false;
-    private String _name;
-    private int _spriteID;
+    private final String _name;
+    private final String _category;
+    private final NameOrIDDataSource _sprite;
 
-    public VarbitTask(long ID, String name, int SpriteID,  int varbitToCheck, int valueToCheck){
+    public VarbitTask(long ID, String name, String category, NameOrIDDataSource sprite,  int varbitToCheck, int valueToCheck){
         _ID = ID;
         _name = name;
-        _spriteID = SpriteID;
+        _category = category;
+        _sprite = sprite;
         _varbitToCheck = varbitToCheck;
         _valueToCheck = valueToCheck;
     }
@@ -31,11 +33,11 @@ public class VarbitTask extends APTask{
     @Override
     public void OnGameTick(Client client) { }
     @Override
-    public void OnMenuOption(MenuOptionClicked event) { }
+    public void OnMenuOption(Client client, MenuOptionClicked event) { }
     @Override
-    public void CheckChatMessage(ChatMessage event) { }
+    public void CheckChatMessage(Client client, ChatMessage event) { }
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
     @Override
     public boolean IsCompleted() {
         return _isCompleted;
@@ -43,7 +45,9 @@ public class VarbitTask extends APTask{
 
     @Override
     public int GetSpriteID() {
-        return _spriteID;
+        if (_sprite.isID)
+            return _sprite.idValue;
+        else return APTask.IconByName(_sprite.nameValue);
     }
     @Override
     public void SetCompleted() { _isCompleted = true; }
@@ -62,6 +66,9 @@ public class VarbitTask extends APTask{
     public long GetID() {
         return _ID;
     }
+
+    @Override
+    public String GetCategory() { return _category; }
 
     @Override
     public boolean CanManuallyActivate() {

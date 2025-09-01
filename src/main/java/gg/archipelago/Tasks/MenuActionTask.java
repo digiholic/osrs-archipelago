@@ -1,6 +1,6 @@
 package gg.archipelago.Tasks;
 
-import gg.archipelago.ArchipelagoPlugin;
+import gg.archipelago.data.NameOrIDDataSource;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.events.ChatMessage;
@@ -11,29 +11,31 @@ public class MenuActionTask extends APTask{
     private final long _ID;
     private boolean _isCompleted = false;
     private String _name;
-    private int _spriteID;
+    private final String _category;
+    private NameOrIDDataSource _sprite;
     private final String _menuAction;
     private final String _menuTarget;
 
 
-    public MenuActionTask(long ID, String name, int spriteID, String menuAction, String menuTarget){
+    public MenuActionTask(long ID, String name, String category, NameOrIDDataSource sprite, String menuAction, String menuTarget){
         _ID = ID;
         _name = name;
-        _spriteID = spriteID;
+        _category = category;
+        _sprite = sprite;
         _menuAction = menuAction;
         _menuTarget = menuTarget;
     }
 
     @Override
-    public void CheckChatMessage(ChatMessage event) { }
+    public void CheckChatMessage(Client client, ChatMessage event) { }
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
     @Override
     public void CheckPlayerStatus(Client client) { }
     @Override
     public void OnGameTick(Client client) { }
     @Override
-    public void OnMenuOption(MenuOptionClicked event) {
+    public void OnMenuOption(Client client, MenuOptionClicked event) {
         if (event.getMenuOption().equalsIgnoreCase(_menuAction) &&
                 Text.removeTags(event.getMenuTarget()).equalsIgnoreCase(_menuTarget)){
             SetCompleted();
@@ -49,7 +51,9 @@ public class MenuActionTask extends APTask{
 
     @Override
     public int GetSpriteID() {
-        return _spriteID;
+        if (_sprite.isID)
+            return _sprite.idValue;
+        else return APTask.IconByName(_sprite.nameValue);
     }
 
     @Override
@@ -66,6 +70,9 @@ public class MenuActionTask extends APTask{
     public long GetID() {
         return _ID;
     }
+
+    @Override
+    public String GetCategory() { return _category; }
 
 
     @Override

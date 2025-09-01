@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.Skill;
-import net.runelite.api.SpriteID;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -15,14 +14,15 @@ public class  BurnLogsTask extends StateTrackingTask{
     private final long _ID;
 
     private String _name;
+    private final String _category;
     private int _required_level;
     private int _xp_gained;
     private int _previousFiremakingXP;
 
     private final String logs_burning_message = "The fire catches and the logs begin to burn.";
-    public BurnLogsTask(Long ID, LogType logType){
+    public BurnLogsTask(Long ID, String category, LogType logType){
         _ID = ID;
-
+        _category = category;
         switch(logType){
             case OAK:
                 _name = "Burn an Oak Log";
@@ -36,25 +36,26 @@ public class  BurnLogsTask extends StateTrackingTask{
         }
     }
 
-    public BurnLogsTask(Long ID, String name, int required_level, int xp_gained){
+    public BurnLogsTask(Long ID, String name, String category, int required_level, int xp_gained){
         _ID = ID;
         _name = name;
+        _category = category;
         _required_level = required_level;
         _xp_gained = xp_gained;
     }
     @Override
-    public void CheckChatMessage(ChatMessage event) {
+    public void CheckChatMessage(Client client, ChatMessage event) {
         // Check for burning log message
         if (event.getMessage().equalsIgnoreCase(logs_burning_message)){
             checkTriggered = true;
         }
     }
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
     @Override
     public void CheckPlayerStatus(Client client) { }
     @Override
-    public void OnMenuOption(MenuOptionClicked event) { }
+    public void OnMenuOption(Client client, MenuOptionClicked event) { }
 
     @Override
     public String GetName() {
@@ -67,8 +68,11 @@ public class  BurnLogsTask extends StateTrackingTask{
     }
 
     @Override
+    public String GetCategory() { return _category; }
+
+    @Override
     public int GetSpriteID() {
-        return SpriteID.SKILL_FIREMAKING;
+        return net.runelite.api.gameval.SpriteID.Staticons.FIREMAKING;
     }
 
     @Override

@@ -14,7 +14,7 @@ public class CraftRunesTask extends StateTrackingTask{
     private final long _ID;
 
     private String _name;
-
+    private final String _category;
     private int _rune_id;
     //if any essence is acceptable, pass -1 for "Any"
     private int _essence_id;
@@ -23,21 +23,22 @@ public class CraftRunesTask extends StateTrackingTask{
     private int _previousRuneCount;
     private boolean _shouldCancel = false;
 
-    public CraftRunesTask(Long ID, String name, int rune_id, int essence_id ){
+    public CraftRunesTask(Long ID, String name, String category, int rune_id, int essence_id ){
         _ID = ID;
         _name = name;
+        _category = category;
         _rune_id = rune_id;
         _essence_id = essence_id;
     }
 
     @Override
-    public void CheckChatMessage(ChatMessage event) { }
+    public void CheckChatMessage(Client client, ChatMessage event) { }
     @Override
-    public void CheckMobKill(NPC npc) { }
+    public void CheckMobKill(Client client, NPC npc) { }
     @Override
     public void CheckPlayerStatus(Client client) { }
     @Override
-    public void OnMenuOption(MenuOptionClicked event) {
+    public void OnMenuOption(Client client, MenuOptionClicked event) {
         //Check for Runecraft option
         if (event.getMenuOption().equalsIgnoreCase("Craft-rune")){
             checkTriggered = true;
@@ -57,6 +58,10 @@ public class CraftRunesTask extends StateTrackingTask{
 
     @Override
     public long GetID() { return _ID; }
+
+    @Override
+    public String GetCategory() { return _category; }
+
     @Override
     public int GetSpriteID() { return SpriteID.SKILL_RUNECRAFT; }
     @Override
