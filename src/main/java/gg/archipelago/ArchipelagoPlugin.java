@@ -2,6 +2,7 @@ package gg.archipelago;
 
 import com.google.gson.Gson;
 import dev.koifysh.archipelago.events.ReceiveItemEvent;
+import dev.koifysh.archipelago.network.client.BouncePacket;
 import gg.archipelago.Tasks.APTask;
 import gg.archipelago.data.ItemData;
 import gg.archipelago.data.ItemNames;
@@ -29,13 +30,16 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.ui.overlay.worldmap.WorldMapPointManager;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -68,6 +72,8 @@ public class ArchipelagoPlugin extends Plugin
 	private OverlayManager overlayManager;
 	@Inject
 	private IllegalRegionOverlay overlay;
+	@Inject
+	private WorldMapPointManager worldMapPointManager;
 
 	public boolean currentlyLoggedIn;
 	public boolean connected;
@@ -99,6 +105,10 @@ public class ArchipelagoPlugin extends Plugin
 	public boolean toggleCategoryOnXP;
 	public boolean goalCompleted;
 
+	private BufferedImage mapArrow;
+	private BufferedImage apIcon64;
+	private BufferedImage apIcon32;
+
 	@Provides
 	ArchipelagoConfig provideConfig(ConfigManager configManager)
 	{
@@ -112,11 +122,12 @@ public class ArchipelagoPlugin extends Plugin
 		panel = new ArchipelagoPanel(this, config, skillIconManager, eventBus);
 		apClient = new APClient(this, gson, eventBus);
 		activeTasks = new ActiveTaskList(this, panel);
-		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
+		apIcon64 = getAPLogo();
+		apIcon32 = getMapAPLogo();
 
 		navButton = NavigationButton.builder()
 				.tooltip("Archipelago Randomizer")
-				.icon(icon)
+				.icon(apIcon64)
 				.priority(20)
 				.panel(panel)
 				.build();
@@ -194,13 +205,21 @@ public class ArchipelagoPlugin extends Plugin
 		for (APTask task : activeTasks.GetActiveTasks()){
 			task.OnGameTick(client);
 		}
+
+		if (connected){
+			//Each one of these points lasts only one tick. Remove all APTeammateWaypoints before drawing new ones
+			//worldMapPointManager.removeIf(APTeammateWaypoint.class::isInstance);
+			//worldMapPointManager.add(new APTeammateWaypoint(client.getLocalPlayer().getWorldLocation(), this));
+
+			//BouncePacket mapPositionBouncePacket = new BouncePacket();
+			//apClient.sendBounce(mapPositionBouncePacket);
+		}
 	}
 
 	@Subscribe
 	public void onClientTick(ClientTick t)
 	{
 		//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", client.getSelectedWidget().getName(), null);
-		
 		if (justLoggedIn && client.getLocalPlayer().getName() != null){
 			// If we just logged in, and the data package's stored seed doesn't match the one we're connected to,
 			// Disconnect immediately before checks get sent
@@ -278,6 +297,7 @@ public class ArchipelagoPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event){
 		if (connected){
+			/*
 			if (event.getMenuOption().equals("Wear") || event.getMenuOption().equals("Wield")){
 				//If we are equipping an item
 				if (event.getItemId() != -1){
@@ -287,7 +307,8 @@ public class ArchipelagoPlugin extends Plugin
 					}
 				}
 			}
-
+			*/
+			/* Disable the teleportation limitation until I can get it working for all of them.
 			if (event.getWidget() != null){
 				String widgetName = Text.removeTags(event.getWidget().getName());
 
@@ -313,6 +334,7 @@ public class ArchipelagoPlugin extends Plugin
 					}
 				}
 			}
+			*/
 		}
 
 		for (APTask task : activeTasks.GetActiveTasks()){
@@ -677,6 +699,35 @@ public class ArchipelagoPlugin extends Plugin
 			log.debug("Unable to load image: ", ex);
 		}
 		return null;
+	}
+
+	BufferedImage getMapArrow()
+	{
+		if (mapArrow != null)
+		{
+			return mapArrow;
+		}
+
+		mapArrow = ImageUtil.loadImageResource(getClass(), "/util/clue_arrow.png");
+
+		return mapArrow;
+	}
+	BufferedImage getAPLogo(){
+		if (apIcon64 != null) {
+			return apIcon64;
+		}
+
+		apIcon64 = ImageUtil.loadImageResource(getClass(), "panel_icon.png");
+		return apIcon64;
+	}
+
+	BufferedImage getMapAPLogo(){
+		if (apIcon32 != null) {
+			return apIcon32;
+		}
+
+		apIcon32 = ImageUtil.loadImageResource(getClass(), "map_icon.png");
+		return apIcon32;
 	}
 	/////////// END SPRITES ///////////
 

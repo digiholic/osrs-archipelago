@@ -183,12 +183,13 @@ public class UpdatedPanel {
     }
 
     private void SetUpTaskPanels(){
+        /*
         AllTasksTab = new JPanel();
         AllTasksTab.setLayout( new BoxLayout(AllTasksTab, BoxLayout.Y_AXIS));
         TaskCategoriesByname.put("all", AllTasksTab);
         JScrollPane allTasksPane = new JScrollPane(AllTasksTab);
         TaskCategoryPanel.addTab("All", allTasksPane);
-
+        */
         QuestsTasksTab = new JPanel();
         QuestsTasksTab.setLayout( new BoxLayout(QuestsTasksTab, BoxLayout.Y_AXIS));
         TaskCategoriesByname.put("quest", QuestsTasksTab);

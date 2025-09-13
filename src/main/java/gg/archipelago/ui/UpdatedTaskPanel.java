@@ -23,7 +23,6 @@ public class UpdatedTaskPanel extends JPanel {
 
         setLayout(new BorderLayout());
         setBackground(task.IsCompleted() ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.DARKER_GRAY_COLOR);
-        setPreferredSize(new Dimension(0, 50));
         setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // For the time being, disable the "Can Manually Activate" check and let users click any of the task buttons.
