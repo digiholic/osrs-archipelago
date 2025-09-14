@@ -66,8 +66,12 @@ public abstract class APTask {
             case QUEST:
                 //remove the prefix to get the quest name
                 String quest_name = row.getLocationName().replace("Quest: ","");
+                if (QuestsByName.containsKey((quest_name))) {
+                    return new QuestTask(locationId, row.getCategory(), QuestsByName.get(quest_name));
+                } else {
+                    return new ManualTask(locationId, quest_name, row.getCategory());
+                }
 
-                return new QuestTask(locationId, row.getCategory(), QuestsByName.get(quest_name));
             case VARBIT:
                 return new VarbitTask(locationId, row.getLocationName(), row.getCategory(),
                         new NameOrIDDataSource(args.get(0)),
