@@ -591,18 +591,18 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	public List<DataPackage> getAllDataPackages() {
+        List<DataPackage> dataPackages = new ArrayList<>();
 		String dataPackageLocation = RuneLite.RUNELITE_DIR + "/APData/";
 		File dataPackageDir = new File(dataPackageLocation);
 		if (!dataPackageDir.exists()){
 			log.error("No DataPackage Directory!");
-			return null;
+			return dataPackages;
 		}
 
 		File[] saves = dataPackageDir.listFiles();
-		List<DataPackage> dataPackages = new ArrayList<>();
 		if (saves == null){
 			log.error("No DataPackage Save files found");
-			return null;
+			return dataPackages;
 		}
 
 		for (File save : saves){
