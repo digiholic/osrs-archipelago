@@ -79,7 +79,11 @@ public class UpdatedTaskPanel extends JPanel {
         setBackground(task.IsCompleted() ? ColorScheme.GRAND_EXCHANGE_PRICE : ColorScheme.DARKER_GRAY_COLOR);
         taskName.setForeground(task.IsCompleted() ? Color.BLACK : Color.WHITE);
 
-        setVisible(!task.IsCompleted() || plugin.displayAllTasks);
+        boolean isSearchVisible = true;
+        if (plugin.taskSearchText != null && !plugin.taskSearchText.isBlank()){
+            isSearchVisible = task.GetName().toLowerCase().contains(plugin.taskSearchText.toLowerCase());
+        }
+        setVisible(isSearchVisible && (!task.IsCompleted() || plugin.displayAllTasks));
     }
 
     private String WrapTaskNameText(String taskName){

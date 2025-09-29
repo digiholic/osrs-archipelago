@@ -104,6 +104,7 @@ public class ArchipelagoPlugin extends Plugin
 	public boolean displayAllTasks;
 	public boolean toggleCategoryOnXP;
 	public boolean goalCompleted;
+	public String taskSearchText;
 
 	private BufferedImage mapArrow;
 	private BufferedImage apIcon64;

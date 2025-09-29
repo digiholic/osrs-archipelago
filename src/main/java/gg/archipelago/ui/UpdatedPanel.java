@@ -4,6 +4,7 @@ import gg.archipelago.ArchipelagoPlugin;
 import gg.archipelago.DataPackage;
 import net.runelite.api.Skill;
 import net.runelite.client.game.SkillIconManager;
+import net.runelite.client.ui.components.IconTextField;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
@@ -57,6 +58,7 @@ public class UpdatedPanel {
     private JPanel MiscTaskTab;
     private JButton ConnectButton;
     private JLabel StatusText;
+    private IconTextField searchText;
 
     private ArchipelagoPlugin plugin;
     private SkillIconManager skillIconManager;
@@ -143,6 +145,15 @@ public class UpdatedPanel {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         TaskTab.add(autoSwapTabOnCheckBox, gbc);
+        searchText = new IconTextField();
+        searchText.setIcon(IconTextField.Icon.SEARCH);
+        searchText.setPreferredSize(new Dimension(searchText.getPreferredSize().width, 32));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        TaskTab.add(searchText, gbc);
         TaskCategoryPanel = new JTabbedPane();
         TaskCategoryPanel.setTabLayoutPolicy(1);
         TaskCategoryPanel.setTabPlacement(2);
@@ -180,6 +191,8 @@ public class UpdatedPanel {
                 plugin.toggleCategoryOnXP = autoSwapTabOnCheckBox.isSelected());
         ConnectButton.addActionListener(e ->
                 plugin.ConnectToAPServer());
+        searchText.addActionListener(e ->
+                plugin.taskSearchText = searchText.getText());
     }
 
     private void SetUpTaskPanels(){
