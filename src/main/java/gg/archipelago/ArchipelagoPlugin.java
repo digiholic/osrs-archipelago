@@ -494,6 +494,7 @@ public class ArchipelagoPlugin extends Plugin
 
 	private void SendChecks()
 	{
+		/*
 		Collection<Long> checkedLocations = activeTasks.stream()
 				.filter(APTask::IsCompleted)
 				.map(APTask::GetID)
@@ -502,6 +503,7 @@ public class ArchipelagoPlugin extends Plugin
 		if (apClient != null && apClient.isConnected()){
 			apClient.checkLocations(checkedLocations);
 		}
+		 */
 	}
 
 	public void addCollectedItem(ItemData item){
@@ -532,8 +534,7 @@ public class ArchipelagoPlugin extends Plugin
 			dataPackageFile.getParentFile().mkdirs();
 			dataPackageFile.createNewFile();
 
-			FileWriter writer = new FileWriter(dataPackageFile);
-
+			Writer writer = new OutputStreamWriter(new FileOutputStream(dataPackageFile), StandardCharsets.UTF_8);
 			String s = gson.toJson(dataPackage);
 			gson.toJson(dataPackage, writer);
 			writer.flush();

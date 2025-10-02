@@ -1,6 +1,7 @@
 package dev.koifysh.archipelago;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dev.koifysh.archipelago.events.RetrievedEvent;
 import dev.koifysh.archipelago.flags.ItemsHandling;
 import dev.koifysh.archipelago.network.server.ConnectUpdatePacket;
@@ -153,8 +154,7 @@ public abstract class Client {
             //noinspection ResultOfMethodCallIgnored
             dataPackageFile.createNewFile();
 
-            FileWriter writer = new FileWriter(dataPackageFile);
-
+            Writer writer = new OutputStreamWriter(new FileOutputStream(dataPackageFile), StandardCharsets.UTF_8);
             String s = gson.toJson(dataPackage);
             gson.toJson(dataPackage, writer);
             writer.flush();
