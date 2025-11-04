@@ -159,7 +159,7 @@ public class UpdatedPanel {
         TaskCategoryPanel.setTabPlacement(2);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
@@ -208,6 +208,7 @@ public class UpdatedPanel {
         TaskCategoriesByname.put("quest", QuestsTasksTab);
         JScrollPane questTasksPane = new JScrollPane(QuestsTasksTab);
         TaskCategoryPanel.addTab("Quests", questTasksPane);
+
 
         CombatTasksTab = new JPanel();
         CombatTasksTab.setLayout( new BoxLayout(CombatTasksTab, BoxLayout.Y_AXIS));
