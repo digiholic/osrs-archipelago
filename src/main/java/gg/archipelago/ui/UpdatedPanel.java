@@ -29,33 +29,7 @@ public class UpdatedPanel {
     private JCheckBox autoSwapTabOnCheckBox;
     private JTabbedPane TaskCategoryPanel;
     private JPanel AllTasksTab;
-    private JPanel QuestsTasksTab;
-    private JPanel CombatTasksTab;
-    private JPanel AttackTasksTab;
-    private JPanel StrengthTaskTab;
-    private JPanel DefenseTaskTab;
-    private JPanel RangedTaskTab;
-    private JPanel MagicTaskTab;
-    private JPanel PrayerTaskTab;
-    private JPanel HitpointsTaskTab;
-    private JPanel MiningTaskTab;
-    private JPanel SmithingTaskTab;
-    private JPanel FishingTaskTab;
-    private JPanel CookingTaskTab;
-    private JPanel WoodcuttingTaskTab;
-    private JPanel FiremakingTaskTab;
-    private JPanel CraftingTaskTab;
-    private JPanel RunecraftTaskTab;
-    private JPanel AgilityTaskTab;
-    private JPanel HerbloreTaskTab;
-    private JPanel ThievingTaskTab;
-    private JPanel FletchingTaskTab;
-    private JPanel SlayerTaskTab;
-    private JPanel FarmingTaskTab;
-    private JPanel ConstructionTaskTab;
-    private JPanel HunterTaskTab;
-    private JPanel StatsTaskTab;
-    private JPanel MiscTaskTab;
+
     private JButton ConnectButton;
     private JLabel StatusText;
     private IconTextField searchText;
@@ -195,6 +169,16 @@ public class UpdatedPanel {
                 plugin.taskSearchText = searchText.getText());
     }
 
+    private void SetUpTaskPanel(String displayTitle, Icon icon, String... categoryNames){
+        JPanel tab = new JPanel();
+        tab.setPreferredSize(new Dimension(TaskCategoryPanel.getPreferredSize().width - 200, tab.getPreferredSize().height));
+        tab.setLayout( new BoxLayout(tab, BoxLayout.Y_AXIS));
+        for(String categoryName : categoryNames){
+            TaskCategoriesByname.put(categoryName, tab);
+        }
+        JScrollPane tasksPane = new JScrollPane(tab);
+        TaskCategoryPanel.addTab(displayTitle, icon, tasksPane);
+    }
     private void SetUpTaskPanels(){
         /*
         AllTasksTab = new JPanel();
@@ -203,169 +187,34 @@ public class UpdatedPanel {
         JScrollPane allTasksPane = new JScrollPane(AllTasksTab);
         TaskCategoryPanel.addTab("All", allTasksPane);
         */
-        QuestsTasksTab = new JPanel();
-        QuestsTasksTab.setLayout( new BoxLayout(QuestsTasksTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("quest", QuestsTasksTab);
-        JScrollPane questTasksPane = new JScrollPane(QuestsTasksTab);
-        TaskCategoryPanel.addTab("Quests", questTasksPane);
-
-
-        CombatTasksTab = new JPanel();
-        CombatTasksTab.setLayout( new BoxLayout(CombatTasksTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("combat", CombatTasksTab);
-        TaskCategoriesByname.put("kill", CombatTasksTab);
-        JScrollPane combatTasksPane = new JScrollPane(CombatTasksTab);
-        TaskCategoryPanel.addTab("Combat", combatTasksPane);
-
-        AttackTasksTab = new JPanel();
-        AttackTasksTab.setLayout( new BoxLayout(AttackTasksTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("attack", AttackTasksTab);
-        JScrollPane attackTasksPane = new JScrollPane(AttackTasksTab);
-        TaskCategoryPanel.addTab("",  new ImageIcon(skillIconManager.getSkillImage(Skill.ATTACK, true)), attackTasksPane);
-
-        StrengthTaskTab = new JPanel();
-        StrengthTaskTab.setLayout( new BoxLayout(StrengthTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("strength", StrengthTaskTab);
-        JScrollPane strengthTasksPane = new JScrollPane(StrengthTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.STRENGTH, true)), strengthTasksPane);
-
-        DefenseTaskTab = new JPanel();
-        DefenseTaskTab.setLayout( new BoxLayout(DefenseTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("defense", DefenseTaskTab);
-        JScrollPane defenseTasksPane = new JScrollPane(DefenseTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.DEFENCE, true)), defenseTasksPane);
-
-        RangedTaskTab = new JPanel();
-        RangedTaskTab.setLayout( new BoxLayout(RangedTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("ranged", RangedTaskTab);
-        JScrollPane rangedTasksPane = new JScrollPane(RangedTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.RANGED, true)), rangedTasksPane);
-
-        MagicTaskTab = new JPanel();
-        MagicTaskTab.setLayout( new BoxLayout(MagicTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("magic", MagicTaskTab);
-        JScrollPane magicTasksPane = new JScrollPane(MagicTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.MAGIC, true)), magicTasksPane);
-
-        PrayerTaskTab = new JPanel();
-        PrayerTaskTab.setLayout( new BoxLayout(PrayerTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("prayer", PrayerTaskTab);
-        JScrollPane prayerTasksPane = new JScrollPane(PrayerTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.PRAYER, true)), prayerTasksPane);
-
-        HitpointsTaskTab = new JPanel();
-        HitpointsTaskTab.setLayout( new BoxLayout(HitpointsTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("hitpoints", HitpointsTaskTab);
-        JScrollPane hitpointsTasksPane = new JScrollPane(HitpointsTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.HITPOINTS, true)), hitpointsTasksPane);
-
-        MiningTaskTab = new JPanel();
-        MiningTaskTab.setLayout( new BoxLayout(MiningTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("mining", MiningTaskTab);
-        JScrollPane miningTasksPane = new JScrollPane(MiningTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.MINING, true)), miningTasksPane);
-
-        SmithingTaskTab = new JPanel();
-        SmithingTaskTab.setLayout( new BoxLayout(SmithingTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("smithing", SmithingTaskTab);
-        JScrollPane smithingTasksPane = new JScrollPane(SmithingTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.SMITHING, true)), smithingTasksPane);
-
-        FishingTaskTab = new JPanel();
-        FishingTaskTab.setLayout( new BoxLayout(FishingTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("fishing", FishingTaskTab);
-        JScrollPane fishingTasksPane = new JScrollPane(FishingTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.FISHING, true)), fishingTasksPane);
-
-        CookingTaskTab = new JPanel();
-        CookingTaskTab.setLayout( new BoxLayout(CookingTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("cooking", CookingTaskTab);
-        JScrollPane cookingTasksPane = new JScrollPane(CookingTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.COOKING, true)), cookingTasksPane);
-
-        WoodcuttingTaskTab = new JPanel();
-        WoodcuttingTaskTab.setLayout( new BoxLayout(WoodcuttingTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("woodcutting", WoodcuttingTaskTab);
-        JScrollPane woodcuttingTasksPane = new JScrollPane(WoodcuttingTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.WOODCUTTING, true)), woodcuttingTasksPane);
-
-        FiremakingTaskTab = new JPanel();
-        FiremakingTaskTab.setLayout( new BoxLayout(FiremakingTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("firemaking", FiremakingTaskTab);
-        JScrollPane firemakingTasksPane = new JScrollPane(FiremakingTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.FIREMAKING, true)), firemakingTasksPane);
-
-        CraftingTaskTab = new JPanel();
-        CraftingTaskTab.setLayout( new BoxLayout(CraftingTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("crafting", CraftingTaskTab);
-        JScrollPane craftingTasksPane = new JScrollPane(CraftingTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.CRAFTING, true)), craftingTasksPane);
-
-        RunecraftTaskTab = new JPanel();
-        RunecraftTaskTab.setLayout( new BoxLayout(RunecraftTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("runecraft", RunecraftTaskTab);
-        JScrollPane runecraftTasksPane = new JScrollPane(RunecraftTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.RUNECRAFT, true)), runecraftTasksPane);
-
-        AgilityTaskTab = new JPanel();
-        AgilityTaskTab.setLayout( new BoxLayout(AgilityTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("agility", AgilityTaskTab);
-        JScrollPane agilityTasksPane = new JScrollPane(AgilityTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.AGILITY, true)), agilityTasksPane);
-
-        HerbloreTaskTab = new JPanel();
-        HerbloreTaskTab.setLayout( new BoxLayout(HerbloreTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("herblore", HerbloreTaskTab);
-        JScrollPane herbloreTasksPane = new JScrollPane(HerbloreTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.HERBLORE, true)), herbloreTasksPane);
-
-        ThievingTaskTab = new JPanel();
-        ThievingTaskTab.setLayout( new BoxLayout(ThievingTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("thieving", ThievingTaskTab);
-        JScrollPane thievingTasksPane = new JScrollPane(ThievingTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.THIEVING, true)), thievingTasksPane);
-
-        FletchingTaskTab = new JPanel();
-        FletchingTaskTab.setLayout( new BoxLayout(FletchingTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("fletching", FletchingTaskTab);
-        JScrollPane fletchingTasksPane = new JScrollPane(FletchingTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.FLETCHING, true)), fletchingTasksPane);
-
-        SlayerTaskTab = new JPanel();
-        SlayerTaskTab.setLayout( new BoxLayout(SlayerTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("slayer", SlayerTaskTab);
-        JScrollPane slayerTasksPane = new JScrollPane(SlayerTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.SLAYER, true)), slayerTasksPane);
-
-        FarmingTaskTab = new JPanel();
-        FarmingTaskTab.setLayout( new BoxLayout(FarmingTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("farming", FarmingTaskTab);
-        JScrollPane farmingTasksPane = new JScrollPane(FarmingTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.FARMING, true)), farmingTasksPane);
-
-        ConstructionTaskTab = new JPanel();
-        ConstructionTaskTab.setLayout( new BoxLayout(ConstructionTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("construction", ConstructionTaskTab);
-        JScrollPane constructionTasksPane = new JScrollPane(ConstructionTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.CONSTRUCTION, true)), constructionTasksPane);
-
-        HunterTaskTab = new JPanel();
-        HunterTaskTab.setLayout( new BoxLayout(HunterTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("hunter", HunterTaskTab);
-        JScrollPane hunterTasksPane = new JScrollPane(HunterTaskTab);
-        TaskCategoryPanel.addTab("", new ImageIcon(skillIconManager.getSkillImage(Skill.HUNTER, true)), hunterTasksPane);
-
-        StatsTaskTab = new JPanel();
-        StatsTaskTab.setLayout( new BoxLayout(StatsTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("stats", StatsTaskTab);
-        JScrollPane statsTasksPane = new JScrollPane(StatsTaskTab);
-        TaskCategoryPanel.addTab("Stats", statsTasksPane);
-
-        MiscTaskTab = new JPanel();
-        MiscTaskTab.setLayout( new BoxLayout(MiscTaskTab, BoxLayout.Y_AXIS));
-        TaskCategoriesByname.put("other", MiscTaskTab);
-        JScrollPane miscTasksPane = new JScrollPane(MiscTaskTab);
-        TaskCategoryPanel.addTab("Misc", new ImageIcon(), miscTasksPane);
+        SetUpTaskPanel( "Quests", null, "quest");
+        SetUpTaskPanel("Combat", null, "combat", "kill");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.ATTACK, true)), "attack");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.STRENGTH, true)), "strength");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.DEFENCE, true)), "defense");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.RANGED, true)), "ranged");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.MAGIC, true)), "magic");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.PRAYER, true)), "prayer");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.HITPOINTS, true)), "hitpoints");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.MINING, true)), "mining");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.SMITHING, true)), "smithing");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FISHING, true)), "fishing");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.COOKING, true)), "cooking");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.WOODCUTTING, true)), "woodcutting");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FIREMAKING, true)), "firemaking");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.CRAFTING, true)), "crafting");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.RUNECRAFT, true)), "runecraft");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.AGILITY, true)), "agility");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.HERBLORE, true)), "herblore");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.THIEVING, true)), "thieving");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FLETCHING, true)), "fletching");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.SLAYER, true)), "slayer");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FARMING, true)), "farming");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.CONSTRUCTION, true)), "construction");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.HUNTER, true)), "hunter");
+        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.SAILING, true)), "sailing");
+        SetUpTaskPanel("Stats", null, "stats");
+        SetUpTaskPanel("Misc", null, "other");
     }
 
     private void SetUpConnectionsTable(){

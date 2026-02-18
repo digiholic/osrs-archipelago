@@ -41,11 +41,13 @@ public class UpdatedTaskPanel extends JPanel {
         taskName.setForeground(task.IsCompleted() ? Color.BLACK : Color.WHITE);
         add(taskName, BorderLayout.CENTER);
 
-        taskName.setPreferredSize(taskName.getPreferredSize());
-        if (taskName.getPreferredSize().height > getPreferredSize().height){
-            setMinimumSize(taskName.getPreferredSize());
-            setMaximumSize(taskName.getPreferredSize());
-        }
+        FixSizes();
+    }
+
+    private void FixSizes() {
+        Dimension d = taskName.getPreferredSize();
+        d.height = d.height + 20;
+        setPreferredSize(d);
     }
 
     public void ManuallyComplete(){
@@ -70,11 +72,7 @@ public class UpdatedTaskPanel extends JPanel {
             remove(taskName);
             taskName = new JLabel(WrapTaskNameText(task.GetName()), SwingConstants.CENTER);
             add(taskName, BorderLayout.CENTER);
-            taskName.setPreferredSize(taskName.getPreferredSize());
-            if (taskName.getPreferredSize().height > getPreferredSize().height){
-                setMinimumSize(taskName.getPreferredSize());
-                setMaximumSize(taskName.getPreferredSize());
-            }
+            FixSizes();
         }
         setBackground(task.IsCompleted() ? ColorScheme.GRAND_EXCHANGE_PRICE : ColorScheme.DARKER_GRAY_COLOR);
         taskName.setForeground(task.IsCompleted() ? Color.BLACK : Color.WHITE);

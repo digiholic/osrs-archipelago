@@ -61,6 +61,8 @@ public class ArchipelagoPanel extends PluginPanel {
         UpdatedTaskPanel taskPanel = new UpdatedTaskPanel(task, plugin);
         JPanel targetPanel = updatedPanel.GetTaskByCategory(task.GetCategory());
         targetPanel.add(taskPanel);
+        targetPanel.setPreferredSize(new Dimension(targetPanel.getPreferredSize().width,
+                targetPanel.getPreferredSize().height + taskPanel.getPreferredSize().height));
         //JPanel allPanel = updatedPanel.GetTaskByCategory("all");
         //allPanel.add(taskPanel);
         taskPanelsById.put(task.GetID(), taskPanel);
