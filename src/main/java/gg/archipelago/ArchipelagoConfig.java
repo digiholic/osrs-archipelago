@@ -59,4 +59,12 @@ public interface ArchipelagoConfig extends Config
 			position = 5
 	)
 	default boolean apMessages() { return true; }
+
+	@ConfigItem(
+			keyName = "useMembers",
+			name = "Connect to Members Beta APWorld",
+			description = "When checked, will connect to a seed generated as a Members AP Beta",
+			position = 6
+	)
+	default boolean useMembers() { return false; }
 }

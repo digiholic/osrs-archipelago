@@ -18,16 +18,23 @@ public class APClient extends Client {
 
     private ArchipelagoPlugin plugin;
 
-    public APClient(ArchipelagoPlugin plugin, Gson gson, EventBus bus){
+    public APClient(ArchipelagoPlugin plugin, Gson gson, EventBus bus, boolean useMembers){
         super(RuneLite.RUNELITE_DIR + "/APData/DataPackage.ser", gson, bus);
-        this.setGame("Old School Runescape");
+        if (useMembers)
+            this.setGame("Old School Runescape Members");
+        else
+            this.setGame("Old School Runescape");
         this.plugin = plugin;
     }
 
     // These variables are stored so we can unsubscribe on disconnect
     private Object connectionListener, itemListener, printListener;
-    public void newConnection(ArchipelagoPlugin plugin, String address, String slotName, String password) {
-        setGame("Old School Runescape");
+    public void newConnection(ArchipelagoPlugin plugin, String address, String slotName, String password, boolean useMembers) {
+        if (useMembers)
+            this.setGame("Old School Runescape Members");
+        else
+            this.setGame("Old School Runescape");
+
         setPassword(password);
         setName(slotName);
         setItemsHandlingFlags(ItemsHandling.SEND_ITEMS + ItemsHandling.SEND_OWN_ITEMS + ItemsHandling.SEND_STARTING_INVENTORY);

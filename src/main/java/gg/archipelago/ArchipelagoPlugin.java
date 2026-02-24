@@ -121,7 +121,7 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		plugin = this;
 		panel = new ArchipelagoPanel(this, config, skillIconManager, eventBus);
-		apClient = new APClient(this, gson, eventBus);
+		apClient = new APClient(this, gson, eventBus, config.useMembers());
 		activeTasks = new ActiveTaskList(this, panel);
 		apIcon64 = getAPLogo();
 		apIcon32 = getMapAPLogo();
@@ -496,7 +496,7 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		String uri = address+":"+port;
 		log.info(uri);
-		apClient.newConnection(this, uri, slotName, password);
+		apClient.newConnection(this, uri, slotName, password, config.useMembers());
 	}
 
 	private String extractCommand(String message)
