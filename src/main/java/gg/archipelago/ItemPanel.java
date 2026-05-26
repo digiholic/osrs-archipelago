@@ -3,10 +3,12 @@ package gg.archipelago;
 import gg.archipelago.Tasks.APTask;
 import gg.archipelago.data.ItemData;
 import gg.archipelago.data.ItemNames;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.GameTick;
 import net.runelite.client.RuneLite;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.ui.ColorScheme;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class ItemPanel extends JPanel {
     private final ArchipelagoPlugin plugin;
 
@@ -42,31 +45,41 @@ public class ItemPanel extends JPanel {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        setBackground(ColorScheme.DARKER_GRAY_COLOR);
+        setBackground(ColorScheme.DARK_GRAY_COLOR);
         setBorder(new EmptyBorder(5, 5, 5, 10));
         setVisible(false);
 
         setAlignmentX(Component.LEFT_ALIGNMENT);
 
         equipmentPanel = new JPanel();
+        equipmentPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
         equipmentPanel.setLayout(new BoxLayout(equipmentPanel, BoxLayout.Y_AXIS));
         add(equipmentPanel);
+        add(Box.createVerticalStrut(10));
 
         carePackPanel = new JPanel();
+        carePackPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
         carePackPanel.setLayout(new BoxLayout(carePackPanel, BoxLayout.Y_AXIS));
         add(carePackPanel);
+        add(Box.createVerticalStrut(10));
 
         areaPanel = new JPanel();
+        areaPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
         areaPanel.setLayout(new BoxLayout(areaPanel, BoxLayout.Y_AXIS));
         add(areaPanel);
+        add(Box.createVerticalStrut(10));
 
         junkPanel = new JPanel();
+        junkPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
         junkPanel.setLayout(new BoxLayout(junkPanel, BoxLayout.Y_AXIS));
         add(junkPanel);
+        add(Box.createVerticalStrut(10));
 
         claimedPackPanel = new JPanel();
+        claimedPackPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
         claimedPackPanel.setLayout(new BoxLayout(claimedPackPanel, BoxLayout.Y_AXIS));
         add(claimedPackPanel);
+        add(Box.createVerticalStrut(10));
     }
 
     @Subscribe

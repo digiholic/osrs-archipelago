@@ -2,7 +2,6 @@ package gg.archipelago;
 
 import com.google.gson.Gson;
 import dev.koifysh.archipelago.events.ReceiveItemEvent;
-import dev.koifysh.archipelago.network.client.BouncePacket;
 import gg.archipelago.Tasks.APTask;
 import gg.archipelago.data.ItemData;
 import gg.archipelago.data.ItemNames;
@@ -34,7 +33,6 @@ import net.runelite.client.ui.overlay.worldmap.WorldMapPointManager;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -153,6 +151,13 @@ public class ArchipelagoPlugin extends Plugin
 		overlayManager.remove(overlay);
 
 		panel.UnregisterListeners();
+	}
+
+	@Override
+	public void resetConfiguration()
+	{
+		//When resetting, also clear the AP Data cache
+		DeleteDataPackage();
 	}
 
 	@Subscribe
@@ -298,7 +303,6 @@ public class ArchipelagoPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event){
 		if (connected){
-			/*
 			if (event.getMenuOption().equals("Wear") || event.getMenuOption().equals("Wield")){
 				//If we are equipping an item
 				if (event.getItemId() != -1){
@@ -308,8 +312,7 @@ public class ArchipelagoPlugin extends Plugin
 					}
 				}
 			}
-			*/
-			/* Disable the teleportation limitation until I can get it working for all of them.
+
 			if (event.getWidget() != null){
 				String widgetName = Text.removeTags(event.getWidget().getName());
 
@@ -321,7 +324,7 @@ public class ArchipelagoPlugin extends Plugin
 					}
 				}
 
-				if (widgetName.equalsIgnoreCase("Lumbridge Teleport") || widgetName.equalsIgnoreCase("Lumbridge Home Teleport")){
+				if (widgetName.equalsIgnoreCase("Lumbridge Teleport")){
 					if (getCollectedItems().stream().noneMatch(it -> it.name.equals("Area: Lumbridge"))){
 						event.consume();
 						client.addChatMessage(ChatMessageType.GAMEMESSAGE, "AP", "<img=" + modIconIndex + ">"+"You have not unlocked that map region yet.", null);
@@ -335,7 +338,6 @@ public class ArchipelagoPlugin extends Plugin
 					}
 				}
 			}
-			*/
 		}
 
 		for (APTask task : activeTasks.GetActiveTasks()){
@@ -626,8 +628,16 @@ public class ArchipelagoPlugin extends Plugin
 		return dataPackages;
 	}
 
-	public void DeleteDataPackage(long accountHash){
+	public void DeleteCharacterSave(long accountHash){
 		String pendingLocation = RuneLite.RUNELITE_DIR + "/APData/" + accountHash + ".save";
+		File saveFile = new File(pendingLocation);
+		if (saveFile.exists()){
+			saveFile.delete();
+		}
+	}
+
+	public void DeleteDataPackage(){
+		String pendingLocation = RuneLite.RUNELITE_DIR + "/APData/DataPackage.ser";
 		File saveFile = new File(pendingLocation);
 		if (saveFile.exists()){
 			saveFile.delete();

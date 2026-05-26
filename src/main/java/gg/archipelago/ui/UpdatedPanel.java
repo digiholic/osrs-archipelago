@@ -2,6 +2,7 @@ package gg.archipelago.ui;
 
 import gg.archipelago.ArchipelagoPlugin;
 import gg.archipelago.DataPackage;
+import gg.archipelago.ItemPanel;
 import net.runelite.api.Skill;
 import net.runelite.client.game.SkillIconManager;
 import net.runelite.client.ui.components.IconTextField;
@@ -9,7 +10,6 @@ import net.runelite.client.ui.components.IconTextField;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.HashMap;
@@ -32,6 +32,8 @@ public class UpdatedPanel {
 
     private JButton ConnectButton;
     private JLabel StatusText;
+    private JButton ClearCacheButton;
+
     private IconTextField searchText;
 
     private ArchipelagoPlugin plugin;
@@ -139,20 +141,20 @@ public class UpdatedPanel {
         gbc.fill = GridBagConstraints.BOTH;
         TaskTab.add(TaskCategoryPanel, gbc);
 
-        RegionsTab = new JPanel();
-        RegionsTab.setLayout(new BorderLayout());
-        TabbedPanel.addTab("Regions", RegionsTab);
+        //RegionsTab = new JPanel();
+        //RegionsTab.setLayout(new BorderLayout());
+        //TabbedPanel.addTab("Regions", RegionsTab);
 
-        UnlocksTab = new JPanel();
-        UnlocksTab.setLayout(new BorderLayout());
-        TabbedPanel.addTab("Unlocks", UnlocksTab);
+        UnlocksTab = new ItemPanel(plugin);
+        JScrollPane unlocksPane = new JScrollPane(UnlocksTab);
+        TabbedPanel.addTab("Unlocks", unlocksPane);
 
         GoalTab = new JPanel();
         GoalTab.setLayout(new BorderLayout());
         TabbedPanel.addTab("Goal", GoalTab);
 
-        RegionsTab.add(new JLabel("<html><div style='text-align:center;padding:2px'>Please just check your map this panel isn't done yet</div></html>"), BorderLayout.NORTH);
-        UnlocksTab.add(new JLabel("<html><div style='text-align:center;padding:2px'>Current version does not have non-chunk unlocks.</div></html>"), BorderLayout.NORTH);
+        //RegionsTab.add(new JLabel("<html><div style='text-align:center;padding:2px'>Please just check your map this panel isn't done yet</div></html>"), BorderLayout.NORTH);
+        //UnlocksTab.add(new JLabel("<html><div style='text-align:center;padding:2px'>Current version does not have non-chunk unlocks.</div></html>"), BorderLayout.NORTH);
         SetUpListeners();
         SetUpTaskPanels();
         SetUpConnectionsTable();
@@ -179,6 +181,7 @@ public class UpdatedPanel {
         JScrollPane tasksPane = new JScrollPane(tab);
         TaskCategoryPanel.addTab(displayTitle, icon, tasksPane);
     }
+
     private void SetUpTaskPanels(){
         /*
         AllTasksTab = new JPanel();
@@ -204,15 +207,15 @@ public class UpdatedPanel {
         SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FIREMAKING, true)), "firemaking");
         SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.CRAFTING, true)), "crafting");
         SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.RUNECRAFT, true)), "runecraft");
-        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.AGILITY, true)), "agility");
-        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.HERBLORE, true)), "herblore");
-        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.THIEVING, true)), "thieving");
-        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FLETCHING, true)), "fletching");
-        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.SLAYER, true)), "slayer");
-        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FARMING, true)), "farming");
-        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.CONSTRUCTION, true)), "construction");
-        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.HUNTER, true)), "hunter");
-        SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.SAILING, true)), "sailing");
+        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.AGILITY, true)), "agility");
+        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.HERBLORE, true)), "herblore");
+        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.THIEVING, true)), "thieving");
+        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FLETCHING, true)), "fletching");
+        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.SLAYER, true)), "slayer");
+        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FARMING, true)), "farming");
+        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.CONSTRUCTION, true)), "construction");
+        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.HUNTER, true)), "hunter");
+        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.SAILING, true)), "sailing");
         SetUpTaskPanel("Stats", null, "stats");
         SetUpTaskPanel("Misc", null, "other");
     }
@@ -240,7 +243,7 @@ public class UpdatedPanel {
                     JTable table = (JTable)e.getSource();
                     int modelRow = Integer.valueOf( e.getActionCommand() );
                     ((DefaultTableModel)table.getModel()).removeRow(modelRow);
-                    plugin.DeleteDataPackage(dataPackages.get(modelRow).accountHash);
+                    plugin.DeleteCharacterSave(dataPackages.get(modelRow).accountHash);
                 }
             }
         };
@@ -250,6 +253,8 @@ public class UpdatedPanel {
     public JPanel GetPanel(){
         return MainPanel;
     }
+
+    public JPanel GetItemPanel() {return UnlocksTab;}
 
     public void UpdateStatusButton(boolean connectionSuccessful){
         ConnectButton.setEnabled(!connectionSuccessful);

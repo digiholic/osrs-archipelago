@@ -43,6 +43,8 @@ public class ArchipelagoPanel extends PluginPanel {
 
         updatedPanel = new UpdatedPanel(plugin, skillIconManager);
         add(updatedPanel.GetPanel());
+
+        eventBus.register(updatedPanel.GetItemPanel());
     }
 
     public void ConnectionStateChanged(boolean connectionSuccessful) {
@@ -70,6 +72,8 @@ public class ArchipelagoPanel extends PluginPanel {
     }
 
     public void AddGoalPanel(String goal){
+        if (goal == null || goal.isEmpty())
+            goal = "Quest: Dragon Slayer I";
         GoalPanel goalPanel = new GoalPanel(goal, plugin);
         updatedPanel.GoalTab.add(goalPanel);
     }
@@ -86,6 +90,7 @@ public class ArchipelagoPanel extends PluginPanel {
         for (UpdatedTaskPanel taskPanel : taskPanelsById.values()){
             eventBus.unregister(taskPanel);
         }
+        eventBus.unregister(updatedPanel.GetItemPanel());
     }
 
     public void SetSelectedTaskCategory(String category) {
