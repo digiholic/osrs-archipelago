@@ -153,8 +153,6 @@ public class UpdatedPanel {
         GoalTab.setLayout(new BorderLayout());
         TabbedPanel.addTab("Goal", GoalTab);
 
-        //RegionsTab.add(new JLabel("<html><div style='text-align:center;padding:2px'>Please just check your map this panel isn't done yet</div></html>"), BorderLayout.NORTH);
-        //UnlocksTab.add(new JLabel("<html><div style='text-align:center;padding:2px'>Current version does not have non-chunk unlocks.</div></html>"), BorderLayout.NORTH);
         SetUpListeners();
         SetUpTaskPanels();
         SetUpConnectionsTable();
@@ -207,15 +205,19 @@ public class UpdatedPanel {
         SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FIREMAKING, true)), "firemaking");
         SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.CRAFTING, true)), "crafting");
         SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.RUNECRAFT, true)), "runecraft");
-        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.AGILITY, true)), "agility");
-        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.HERBLORE, true)), "herblore");
-        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.THIEVING, true)), "thieving");
-        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FLETCHING, true)), "fletching");
-        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.SLAYER, true)), "slayer");
-        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FARMING, true)), "farming");
-        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.CONSTRUCTION, true)), "construction");
-        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.HUNTER, true)), "hunter");
-        //SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.SAILING, true)), "sailing");
+
+        if (plugin.isMembersWorld()){
+            SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.AGILITY, true)), "agility");
+            SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.HERBLORE, true)), "herblore");
+            SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.THIEVING, true)), "thieving");
+            SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FLETCHING, true)), "fletching");
+            SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.SLAYER, true)), "slayer");
+            SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.FARMING, true)), "farming");
+            SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.CONSTRUCTION, true)), "construction");
+            SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.HUNTER, true)), "hunter");
+            SetUpTaskPanel("", new ImageIcon(skillIconManager.getSkillImage(Skill.SAILING, true)), "sailing");
+        }
+
         SetUpTaskPanel("Stats", null, "stats");
         SetUpTaskPanel("Misc", null, "other");
     }

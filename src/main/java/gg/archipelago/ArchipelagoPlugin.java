@@ -501,6 +501,10 @@ public class ArchipelagoPlugin extends Plugin
 		apClient.newConnection(this, uri, slotName, password, config.useMembers());
 	}
 
+	public boolean isMembersWorld(){
+		return config.useMembers();
+	}
+
 	private String extractCommand(String message)
 	{
 		int idx = message.indexOf(' ');
