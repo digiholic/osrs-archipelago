@@ -22,21 +22,19 @@ import dev.koifysh.archipelago.events.*;
 import dev.koifysh.archipelago.network.server.*;
 
 import dev.koifysh.archipelago.parts.NetworkSlot;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft;
-import org.java_websocket.drafts.Draft_6455;
-import org.java_websocket.extensions.permessage_deflate.PerMessageDeflateExtension;
-import org.java_websocket.handshake.ServerHandshake;
+import okhttp3.*;
 
 import javax.net.ssl.SSLException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-class WebSocket extends WebSocketClient {
+class APWebSocket extends WebSocketListener {
 
-    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(WebSocket.class.getName());
+    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(APWebSocket.class.getName());
 
     private final Client client;
     private final Gson gson;
@@ -49,12 +47,16 @@ class WebSocket extends WebSocketClient {
     private static Timer reconnectTimer;
     private boolean downgrade = false;
 
-    private static final Draft perMessageDeflateDraft = new Draft_6455(new PerMessageDeflateExtension());
-
     private JsonParser parser;
 
-    public WebSocket(URI serverUri, Client client, Gson gson) {
-        super(serverUri, perMessageDeflateDraft);
+    private URI serverUri;
+    private OkHttpClient httpClient;
+    private WebSocket webSocket;
+
+    public APWebSocket(URI serverUrl, Client client, Gson gson) {
+        httpClient = new OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build();
+        this.serverUri = serverUrl;
+
         this.client = client;
         this.gson = gson;
 
@@ -67,11 +69,92 @@ class WebSocket extends WebSocketClient {
     }
 
     @Override
-    public void onOpen(ServerHandshake handshakeData) {
+    public void onOpen(WebSocket webSocket, Response response) {
+        LOGGER.fine(response.toString());
     }
 
     @Override
-    public void onMessage(String message) {
+    public void onClosing(WebSocket webSocket, int code, String reason){
+
+    }
+    @Override
+    public void onClosed(WebSocket webSocket, int code, String wsReason) {
+        LOGGER.fine(String.format("Connection closed, Code: %s Reason: %s", code, wsReason));
+        String reason = (wsReason.isEmpty()) ? "Connection refused by the Archipelago server." : wsReason;
+        if (code == -1) {
+            reconnectTimer.cancel();
+
+            // attempt to reconnect using non-secure web socket if we are failing to connect with a secure socket.
+            if (serverUri.getScheme().equalsIgnoreCase("wss") && downgrade) {
+                try {
+                    URI wsUri = new URI(String.format("ws://%s:%s", serverUri.getHost(), serverUri.getPort()));
+                    client.connect(wsUri);
+                } catch (URISyntaxException e) {
+                    client.onClose("(AP-275) " + reason, 0);
+                }
+                return;
+            }
+            client.onClose("(AP-279) " + reason, 0);
+            return;
+        }
+        if (code == 1000) {
+            reconnectTimer.cancel();
+            client.onClose("(AP-284) Disconnected.", 0);
+        }
+
+        if (code == 1006) {
+            reason = "Lost connection to the Archipelago server.";
+            if (reconnectAttempt <= 10) {
+                int reconnectDelay = (int) (5000 * Math.pow(2, reconnectAttempt));
+                reconnectAttempt++;
+                TimerTask reconnectTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        client.reconnect();
+                    }
+                };
+
+                reconnectTimer.cancel();
+                reconnectTimer = new Timer();
+                reconnectTimer.schedule(reconnectTask, reconnectDelay);
+                client.onClose("(AP-302)  " + reason, reconnectDelay / 1000);
+                return;
+            }
+        }
+
+        reconnectTimer.cancel();
+        client.onClose("(AP-308) "+reason, 0);
+        this.webSocket = null;
+    }
+
+    @Override
+    public void onFailure(WebSocket webSocket, Throwable t, Response response){
+        if (t instanceof SSLException) {
+            LOGGER.info(String.format("SSL Error: %s", t.getMessage()));
+            reconnectTimer.cancel();
+
+            // attempt to reconnect using non-secure web socket if we are failing to connect with a secure socket.
+            if (serverUri.getScheme().equalsIgnoreCase("wss") && downgrade) {
+                try {
+                    URI wsUri = new URI(String.format("ws://%s:%s", serverUri.getHost(), serverUri.getPort()));
+                    client.connect(wsUri);
+                } catch (URISyntaxException e) {
+                    client.onClose("(AP-275) " + t.getMessage(), 0);
+                }
+                return;
+            }
+            client.onClose("(AP-279) " + t.getMessage(), 0);
+            return;
+        }
+        if (t instanceof Exception){
+            client.onError((Exception) t);
+        }
+        LOGGER.log(Level.WARNING, "Error in websocket connection: " + t.getMessage());
+        webSocket.close(-1, t.getMessage());
+    }
+
+    @Override
+    public void onMessage(WebSocket webSocket, String message) {
         try {
             LOGGER.fine("Got Packet: " + message);
             JsonElement element = parser.parse(message);
@@ -148,7 +231,7 @@ class WebSocket extends WebSocketClient {
                             ConnectionResultEvent connectionResultEvent = new ConnectionResultEvent(ConnectionResult.Success, connectedPacket.team, connectedPacket.slot, seedName, slotData, gson);
                             client.getEventBus().post(connectionResultEvent);
                         } else {
-                            this.close();
+                            webSocket.close(1000, "Connection Request Canceled");
                             //close out of this loop because we are no longer interested in further commands from the server.
                             break;
                         }
@@ -241,6 +324,8 @@ class WebSocket extends WebSocketClient {
         }
     }
 
+
+
     private void updateRoom(RoomUpdatePacket updateRoomPacket) {
         if (!updateRoomPacket.networkPlayers.isEmpty()) {
             client.getRoomInfo().networkPlayers = updateRoomPacket.networkPlayers;
@@ -275,6 +360,14 @@ class WebSocket extends WebSocketClient {
         }
     }
 
+    public boolean isOpen(){
+        return webSocket != null;
+    }
+
+    public void close(int code, String reason){
+        if (!isOpen()) return;
+        webSocket.close(code, reason);
+    }
     private void fetchDataPackageFromAP(Set<String> games) {
         sendPacket(new GetDataPackagePacket(games));
     }
@@ -284,74 +377,23 @@ class WebSocket extends WebSocketClient {
     }
 
     private void sendManyPackets(APPacket[] packet) {
-        if (!isOpen())
-            return;
+        if (!isOpen()) return;
         String json = gson.toJson(packet);
         LOGGER.fine("Sent Packet: " + json);
-        send(json);
+        webSocket.send(json);
     }
 
-    @Override
-    public void onClose(int code, String wsReason, boolean remote) {
-        LOGGER.fine(String.format("Connection closed by %s Code: %s Reason: %s", (remote ? "remote peer" : "us"), code, wsReason));
-        String reason = (wsReason.isEmpty()) ? "Connection refused by the Archipelago server." : wsReason;
-        if (code == -1) {
-            reconnectTimer.cancel();
-
-            // attempt to reconnect using non-secure web socket if we are failing to connect with a secure socket.
-            if (uri.getScheme().equalsIgnoreCase("wss") && downgrade) {
-                try {
-                    URI wsUri = new URI(String.format("ws://%s:%s",uri.getHost(),uri.getPort()));
-                    client.connect(wsUri);
-                } catch (URISyntaxException ignored) {
-                    client.onClose("(AP-275) " + reason, 0);
-                }
-                return;
-            }
-            client.onClose("(AP-279) " + reason, 0);
-            return;
-        }
-        if (code == 1000) {
-            reconnectTimer.cancel();
-            client.onClose("(AP-284) Disconnected.", 0);
-        }
-
-        if (code == 1006) {
-            reason = "Lost connection to the Archipelago server.";
-            if (reconnectAttempt <= 10) {
-                int reconnectDelay = (int) (5000 * Math.pow(2, reconnectAttempt));
-                reconnectAttempt++;
-                TimerTask reconnectTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        client.reconnect();
-                    }
-                };
-
-                reconnectTimer.cancel();
-                reconnectTimer = new Timer();
-                reconnectTimer.schedule(reconnectTask, reconnectDelay);
-                client.onClose("(AP-302)  " + reason, reconnectDelay / 1000);
-                return;
-            }
-        }
-
-        reconnectTimer.cancel();
-        client.onClose("(AP-308) "+reason, 0);
-    }
-
-    @Override
-    public void onError(Exception ex) {
-        if (ex instanceof SSLException) {
-            LOGGER.info(String.format("SSL Error: %s", ex.getMessage()));
-            return;
-        }
-        client.onError(ex);
-        LOGGER.log(Level.WARNING, "Error in websocket connection: " + ex.getMessage());
+    //Connect again without re-specifying downgrade schema
+    public void reconnect(){
+        connect(this.downgrade);
     }
 
     public void connect(boolean allowDowngrade) {
-        super.connect();
+        String uri = serverUri.toString();
+        Request.Builder builder = new Request.Builder().url(uri);
+        Request request = builder.build();
+        webSocket = httpClient.newWebSocket(request, this);
+
         reconnectTimer.cancel();
         reconnectAttempt = 0;
         this.downgrade = allowDowngrade;
@@ -369,5 +411,9 @@ class WebSocket extends WebSocketClient {
     public void scoutLocation(ArrayList<Long> locationIDs) {
         LocationScouts packet = new LocationScouts(locationIDs);
         sendPacket(packet);
+    }
+
+    public URI getRemoteSocketAddress(){
+        return serverUri;
     }
 }

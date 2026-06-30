@@ -10,7 +10,6 @@ import dev.koifysh.archipelago.Client;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.RuneLite;
 import net.runelite.client.eventbus.EventBus;
-
 import java.net.URISyntaxException;
 
 @Slf4j
@@ -51,7 +50,7 @@ public class APClient extends Client {
         try {
             connect(address);
         } catch (URISyntaxException e) {
-
+            e.printStackTrace();
         }
     }
 

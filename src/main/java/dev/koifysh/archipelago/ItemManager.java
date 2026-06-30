@@ -11,7 +11,7 @@ public class ItemManager {
 
 
     Client client;
-    WebSocket webSocket;
+    APWebSocket APWebSocket;
 
     ArrayList<NetworkItem> receivedItems = new ArrayList<>();
 
@@ -40,8 +40,8 @@ public class ItemManager {
             this.index = receivedItems.size();
         }
         else {
-            if(webSocket != null) {
-                webSocket.sendPacket(new SyncPacket());
+            if(APWebSocket != null) {
+                APWebSocket.sendPacket(new SyncPacket());
                 client.getLocationManager().resendAllCheckedLocations();
             }
         }
@@ -52,8 +52,8 @@ public class ItemManager {
         this.index = index;
     }
 
-    public void setAPWebSocket(WebSocket webSocket) {
-        this.webSocket = webSocket;
+    public void setAPWebSocket(APWebSocket APWebSocket) {
+        this.APWebSocket = APWebSocket;
     }
 
     public int getIndex() {

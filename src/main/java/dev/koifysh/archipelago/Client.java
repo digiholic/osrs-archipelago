@@ -30,7 +30,7 @@ public abstract class Client {
 
     private int hintPoints;
 
-    private WebSocket webSocket;
+    private APWebSocket APWebSocket;
 
     private String password;
 
@@ -95,7 +95,7 @@ public abstract class Client {
             if (isConnected()) {
                 ConnectUpdatePacket packet = new ConnectUpdatePacket();
                 packet.tags = this.tags;
-                webSocket.sendPacket(packet);
+                APWebSocket.sendPacket(packet);
             }
         }
     }
@@ -110,7 +110,7 @@ public abstract class Client {
             if (isConnected()) {
                 ConnectUpdatePacket packet = new ConnectUpdatePacket();
                 packet.tags = this.tags;
-                webSocket.sendPacket(packet);
+                APWebSocket.sendPacket(packet);
             }
         }
     }
@@ -125,7 +125,7 @@ public abstract class Client {
             if (isConnected()) {
                 ConnectUpdatePacket packet = new ConnectUpdatePacket();
                 packet.tags = this.tags;
-                webSocket.sendPacket(packet);
+                APWebSocket.sendPacket(packet);
             }
         }
     }
@@ -170,15 +170,15 @@ public abstract class Client {
      * @return true if connected, otherwise false
      */
     public boolean isConnected() {
-        return webSocket != null && webSocket.isOpen();
+        return APWebSocket != null && APWebSocket.isOpen();
     }
 
     /**
      * closes a connection to the Archipelago server if connected.
      */
     public void close() {
-        if (webSocket != null)
-            webSocket.close();
+        if (APWebSocket != null)
+            APWebSocket.close(1000, "User initiated Close");
     }
 
     /**
@@ -253,9 +253,9 @@ public abstract class Client {
      * @throws URISyntaxException on malformed address
      */
     public void connect(String address) throws URISyntaxException {
-        if (webSocket != null && webSocket.isOpen()) {
+        if (APWebSocket != null && APWebSocket.isOpen()) {
             LOGGER.fine("previous WebSocket is open, closing.");
-            webSocket.close();
+            APWebSocket.close(1000, "Websocket already exists");
         }
 
         if (!address.contains("//")) address = "//" + address;
@@ -300,10 +300,10 @@ public abstract class Client {
      */
     public void connect(URI address, boolean allowDowngrade) {
         LOGGER.fine("attempting WebSocket connection to " + address.toString());
-        webSocket = new WebSocket(address, this, gson);
-        locationManager.setAPWebSocket(webSocket);
-        itemManager.setAPWebSocket(webSocket);
-        webSocket.connect(allowDowngrade);
+        APWebSocket = new APWebSocket(address, this, gson);
+        locationManager.setAPWebSocket(APWebSocket);
+        itemManager.setAPWebSocket(APWebSocket);
+        APWebSocket.connect(allowDowngrade);
     }
 
     /**
@@ -311,10 +311,10 @@ public abstract class Client {
      * @param message Message to send.
      */
     public void sendChat(String message) {
-        if (webSocket == null)
+        if (APWebSocket == null)
             return;
-        if (webSocket.isAuthenticated()) {
-            webSocket.sendChat(message);
+        if (APWebSocket.isAuthenticated()) {
+            APWebSocket.sendChat(message);
         }
     }
 
@@ -342,7 +342,7 @@ public abstract class Client {
      */
     public void scoutLocations(ArrayList<Long> locationIDs) {
         locationIDs.removeIf( location -> !dataPackage.getGame(game).locationNameToId.containsValue(location));
-        webSocket.scoutLocation(locationIDs);
+        APWebSocket.scoutLocation(locationIDs);
     }
 
     public abstract void onError(Exception ex);
@@ -371,7 +371,7 @@ public abstract class Client {
 
     public String getConnectedAddress() {
         if (isConnected())
-            return webSocket.getRemoteSocketAddress().getHostName()+":"+ webSocket.getRemoteSocketAddress().getPort();
+            return APWebSocket.getRemoteSocketAddress().getHost()+":"+ APWebSocket.getRemoteSocketAddress().getPort();
         else
             return "";
     }
@@ -380,7 +380,7 @@ public abstract class Client {
      * this should not need to be called externally but is left public just in case.
      */
     public void reconnect() {
-        webSocket.reconnect();
+        APWebSocket.reconnect();
     }
 
     /**
@@ -422,31 +422,31 @@ public abstract class Client {
      * @param status a {@link ClientStatus} to send to the server.
      */
     public void setGameState(ClientStatus status) {
-        if (webSocket == null)
+        if (APWebSocket == null)
             return;
-        if (webSocket.isAuthenticated())
-            webSocket.sendPacket(new StatusUpdatePacket(status));
+        if (APWebSocket.isAuthenticated())
+            APWebSocket.sendPacket(new StatusUpdatePacket(status));
     }
 
     /**
      * manually trigger a resync to the Archipelago server. this should be done automatically if the library detects a desync.
      */
     public void sync() {
-        webSocket.sendPacket(new SyncPacket());
+        APWebSocket.sendPacket(new SyncPacket());
     }
 
     public void sendBounce(BouncePacket bouncePacket) {
-        if (webSocket == null)
+        if (APWebSocket == null)
             return;
-        if (webSocket.isAuthenticated())
-            webSocket.sendPacket(bouncePacket);
+        if (APWebSocket.isAuthenticated())
+            APWebSocket.sendPacket(bouncePacket);
     }
 
     /**
      * disconnects from a connected Archipelago server.
      */
     public void disconnect() {
-        webSocket.close();
+        APWebSocket.close(1000, "User initiated Disconnect");
     }
 
     /**
@@ -483,10 +483,10 @@ public abstract class Client {
      *
      */
     public int dataStorageSet(SetPacket setPacket) {
-        if (webSocket == null || !webSocket.isAuthenticated())
+        if (APWebSocket == null || !APWebSocket.isAuthenticated())
             return 0;
 
-        webSocket.sendPacket(setPacket);
+        APWebSocket.sendPacket(setPacket);
         return setPacket.getRequestID();
     }
 
@@ -496,9 +496,9 @@ public abstract class Client {
      * @param keys List of Keys to be notified of.
      */
     public void dataStorageSetNotify(Collection<String> keys) {
-        if (webSocket == null || !webSocket.isAuthenticated())
+        if (APWebSocket == null || !APWebSocket.isAuthenticated())
             return;
-        webSocket.sendPacket(new SetNotifyPacket(keys));
+        APWebSocket.sendPacket(new SetNotifyPacket(keys));
     }
 
     /**
@@ -546,11 +546,11 @@ public abstract class Client {
      * @param keys a list of keys to retrieve values for
      */
     public int dataStorageGet(Collection<String> keys) {
-        if (webSocket == null || !webSocket.isAuthenticated())
+        if (APWebSocket == null || !APWebSocket.isAuthenticated())
             return 0;
 
         GetPacket getPacket = new GetPacket(keys);
-        webSocket.sendPacket(getPacket);
+        APWebSocket.sendPacket(getPacket);
         return getPacket.getRequestID();
     }
 

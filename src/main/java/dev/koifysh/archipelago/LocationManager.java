@@ -10,7 +10,7 @@ import java.util.Set;
 public class LocationManager {
 
     Client client;
-    WebSocket webSocket;
+    APWebSocket APWebSocket;
 
     Set<Long> checkedLocations = new HashSet<>();
 
@@ -30,11 +30,11 @@ public class LocationManager {
         missingLocations.removeAll(ids);
         LocationChecks packet = new LocationChecks();
         packet.locations.addAll(ids);
-        if(webSocket == null)
+        if(APWebSocket == null)
             return false;
 
-        if(webSocket.isAuthenticated()) {
-            webSocket.sendPacket(packet);
+        if(APWebSocket.isAuthenticated()) {
+            APWebSocket.sendPacket(packet);
             return true;
         }
         return false;
@@ -48,20 +48,20 @@ public class LocationManager {
                 packet.locations.add(missingCheck);
             }
         }
-        if(webSocket != null && !packet.locations.isEmpty())
-            webSocket.sendPacket(packet);
+        if(APWebSocket != null && !packet.locations.isEmpty())
+            APWebSocket.sendPacket(packet);
     }
 
     public void resendAllCheckedLocations() {
-        if (webSocket == null)
+        if (APWebSocket == null)
                 return;
         LocationChecks packet = new LocationChecks();
         packet.locations = checkedLocations;
-        webSocket.sendPacket(packet);
+        APWebSocket.sendPacket(packet);
     }
 
-    protected void setAPWebSocket(WebSocket webSocket) {
-        this.webSocket = webSocket;
+    protected void setAPWebSocket(APWebSocket APWebSocket) {
+        this.APWebSocket = APWebSocket;
     }
 
     public Set<Long> getCheckedLocations() {
