@@ -10,6 +10,7 @@ import dev.koifysh.archipelago.parts.NetworkSlot;
 import dev.koifysh.archipelago.parts.Version;
 import dev.koifysh.archipelago.network.client.*;
 import net.runelite.client.eventbus.EventBus;
+import okhttp3.OkHttpClient;
 
 import java.io.*;
 import java.net.URI;
@@ -59,12 +60,13 @@ public abstract class Client {
     private int itemsHandlingFlags = 0b000;
 
     private Gson gson;
-
+    private OkHttpClient okHttpClient;
     // Parameters modified for OSRS usage. Original data package location and non-gson serialization not allowed.
     // If you're looking at this for reference on how to implement an AP game, don't look at this bit
-    public Client(String dataPackageLocation, Gson gson, EventBus bus) {
+    public Client(String dataPackageLocation, Gson gson, EventBus bus, OkHttpClient okHttpClient) {
         this.dataPackageLocation = dataPackageLocation;
         this.gson = gson;
+        this.okHttpClient = okHttpClient;
 
         loadDataPackage();
 
@@ -300,7 +302,7 @@ public abstract class Client {
      */
     public void connect(URI address, boolean allowDowngrade) {
         LOGGER.fine("attempting WebSocket connection to " + address.toString());
-        APWebSocket = new APWebSocket(address, this, gson);
+        APWebSocket = new APWebSocket(okHttpClient, address, this, gson);
         locationManager.setAPWebSocket(APWebSocket);
         itemManager.setAPWebSocket(APWebSocket);
         APWebSocket.connect(allowDowngrade);

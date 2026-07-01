@@ -10,6 +10,8 @@ import dev.koifysh.archipelago.Client;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.RuneLite;
 import net.runelite.client.eventbus.EventBus;
+import okhttp3.OkHttpClient;
+
 import java.net.URISyntaxException;
 
 @Slf4j
@@ -17,8 +19,8 @@ public class APClient extends Client {
 
     private ArchipelagoPlugin plugin;
 
-    public APClient(ArchipelagoPlugin plugin, Gson gson, EventBus bus, boolean useMembers){
-        super(RuneLite.RUNELITE_DIR + "/APData/DataPackage.ser", gson, bus);
+    public APClient(ArchipelagoPlugin plugin, Gson gson, EventBus bus, OkHttpClient httpClient, boolean useMembers){
+        super(RuneLite.RUNELITE_DIR + "/APData/DataPackage.ser", gson, bus, httpClient);
         if (useMembers)
             this.setGame("Old School Runescape Members");
         else

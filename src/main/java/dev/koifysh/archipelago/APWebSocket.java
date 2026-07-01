@@ -47,14 +47,14 @@ class APWebSocket extends WebSocketListener {
     private static Timer reconnectTimer;
     private boolean downgrade = false;
 
-    private JsonParser parser;
+    private final JsonParser parser;
 
-    private URI serverUri;
-    private OkHttpClient httpClient;
+    private final URI serverUri;
+    private final OkHttpClient httpClient;
     private WebSocket webSocket;
 
-    public APWebSocket(URI serverUrl, Client client, Gson gson) {
-        httpClient = new OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build();
+    public APWebSocket(OkHttpClient okHttpClient, URI serverUrl, Client client, Gson gson) {
+        httpClient = okHttpClient;
         this.serverUri = serverUrl;
 
         this.client = client;

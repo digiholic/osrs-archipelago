@@ -32,6 +32,7 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.ui.overlay.worldmap.WorldMapPointManager;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
+import okhttp3.OkHttpClient;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -72,6 +73,8 @@ public class ArchipelagoPlugin extends Plugin
 	private IllegalRegionOverlay overlay;
 	@Inject
 	private WorldMapPointManager worldMapPointManager;
+	@Inject
+	private OkHttpClient okHttpClient;
 
 	public boolean currentlyLoggedIn;
 	public boolean connected;
@@ -119,7 +122,7 @@ public class ArchipelagoPlugin extends Plugin
 	{
 		plugin = this;
 		panel = new ArchipelagoPanel(this, config, skillIconManager, eventBus);
-		apClient = new APClient(this, gson, eventBus, config.useMembers());
+		apClient = new APClient(this, gson, eventBus, okHttpClient, config.useMembers());
 		activeTasks = new ActiveTaskList(this, panel);
 		apIcon64 = getAPLogo();
 		apIcon32 = getMapAPLogo();
