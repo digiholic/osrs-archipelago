@@ -367,6 +367,11 @@ public class ArchipelagoPlugin extends Plugin
 	}
 
 	private boolean IsItemAllowed(int itemId){
+		//TODO: Refactor this item filtering to something that doesn't need a hard-coded check. A data-driven way to determine items needed to equip something.
+
+		//Members currently does not support item locking (too many items)
+		if (config.useMembers()) return true;
+
 		if (ItemHandler.MetalWeaponItemIds.contains(itemId)){
 			int itemTier = (int) getCollectedItems().stream().filter(it -> it.name.equals(ItemNames.Progressive_Weapons)).count();
 			for (int i=0; i <= itemTier; i++){
