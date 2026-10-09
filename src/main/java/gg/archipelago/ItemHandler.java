@@ -2,8 +2,8 @@ package gg.archipelago;
 
 import gg.archipelago.data.ItemData;
 import gg.archipelago.data.ItemNames;
-import net.runelite.api.ItemID;
-import net.runelite.api.SpriteID;
+import net.runelite.api.gameval.ItemID;
+import net.runelite.api.gameval.SpriteID;
 import net.runelite.client.game.SpriteManager;
 
 import java.awt.image.BufferedImage;
@@ -56,7 +56,7 @@ public class ItemHandler {
 
                 switch(itemRow.get(3)){
                     case "Area":
-                        icon_id = SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET;
+                        icon_id = SpriteID.WorldmapIcon.PLANET;
                         //Icon ID is already 0, no need to reassign
                         String name = itemRow.get(0);
                         String chunks = itemRow.get(4);
@@ -86,7 +86,7 @@ public class ItemHandler {
         String taggedRepoAddress = repository_address+dataVersion;
         List<List<String>> items = new ArrayList<>();
         try {
-            BufferedReader in = null;
+            BufferedReader in;
             if (DEBUG){
                 FileReader fileIn = new FileReader(debugItemDataSource);
                 in = new BufferedReader(fileIn);
@@ -118,47 +118,47 @@ public class ItemHandler {
         }
         return items;
     }
-    private static List<ItemData> defaultItems = List.of(
-            new ItemData(base_id, ItemNames.Lumbridge, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 1, ItemNames.Lumbridge_Swamp, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 2, ItemNames.HAM_Hideout, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 3, ItemNames.Lumbridge_Farms, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 4, ItemNames.South_Of_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 5, ItemNames.Lumberyard, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 6, ItemNames.Central_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 7, ItemNames.Varrock_Palace, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 8, ItemNames.West_Varrock, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 9, ItemNames.Edgeville, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 10, ItemNames.Barbarian_Village, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 11, ItemNames.Draynor_Manor, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 12, ItemNames.Falador, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 13, ItemNames.Dwarven_Mines, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 14, ItemNames.Ice_Mountain, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 15, ItemNames.Monastery, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 16, ItemNames.Falador_Farm, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 17, ItemNames.Port_Sarim, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 18, ItemNames.Mudskipper_Point, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 19, ItemNames.Karamja, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 20, ItemNames.Crandor, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 21, ItemNames.Rimmington, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 22, ItemNames.Crafting_Guild, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 23, ItemNames.Draynor_Village, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 24, ItemNames.Wizards_Tower, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 25, ItemNames.Corsair_Cove, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 26, ItemNames.Al_Kharid, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 27, ItemNames.Citharede_Abbey, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 28, ItemNames.Wilderness, SpriteID.MINIMAP_ORB_WORLD_MAP_PLANET, 0, "Area"),
-            new ItemData(base_id + 29, ItemNames.Progressive_Armor, SpriteID.MAP_ICON_HELMET_SHOP, 0, "Item"),
-            new ItemData(base_id + 30, ItemNames.Progressive_Weapons, SpriteID.MAP_ICON_SWORD_SHOP, 0, "Item"),
-            new ItemData(base_id + 31, ItemNames.Progressive_Tools, SpriteID.MAP_ICON_MINING_SHOP, 0, "Item"),
-            new ItemData(base_id + 32, ItemNames.Progressive_Range_Weapon, SpriteID.MAP_ICON_ARCHERY_SHOP, 0, "Item"),
-            new ItemData(base_id + 33, ItemNames.Progressive_Range_Armor, SpriteID.MAP_ICON_TANNERY, 0, "Item"),
-            new ItemData(base_id + 34, ItemNames.Progressive_Magic, SpriteID.MAP_ICON_MAGIC_SHOP, 0, "Item")
+    private static final List<ItemData> defaultItems = List.of(
+            new ItemData(base_id, ItemNames.Lumbridge, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 1, ItemNames.Lumbridge_Swamp, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 2, ItemNames.HAM_Hideout, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 3, ItemNames.Lumbridge_Farms, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 4, ItemNames.South_Of_Varrock, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 5, ItemNames.Lumberyard, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 6, ItemNames.Central_Varrock, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 7, ItemNames.Varrock_Palace, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 8, ItemNames.West_Varrock, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 9, ItemNames.Edgeville, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 10, ItemNames.Barbarian_Village, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 11, ItemNames.Draynor_Manor, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 12, ItemNames.Falador, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 13, ItemNames.Dwarven_Mines, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 14, ItemNames.Ice_Mountain, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 15, ItemNames.Monastery, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 16, ItemNames.Falador_Farm, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 17, ItemNames.Port_Sarim, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 18, ItemNames.Mudskipper_Point, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 19, ItemNames.Karamja, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 20, ItemNames.Crandor, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 21, ItemNames.Rimmington, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 22, ItemNames.Crafting_Guild, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 23, ItemNames.Draynor_Village, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 24, ItemNames.Wizards_Tower, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 25, ItemNames.Corsair_Cove, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 26, ItemNames.Al_Kharid, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 27, ItemNames.Citharede_Abbey, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 28, ItemNames.Wilderness, SpriteID.WorldmapIcon.PLANET, 0, "Area"),
+            new ItemData(base_id + 29, ItemNames.Progressive_Armor, SpriteID.Mapfunction._4, 0, "Item"),
+            new ItemData(base_id + 30, ItemNames.Progressive_Weapons, SpriteID.Mapfunction._1, 0, "Item"),
+            new ItemData(base_id + 31, ItemNames.Progressive_Tools, SpriteID.Mapfunction._44, 0, "Item"),
+            new ItemData(base_id + 32, ItemNames.Progressive_Range_Weapon, SpriteID.Mapfunction._17, 0, "Item"),
+            new ItemData(base_id + 33, ItemNames.Progressive_Range_Armor, SpriteID.Mapfunction._33, 0, "Item"),
+            new ItemData(base_id + 34, ItemNames.Progressive_Magic, SpriteID.Mapfunction._2, 0, "Item")
     );
 
     public static Map<String, String> RegionNamesToChunkIdString = new HashMap<>();
     public static Map<String, String> ChunkIDStringToRegionNames = new HashMap<>();
-    private static Map<String, String> defaultChunkRegions = Map.ofEntries(
+    private static final Map<String, String> defaultChunkRegions = Map.ofEntries(
             Map.entry(ItemNames.Lumbridge, "12850"),
             Map.entry(ItemNames.Lumbridge_Swamp, "12849,12593"),
             Map.entry(ItemNames.Lumbridge_Farms, "12851,12595"),
@@ -189,7 +189,7 @@ public class ItemHandler {
             Map.entry(ItemNames.Corsair_Cove, "10284,10028"),
             Map.entry(ItemNames.Wilderness, "11836,11835,11834,11833,11832,11831,12092,12091,12090,12089,12088,12087,12348,12347,12346,12345,12344,12343,12604,12603,12602,12601,12600,12599,12860,12859,12858,12857,12856,12855,13116,13115,13114,13113,13112,13111,13372,13371,13370,13369,13368,13367")
     );
-    public static final Map<ItemData, BufferedImage> loadedSprites = new HashMap<ItemData, BufferedImage>();
+    public static final Map<ItemData, BufferedImage> loadedSprites = new HashMap<>();
 
     public static ItemData GetItemByName(String name) {
         return GetItems().stream()
@@ -267,70 +267,70 @@ public class ItemHandler {
         {
             put(0, new Integer[]{
                     ItemID.BRONZE_2H_SWORD, ItemID.BRONZE_AXE, ItemID.BRONZE_BATTLEAXE,
-                    ItemID.BRONZE_CLAWS, ItemID.BRONZE_DAGGER, ItemID.BRONZE_DAGGERP, ItemID.BRONZE_DAGGERP_5670,
-                    ItemID.BRONZE_DAGGERP_5688, ItemID.BRONZE_HALBERD, ItemID.BRONZE_HASTA, ItemID.BRONZE_HASTAKP,
-                    ItemID.BRONZE_HASTAP, ItemID.BRONZE_HASTAP_11382, ItemID.BRONZE_HASTAP_11384,
+                    ItemID.BRONZE_CLAWS, ItemID.BRONZE_DAGGER, ItemID.BRONZE_DAGGER_P, ItemID.BRONZE_DAGGER_P_,
+                    ItemID.BRONZE_DAGGER_P__, ItemID.BRONZE_HALBERD, ItemID.BRUT_BRONZE_SPEAR, ItemID.BRUT_BRONZE_SPEAR_KP,
+                    ItemID.BRUT_BRONZE_SPEAR_P, ItemID.BRUT_BRONZE_SPEAR_P_, ItemID.BRUT_BRONZE_SPEAR_P__,
                     ItemID.BRONZE_LONGSWORD, ItemID.BRONZE_MACE, ItemID.BRONZE_PICKAXE, ItemID.BRONZE_SCIMITAR,
-                    ItemID.BRONZE_SPEAR, ItemID.BRONZE_SPEARKP, ItemID.BRONZE_SPEARP, ItemID.BRONZE_SPEARP_5704,
-                    ItemID.BRONZE_SPEARP_5718, ItemID.BRONZE_SWORD, ItemID.BRONZE_WARHAMMER
+                    ItemID.BRONZE_SPEAR, ItemID.TBWT_BRONZE_SPEAR_KP, ItemID.BRONZE_SPEAR_P, ItemID.BRONZE_SPEAR_P_,
+                    ItemID.BRONZE_SPEAR_P__, ItemID.BRONZE_SWORD, ItemID.BRONZE_WARHAMMER
             });
             put(1, new Integer[]{
                     ItemID.IRON_2H_SWORD, ItemID.IRON_AXE, ItemID.IRON_BATTLEAXE,
-                    ItemID.IRON_CLAWS, ItemID.IRON_DAGGER, ItemID.IRON_DAGGERP, ItemID.IRON_DAGGERP_5668,
-                    ItemID.IRON_DAGGERP_5686, ItemID.IRON_HALBERD, ItemID.IRON_HASTA, ItemID.IRON_HASTAKP,
-                    ItemID.IRON_HASTAP, ItemID.IRON_HASTAP_11389, ItemID.IRON_HASTAP_11391,
+                    ItemID.IRON_CLAWS, ItemID.IRON_DAGGER, ItemID.IRON_DAGGER_P, ItemID.IRON_DAGGER_P_,
+                    ItemID.IRON_DAGGER_P__, ItemID.IRON_HALBERD, ItemID.BRUT_IRON_SPEAR, ItemID.BRUT_IRON_SPEAR_KP,
+                    ItemID.BRUT_IRON_SPEAR_P, ItemID.BRUT_IRON_SPEAR_P_, ItemID.BRUT_IRON_SPEAR_P__,
                     ItemID.IRON_LONGSWORD, ItemID.IRON_MACE, ItemID.IRON_PICKAXE, ItemID.IRON_SCIMITAR,
-                    ItemID.IRON_SPEAR, ItemID.IRON_SPEARKP, ItemID.IRON_SPEARP, ItemID.IRON_SPEARP_5706,
-                    ItemID.IRON_SPEARP_5720, ItemID.IRON_SWORD, ItemID.IRON_WARHAMMER
+                    ItemID.IRON_SPEAR, ItemID.TBWT_IRON_SPEAR_KP, ItemID.IRON_SPEAR_P, ItemID.IRON_SPEAR_P_,
+                    ItemID.IRON_SPEAR_P__, ItemID.IRON_SWORD, ItemID.IRON_WARHAMMER
             });
             put(2, new Integer[]{
                     ItemID.STEEL_2H_SWORD, ItemID.STEEL_AXE, ItemID.STEEL_BATTLEAXE,
-                    ItemID.STEEL_CLAWS, ItemID.STEEL_DAGGER, ItemID.STEEL_DAGGERP, ItemID.STEEL_DAGGERP_5672,
-                    ItemID.STEEL_DAGGERP_5690, ItemID.STEEL_HALBERD, ItemID.STEEL_HASTA, ItemID.STEEL_HASTAKP,
-                    ItemID.STEEL_HASTAP, ItemID.STEEL_HASTAP_11396, ItemID.STEEL_HASTAP_11398,
+                    ItemID.STEEL_CLAWS, ItemID.STEEL_DAGGER, ItemID.STEEL_DAGGER_P, ItemID.STEEL_DAGGER_P_,
+                    ItemID.STEEL_DAGGER_P__, ItemID.STEEL_HALBERD, ItemID.BRUT_STEEL_SPEAR, ItemID.BRUT_STEEL_SPEAR_KP,
+                    ItemID.BRUT_STEEL_SPEAR_P, ItemID.BRUT_STEEL_SPEAR_P_, ItemID.BRUT_STEEL_SPEAR_P__,
                     ItemID.STEEL_LONGSWORD, ItemID.STEEL_MACE, ItemID.STEEL_PICKAXE, ItemID.STEEL_SCIMITAR,
-                    ItemID.STEEL_SPEAR, ItemID.STEEL_SPEARKP, ItemID.STEEL_SPEARP, ItemID.STEEL_SPEARP_5708,
-                    ItemID.STEEL_SPEARP_5722, ItemID.STEEL_SWORD, ItemID.STEEL_WARHAMMER
+                    ItemID.STEEL_SPEAR, ItemID.TBWT_STEEL_SPEAR_KP, ItemID.STEEL_SPEAR_P, ItemID.STEEL_SPEAR_P__,
+                    ItemID.STEEL_SPEAR_P__, ItemID.STEEL_SWORD, ItemID.STEEL_WARHAMMER
             });
             put(3, new Integer[]{
                     ItemID.BLACK_2H_SWORD, ItemID.BLACK_AXE, ItemID.BLACK_BATTLEAXE,
-                    ItemID.BLACK_CLAWS, ItemID.BLACK_DAGGER, ItemID.BLACK_DAGGERP, ItemID.BLACK_DAGGERP_5682,
-                    ItemID.BLACK_DAGGERP_5700, ItemID.BLACK_HALBERD, ItemID.BLACK_LONGSWORD, ItemID.BLACK_MACE,
-                    ItemID.BLACK_PICKAXE, ItemID.BLACK_SCIMITAR, ItemID.BLACK_SPEAR, ItemID.BLACK_SPEARKP,
-                    ItemID.BLACK_SPEARP, ItemID.BLACK_SPEARP_5734, ItemID.BLACK_SPEARP_5736, ItemID.BLACK_SWORD,
+                    ItemID.BLACK_CLAWS, ItemID.BLACK_DAGGER, ItemID.BLACK_DAGGER_P, ItemID.BLACK_DAGGER_P_,
+                    ItemID.BLACK_DAGGER_P__, ItemID.BLACK_HALBERD, ItemID.BLACK_LONGSWORD, ItemID.BLACK_MACE,
+                    ItemID.BLACK_PICKAXE, ItemID.BLACK_SCIMITAR, ItemID.BLACK_SPEAR, ItemID.TBWT_BLACK_SPEAR_KP,
+                    ItemID.BLACK_SPEAR_P, ItemID.BLACK_SPEAR_P_, ItemID.BLACK_SPEAR_P__, ItemID.BLACK_SWORD,
                     ItemID.BLACK_WARHAMMER
             });
             put(4, new Integer[]{
                     ItemID.MITHRIL_2H_SWORD, ItemID.MITHRIL_AXE, ItemID.MITHRIL_BATTLEAXE,
-                    ItemID.MITHRIL_CLAWS, ItemID.MITHRIL_DAGGER, ItemID.MITHRIL_DAGGERP, ItemID.MITHRIL_DAGGERP_5674,
-                    ItemID.MITHRIL_DAGGERP_5692, ItemID.MITHRIL_HALBERD, ItemID.MITHRIL_HASTA, ItemID.MITHRIL_HASTAKP,
-                    ItemID.MITHRIL_HASTAP, ItemID.MITHRIL_HASTAP_11403, ItemID.MITHRIL_HASTAP_11405,
+                    ItemID.MITHRIL_CLAWS, ItemID.MITHRIL_DAGGER, ItemID.MITHRIL_DAGGER_P, ItemID.MITHRIL_DAGGER_P_,
+                    ItemID.MITHRIL_DAGGER_P__, ItemID.MITHRIL_HALBERD, ItemID.BRUT_MITHRIL_SPEAR, ItemID.BRUT_MITHRIL_SPEAR_KP,
+                    ItemID.BRUT_MITHRIL_SPEAR_P, ItemID.BRUT_MITHRIL_SPEAR_P_, ItemID.BRUT_MITHRIL_SPEAR_P__,
                     ItemID.MITHRIL_LONGSWORD, ItemID.MITHRIL_MACE, ItemID.MITHRIL_PICKAXE, ItemID.MITHRIL_SCIMITAR,
-                    ItemID.MITHRIL_SPEAR, ItemID.MITHRIL_SPEARKP, ItemID.MITHRIL_SPEARP, ItemID.MITHRIL_SPEARP_5710,
-                    ItemID.MITHRIL_SPEARP_5724, ItemID.MITHRIL_SWORD, ItemID.MITHRIL_WARHAMMER
+                    ItemID.MITHRIL_SPEAR, ItemID.TBWT_MITHRIL_SPEAR_KP, ItemID.MITHRIL_SPEAR_P, ItemID.MITHRIL_SPEAR_P_,
+                    ItemID.MITHRIL_SPEAR_P__, ItemID.MITHRIL_SWORD, ItemID.MITHRIL_WARHAMMER
             });
             put(5, new Integer[]{
                     ItemID.ADAMANT_2H_SWORD, ItemID.ADAMANT_AXE, ItemID.ADAMANT_BATTLEAXE,
-                    ItemID.ADAMANT_CLAWS, ItemID.ADAMANT_DAGGER, ItemID.ADAMANT_DAGGERP, ItemID.ADAMANT_DAGGERP_5676,
-                    ItemID.ADAMANT_DAGGERP_5694, ItemID.ADAMANT_HALBERD, ItemID.ADAMANT_HASTA, ItemID.ADAMANT_HASTAKP,
-                    ItemID.ADAMANT_HASTAP, ItemID.ADAMANT_HASTAP_11410, ItemID.ADAMANT_HASTAP_11412,
+                    ItemID.ADAMANT_CLAWS, ItemID.ADAMANT_DAGGER, ItemID.ADAMANT_DAGGER_P, ItemID.ADAMANT_DAGGER_P_,
+                    ItemID.ADAMANT_DAGGER_P__, ItemID.ADAMANT_HALBERD, ItemID.BRUT_ADAMANT_SPEAR, ItemID.BRUT_ADAMANT_SPEAR_KP,
+                    ItemID.BRUT_ADAMANT_SPEAR_P, ItemID.BRUT_ADAMANT_SPEAR_P_, ItemID.BRUT_ADAMANT_SPEAR_P__,
                     ItemID.ADAMANT_LONGSWORD, ItemID.ADAMANT_MACE, ItemID.ADAMANT_PICKAXE, ItemID.ADAMANT_SCIMITAR,
-                    ItemID.ADAMANT_SPEAR, ItemID.ADAMANT_SPEARKP, ItemID.ADAMANT_SPEARP, ItemID.ADAMANT_SPEARP_5712,
-                    ItemID.ADAMANT_SPEARP_5726, ItemID.ADAMANT_SWORD, ItemID.ADAMANT_WARHAMMER
+                    ItemID.ADAMANT_SPEAR, ItemID.TBWT_ADAMANT_SPEAR_KP, ItemID.ADAMANT_SPEAR_P, ItemID.ADAMANT_SPEAR_P_,
+                    ItemID.ADAMANT_SPEAR_P__, ItemID.ADAMANT_SWORD, ItemID.ADAMNT_WARHAMMER
             });
             put(6, new Integer[]{
                     ItemID.RUNE_2H_SWORD, ItemID.RUNE_AXE, ItemID.RUNE_BATTLEAXE,
-                    ItemID.RUNE_CLAWS, ItemID.RUNE_DAGGER, ItemID.RUNE_DAGGERP, ItemID.RUNE_DAGGERP_5678,
-                    ItemID.RUNE_DAGGERP_5696, ItemID.RUNE_HALBERD, ItemID.RUNE_HASTA, ItemID.RUNE_HASTAKP,
-                    ItemID.RUNE_HASTAP, ItemID.RUNE_HASTAP_11417, ItemID.RUNE_HASTAP_11419,
+                    ItemID.RUNE_CLAWS, ItemID.RUNE_DAGGER, ItemID.RUNE_DAGGER_P, ItemID.RUNE_DAGGER_P_,
+                    ItemID.RUNE_DAGGER_P__, ItemID.RUNE_HALBERD, ItemID.BRUT_RUNE_SPEAR, ItemID.BRUT_RUNE_SPEAR_KP,
+                    ItemID.BRUT_RUNE_SPEAR_P, ItemID.BRUT_RUNE_SPEAR_P_, ItemID.BRUT_RUNE_SPEAR_P__,
                     ItemID.RUNE_LONGSWORD, ItemID.RUNE_MACE, ItemID.RUNE_PICKAXE, ItemID.RUNE_SCIMITAR,
-                    ItemID.RUNE_SPEAR, ItemID.RUNE_SPEARKP, ItemID.RUNE_SPEARP, ItemID.RUNE_SPEARP_5714,
-                    ItemID.RUNE_SPEARP_5728, ItemID.RUNE_SWORD, ItemID.RUNE_WARHAMMER
+                    ItemID.RUNE_SPEAR, ItemID.TBWT_RUNE_SPEAR_KP, ItemID.RUNE_SPEAR_P, ItemID.RUNE_SPEAR_P_,
+                    ItemID.RUNE_SPEAR_P__, ItemID.RUNE_SWORD, ItemID.RUNE_WARHAMMER
             });
         }
     };
 
-    public static final List<Integer> MetalWeaponItemIds = new ArrayList<Integer>(){{
+    public static final List<Integer> MetalWeaponItemIds = new ArrayList<>(){{
         for (int i=0;i<MetalWeaponsPermittedByTier.size();i++){
             Collections.addAll(this,MetalWeaponsPermittedByTier.get(i));
         }
@@ -339,136 +339,138 @@ public class ItemHandler {
     public static Map<Integer, Integer[]> MetalArmorPermittedByTier = new Hashtable<>() {
         {
             put(0, new Integer[]{
-                    ItemID.BRONZE_BOOTS, ItemID.BRONZE_CHAINBODY, ItemID.BRONZE_GLOVES, ItemID.BRONZE_MED_HELM,
-                    ItemID.BRONZE_FULL_HELM, ItemID.BRONZE_FULL_HELM_T, ItemID.BRONZE_FULL_HELM_G,
-                    ItemID.BRONZE_KITESHIELD, ItemID.BRONZE_KITESHIELD_T, ItemID.BRONZE_KITESHIELD_G,
-                    ItemID.BRONZE_PLATEBODY, ItemID.BRONZE_PLATEBODY_T, ItemID.BRONZE_PLATEBODY_G,
-                    ItemID.BRONZE_PLATELEGS, ItemID.BRONZE_PLATELEGS_T, ItemID.BRONZE_PLATELEGS_G,
-                    ItemID.BRONZE_PLATESKIRT, ItemID.BRONZE_PLATESKIRT_T, ItemID.BRONZE_PLATESKIRT_G,
+                    ItemID.BRONZE_ARMOURED_BOOTS, ItemID.BRONZE_CHAINBODY, ItemID.HUNDRED_GAUNTLETS_LEVEL_2, ItemID.BRONZE_MED_HELM,
+                    ItemID.BRONZE_FULL_HELM, ItemID.BRONZE_FULL_HELM_TRIM, ItemID.BRONZE_FULL_HELM_GOLD,
+                    ItemID.BRONZE_KITESHIELD, ItemID.BRONZE_KITESHIELD_TRIM, ItemID.BRONZE_KITESHIELD_GOLD,
+                    ItemID.BRONZE_PLATEBODY, ItemID.BRONZE_PLATEBODY_TRIM, ItemID.BRONZE_PLATEBODY_GOLD,
+                    ItemID.BRONZE_PLATELEGS, ItemID.BRONZE_PLATELEGS_TRIM, ItemID.BRONZE_PLATELEGS_GOLD,
+                    ItemID.BRONZE_PLATESKIRT, ItemID.BRONZE_PLATESKIRT_TRIM, ItemID.BRONZE_PLATESKIRT_GOLD,
                     ItemID.BRONZE_SQ_SHIELD
             });
             put(1, new Integer[]{
-                    ItemID.IRON_BOOTS, ItemID.IRON_CHAINBODY, ItemID.IRON_GLOVES, ItemID.IRON_MED_HELM,
-                    ItemID.IRON_FULL_HELM, ItemID.IRON_FULL_HELM_T, ItemID.IRON_FULL_HELM_G,
-                    ItemID.IRON_KITESHIELD, ItemID.IRON_KITESHIELD_T, ItemID.IRON_KITESHIELD_G,
-                    ItemID.IRON_PLATEBODY, ItemID.IRON_PLATEBODY_T, ItemID.IRON_PLATEBODY_G,
-                    ItemID.IRON_PLATELEGS, ItemID.IRON_PLATELEGS_T, ItemID.IRON_PLATELEGS_G,
-                    ItemID.IRON_PLATESKIRT, ItemID.IRON_PLATESKIRT_T, ItemID.IRON_PLATESKIRT_G,
+                    ItemID.IRON_ARMOURED_BOOTS, ItemID.IRON_CHAINBODY, ItemID.HUNDRED_GAUNTLETS_LEVEL_3, ItemID.IRON_MED_HELM,
+                    ItemID.IRON_FULL_HELM, ItemID.IRON_FULL_HELM_TRIM, ItemID.IRON_FULL_HELM_GOLD,
+                    ItemID.IRON_KITESHIELD, ItemID.IRON_KITESHIELD_TRIM, ItemID.IRON_KITESHIELD_GOLD,
+                    ItemID.IRON_PLATEBODY, ItemID.IRON_PLATEBODY_TRIM, ItemID.IRON_PLATEBODY_GOLD,
+                    ItemID.IRON_PLATELEGS, ItemID.IRON_PLATELEGS_TRIM, ItemID.IRON_PLATELEGS_GOLD,
+                    ItemID.IRON_PLATESKIRT, ItemID.IRON_PLATESKIRT_TRIM, ItemID.IRON_PLATESKIRT_GOLD,
                     ItemID.IRON_SQ_SHIELD, ItemID.IRONMAN_HELM, ItemID.IRONMAN_PLATEBODY, ItemID.IRONMAN_PLATELEGS,
                     ItemID.HARDCORE_IRONMAN_HELM, ItemID.HARDCORE_IRONMAN_PLATEBODY, ItemID.HARDCORE_IRONMAN_PLATELEGS,
-                    ItemID.GROUP_IRONMAN_BRACERS, ItemID.GROUP_IRONMAN_BRACERS_UNRANKED, ItemID.GROUP_IRONMAN_HELM,
-                    ItemID.GROUP_IRONMAN_HELM_UNRANKED, ItemID.GROUP_IRONMAN_PLATEBODY, ItemID.GROUP_IRONMAN_PLATEBODY_26160,
-                    ItemID.GROUP_IRONMAN_PLATEBODY_26162, ItemID.GROUP_IRONMAN_PLATEBODY_26164,
-                    ItemID.GROUP_IRONMAN_PLATEBODY_UNRANKED, ItemID.GROUP_IRONMAN_PLATEBODY_UNRANKED_27050,
-                    ItemID.GROUP_IRONMAN_PLATEBODY_UNRANKED_27052, ItemID.GROUP_IRONMAN_PLATEBODY_UNRANKED_27054,
+                    ItemID.GROUP_IRONMAN_GLOVES, ItemID.GROUP_IRONMAN_GLOVES_UNRANKED, ItemID.GROUP_IRONMAN_HELM,
+                    ItemID.GROUP_IRONMAN_HELM_UNRANKED, ItemID.GROUP_IRONMAN_PLATEBODY02, ItemID.GROUP_IRONMAN_PLATEBODY03,
+                    ItemID.GROUP_IRONMAN_PLATEBODY04, ItemID.GROUP_IRONMAN_PLATEBODY05,
+                    ItemID.GROUP_IRONMAN_PLATEBODY02_UNRANKED, ItemID.GROUP_IRONMAN_PLATEBODY03_UNRANKED,
+                    ItemID.GROUP_IRONMAN_PLATEBODY04_UNRANKED, ItemID.GROUP_IRONMAN_PLATEBODY05_UNRANKED,
                     ItemID.GROUP_IRONMAN_PLATELEGS, ItemID.GROUP_IRONMAN_PLATELEGS_UNRANKED,
-                    ItemID.HARDCORE_GROUP_IRONMAN_BRACERS, ItemID.HARDCORE_GROUP_IRONMAN_HELM,
-                    ItemID.HARDCORE_GROUP_IRONMAN_PLATEBODY, ItemID.HARDCORE_GROUP_IRONMAN_PLATEBODY_26174,
-                    ItemID.HARDCORE_GROUP_IRONMAN_PLATEBODY_26176, ItemID.HARDCORE_GROUP_IRONMAN_PLATEBODY_26178,
+                    ItemID.HARDCORE_GROUP_IRONMAN_GLOVES, ItemID.HARDCORE_GROUP_IRONMAN_HELM,
+                    ItemID.HARDCORE_GROUP_IRONMAN_PLATEBODY02, ItemID.HARDCORE_GROUP_IRONMAN_PLATEBODY03,
+                    ItemID.HARDCORE_GROUP_IRONMAN_PLATEBODY04, ItemID.HARDCORE_GROUP_IRONMAN_PLATEBODY05,
                     ItemID.HARDCORE_GROUP_IRONMAN_PLATELEGS
             });
             put(2, new Integer[]{
-                    ItemID.STEEL_BOOTS, ItemID.STEEL_CHAINBODY, ItemID.STEEL_GLOVES, ItemID.STEEL_MED_HELM,
-                    ItemID.STEEL_FULL_HELM, ItemID.STEEL_FULL_HELM_T, ItemID.STEEL_FULL_HELM_G,
-                    ItemID.STEEL_KITESHIELD, ItemID.STEEL_KITESHIELD_T, ItemID.STEEL_KITESHIELD_G,
-                    ItemID.STEEL_PLATEBODY, ItemID.STEEL_PLATEBODY_T, ItemID.STEEL_PLATEBODY_G,
-                    ItemID.STEEL_PLATELEGS, ItemID.STEEL_PLATELEGS_T, ItemID.STEEL_PLATELEGS_G,
-                    ItemID.STEEL_PLATESKIRT, ItemID.STEEL_PLATESKIRT_T, ItemID.STEEL_PLATESKIRT_G,
+                    ItemID.STEEL_ARMOURED_BOOTS, ItemID.STEEL_CHAINBODY, ItemID.HUNDRED_GAUNTLETS_LEVEL_4, ItemID.STEEL_MED_HELM,
+                    ItemID.STEEL_FULL_HELM, ItemID.STEEL_FULL_HELM_TRIM, ItemID.STEEL_FULL_HELM_GOLD,
+                    ItemID.STEEL_KITESHIELD, ItemID.STEEL_KITESHIELD_TRIM, ItemID.STEEL_KITESHIELD_GOLD,
+                    ItemID.STEEL_PLATEBODY, ItemID.STEEL_PLATEBODY_TRIM, ItemID.STEEL_PLATEBODY_GOLD,
+                    ItemID.STEEL_PLATELEGS, ItemID.STEEL_PLATELEGS_TRIM, ItemID.STEEL_PLATELEGS_GOLD,
+                    ItemID.STEEL_PLATESKIRT, ItemID.STEEL_PLATESKIRT_TRIM, ItemID.STEEL_PLATESKIRT_GOLD,
                     ItemID.STEEL_SQ_SHIELD,
-                    ItemID.STEEL_HERALDIC_HELM, ItemID.STEEL_HERALDIC_HELM_8684, ItemID.STEEL_HERALDIC_HELM_8686,
-                    ItemID.STEEL_HERALDIC_HELM_8688, ItemID.STEEL_HERALDIC_HELM_8690, ItemID.STEEL_HERALDIC_HELM_8692,
-                    ItemID.STEEL_HERALDIC_HELM_8694, ItemID.STEEL_HERALDIC_HELM_8696, ItemID.STEEL_HERALDIC_HELM_8698,
-                    ItemID.STEEL_HERALDIC_HELM_8700, ItemID.STEEL_HERALDIC_HELM_8702, ItemID.STEEL_HERALDIC_HELM_8704,
-                    ItemID.STEEL_HERALDIC_HELM_8706, ItemID.STEEL_HERALDIC_HELM_8708, ItemID.STEEL_HERALDIC_HELM_8710,
-                    ItemID.STEEL_HERALDIC_HELM_8712,
-                    ItemID.STEEL_KITESHIELD_8746, ItemID.STEEL_KITESHIELD_8748, ItemID.STEEL_KITESHIELD_8750,
-                    ItemID.STEEL_KITESHIELD_8752, ItemID.STEEL_KITESHIELD_8754, ItemID.STEEL_KITESHIELD_8756,
-                    ItemID.STEEL_KITESHIELD_8758, ItemID.STEEL_KITESHIELD_8760, ItemID.STEEL_KITESHIELD_8762,
-                    ItemID.STEEL_KITESHIELD_8764, ItemID.STEEL_KITESHIELD_8766, ItemID.STEEL_KITESHIELD_8768,
-                    ItemID.STEEL_KITESHIELD_8770, ItemID.STEEL_KITESHIELD_8772, ItemID.STEEL_KITESHIELD_8774,
-                    ItemID.STEEL_KITESHIELD_8776
+                    ItemID.POH_HELMET_ARRAV, ItemID.POH_HELMET_ASGARNIA, ItemID.POH_HELMET_DORGESHUUN,
+                    ItemID.POH_HELMET_DRAGON, ItemID.POH_HELMET_FAIRY, ItemID.POH_HELMET_GUTHIX,
+                    ItemID.POH_HELMET_HAM, ItemID.POH_HELMET_HORSE, ItemID.POH_HELMET_JOGRE,
+                    ItemID.POH_HELMET_KANDARIN, ItemID.POH_HELMET_MISTHALIN, ItemID.POH_HELMET_MONEY,
+                    ItemID.POH_HELMET_SARADOMIN, ItemID.POH_HELMET_SKULL, ItemID.POH_HELMET_VARROCK,
+                    ItemID.POH_HELMET_ZAMORAK,
+                    ItemID.POH_SHIELD_ARRAV, ItemID.POH_SHIELD_ASGARNIA, ItemID.POH_SHIELD_DORGESHUUN,
+                    ItemID.POH_SHIELD_DRAGON, ItemID.POH_SHIELD_FAIRY, ItemID.POH_SHIELD_GUTHIX,
+                    ItemID.POH_SHIELD_HAM, ItemID.POH_SHIELD_HORSE, ItemID.POH_SHIELD_JOGRE,
+                    ItemID.POH_SHIELD_KANDARIN, ItemID.POH_SHIELD_MISTHALIN, ItemID.POH_SHIELD_MONEY,
+                    ItemID.POH_SHIELD_SARADOMIN, ItemID.POH_SHIELD_SKULL, ItemID.POH_SHIELD_VARROCK,
+                    ItemID.POH_SHIELD_ZAMORAK
 
             });
             put(3, new Integer[]{
-                    ItemID.BLACK_BOOTS, ItemID.BLACK_CHAINBODY, ItemID.BLACK_GLOVES, ItemID.BLACK_MED_HELM,
-                    ItemID.BLACK_FULL_HELM, ItemID.BLACK_FULL_HELM_T, ItemID.BLACK_FULL_HELM_G,
-                    ItemID.BLACK_KITESHIELD, ItemID.BLACK_KITESHIELD_T, ItemID.BLACK_KITESHIELD_G,
-                    ItemID.BLACK_PLATEBODY, ItemID.BLACK_PLATEBODY_T, ItemID.BLACK_PLATEBODY_G,
-                    ItemID.BLACK_PLATELEGS, ItemID.BLACK_PLATELEGS_T, ItemID.BLACK_PLATELEGS_G,
-                    ItemID.BLACK_PLATESKIRT, ItemID.BLACK_PLATESKIRT_T, ItemID.BLACK_PLATESKIRT_G,
+                    ItemID.BLACK_ARMOURED_BOOTS, ItemID.BLACK_CHAINBODY, ItemID.HUNDRED_GAUNTLETS_LEVEL_5, ItemID.BLACK_MED_HELM,
+                    ItemID.BLACK_FULL_HELM, ItemID.BLACK_FULL_HELM_TRIM, ItemID.BLACK_FULL_HELM_GOLD,
+                    ItemID.BLACK_KITESHIELD, ItemID.BLACK_KITESHIELD_TRIM, ItemID.BLACK_KITESHIELD_GOLD,
+                    ItemID.BLACK_PLATEBODY, ItemID.BLACK_PLATEBODY_TRIM, ItemID.BLACK_PLATEBODY_GOLD,
+                    ItemID.BLACK_PLATELEGS, ItemID.BLACK_PLATELEGS_TRIM, ItemID.BLACK_PLATELEGS_GOLD,
+                    ItemID.BLACK_PLATESKIRT, ItemID.BLACK_PLATESKIRT_TRIM, ItemID.BLACK_PLATESKIRT_GOLD,
                     ItemID.BLACK_SQ_SHIELD,
-                    ItemID.BLACK_HELM_H1, ItemID.BLACK_HELM_H2, ItemID.BLACK_HELM_H3, ItemID.BLACK_HELM_H4,
+                    ItemID.TRAIL_HERALDIC_HELM_1_BLACK, ItemID.TRAIL_HERALDIC_HELM_2_BLACK,
+                    ItemID.TRAIL_HERALDIC_HELM_3_BLACK, ItemID.TRAIL_HERALDIC_HELM_4_BLACK,
                     ItemID.BLACK_PLATEBODY_H1, ItemID.BLACK_PLATEBODY_H2, ItemID.BLACK_PLATEBODY_H3,
                     ItemID.BLACK_PLATEBODY_H4, ItemID.BLACK_PLATEBODY_H5,
-                    ItemID.BLACK_SHIELD_H1, ItemID.BLACK_SHIELD_H2, ItemID.BLACK_SHIELD_H3,
-                    ItemID.BLACK_SHIELD_H4,ItemID.BLACK_SHIELD_H5
+                    ItemID.BLACK_HERALDIC_KITESHIELD1, ItemID.BLACK_HERALDIC_KITESHIELD2, ItemID.BLACK_HERALDIC_KITESHIELD3,
+                    ItemID.BLACK_HERALDIC_KITESHIELD4,ItemID.BLACK_HERALDIC_KITESHIELD5
             });
             put(4, new Integer[]{
-                    ItemID.MITHRIL_BOOTS, ItemID.MITHRIL_CHAINBODY, ItemID.MITHRIL_GLOVES, ItemID.MITHRIL_MED_HELM,
-                    ItemID.MITHRIL_FULL_HELM, ItemID.MITHRIL_FULL_HELM_T, ItemID.MITHRIL_FULL_HELM_G,
-                    ItemID.MITHRIL_KITESHIELD, ItemID.MITHRIL_KITESHIELD_T, ItemID.MITHRIL_KITESHIELD_G,
-                    ItemID.MITHRIL_PLATEBODY, ItemID.MITHRIL_PLATEBODY_T, ItemID.MITHRIL_PLATEBODY_G,
-                    ItemID.MITHRIL_PLATELEGS, ItemID.MITHRIL_PLATELEGS_T, ItemID.MITHRIL_PLATELEGS_G,
-                    ItemID.MITHRIL_PLATESKIRT, ItemID.MITHRIL_PLATESKIRT_T, ItemID.MITHRIL_PLATESKIRT_G,
+                    ItemID.MITHRIL_ARMOURED_BOOTS, ItemID.MITHRIL_CHAINBODY, ItemID.HUNDRED_GAUNTLETS_LEVEL_6, ItemID.MITHRIL_MED_HELM,
+                    ItemID.MITHRIL_FULL_HELM, ItemID.MITHRIL_FULL_HELM_TRIM, ItemID.MITHRIL_FULL_HELM_GOLD,
+                    ItemID.MITHRIL_KITESHIELD, ItemID.MITHRIL_KITESHIELD_TRIM, ItemID.MITHRIL_KITESHIELD_GOLD,
+                    ItemID.MITHRIL_PLATEBODY, ItemID.MITHRIL_PLATEBODY_TRIM, ItemID.MITHRIL_PLATEBODY_GOLD,
+                    ItemID.MITHRIL_PLATELEGS, ItemID.MITHRIL_PLATELEGS_TRIM, ItemID.MITHRIL_PLATELEGS_GOLD,
+                    ItemID.MITHRIL_PLATESKIRT, ItemID.MITHRIL_PLATESKIRT_TRIM, ItemID.MITHRIL_PLATESKIRT_GOLD,
                     ItemID.MITHRIL_SQ_SHIELD
             });
             put(5, new Integer[]{
-                    ItemID.ADAMANT_BOOTS, ItemID.ADAMANT_CHAINBODY, ItemID.ADAMANT_GLOVES, ItemID.ADAMANT_MED_HELM,
-                    ItemID.ADAMANT_FULL_HELM, ItemID.ADAMANT_FULL_HELM_T, ItemID.ADAMANT_FULL_HELM_G,
-                    ItemID.ADAMANT_KITESHIELD, ItemID.ADAMANT_KITESHIELD_T, ItemID.ADAMANT_KITESHIELD_G,
-                    ItemID.ADAMANT_PLATEBODY, ItemID.ADAMANT_PLATEBODY_T, ItemID.ADAMANT_PLATEBODY_G,
-                    ItemID.ADAMANT_PLATELEGS, ItemID.ADAMANT_PLATELEGS_T, ItemID.ADAMANT_PLATELEGS_G,
-                    ItemID.ADAMANT_PLATESKIRT, ItemID.ADAMANT_PLATESKIRT_T, ItemID.ADAMANT_PLATESKIRT_G,
+                    ItemID.ADAMANT_ARMOURED_BOOTS, ItemID.ADAMANT_CHAINBODY, ItemID.HUNDRED_GAUNTLETS_LEVEL_7, ItemID.ADAMANT_MED_HELM,
+                    ItemID.ADAMANT_FULL_HELM, ItemID.ADAMANT_FULL_HELM_TRIM, ItemID.ADAMANT_FULL_HELM_GOLD,
+                    ItemID.ADAMANT_KITESHIELD, ItemID.ADAMANT_KITESHIELD_TRIM, ItemID.ADAMANT_KITESHIELD_GOLD,
+                    ItemID.ADAMANT_PLATEBODY, ItemID.ADAMANT_PLATEBODY_TRIM, ItemID.ADAMANT_PLATEBODY_GOLD,
+                    ItemID.ADAMANT_PLATELEGS, ItemID.ADAMANT_PLATELEGS_TRIM, ItemID.ADAMANT_PLATELEGS_GOLD,
+                    ItemID.ADAMANT_PLATESKIRT, ItemID.ADAMANT_PLATESKIRT_TRIM, ItemID.ADAMANT_PLATESKIRT_GOLD,
                     ItemID.ADAMANT_SQ_SHIELD,
-                    ItemID.ADAMANT_HELM_H1, ItemID.ADAMANT_HELM_H2, ItemID.ADAMANT_HELM_H3, ItemID.ADAMANT_HELM_H4,
+                    ItemID.TRAIL_HERALDIC_HELM_1_ADAMANT, ItemID.TRAIL_HERALDIC_HELM_2_ADAMANT,
+                    ItemID.TRAIL_HERALDIC_HELM_3_ADAMANT, ItemID.TRAIL_HERALDIC_HELM_4_ADAMANT,
                     ItemID.ADAMANT_PLATEBODY_H1, ItemID.ADAMANT_PLATEBODY_H2, ItemID.ADAMANT_PLATEBODY_H3,
                     ItemID.ADAMANT_PLATEBODY_H4, ItemID.ADAMANT_PLATEBODY_H5,
-                    ItemID.ADAMANT_SHIELD_H1, ItemID.ADAMANT_SHIELD_H2, ItemID.ADAMANT_SHIELD_H3,
-                    ItemID.ADAMANT_SHIELD_H4,ItemID.ADAMANT_SHIELD_H5,
-                    ItemID.ADAMANT_KITESHIELD_6894, ItemID.ADAMANT_KITESHIELD_22127, ItemID.ADAMANT_KITESHIELD_22129,
-                    ItemID.ADAMANT_KITESHIELD_22131, ItemID.ADAMANT_KITESHIELD_22133, ItemID.ADAMANT_KITESHIELD_22135,
-                    ItemID.ADAMANT_KITESHIELD_22137, ItemID.ADAMANT_KITESHIELD_22139, ItemID.ADAMANT_KITESHIELD_22141,
-                    ItemID.ADAMANT_KITESHIELD_22143, ItemID.ADAMANT_KITESHIELD_22145, ItemID.ADAMANT_KITESHIELD_22147,
-                    ItemID.ADAMANT_KITESHIELD_22149, ItemID.ADAMANT_KITESHIELD_22151, ItemID.ADAMANT_KITESHIELD_22153,
-                    ItemID.ADAMANT_KITESHIELD_22155, ItemID.ADAMANT_KITESHIELD_22157, ItemID.ADAMANT_HERALDIC_HELM,
-                    ItemID.ADAMANT_HERALDIC_HELM_22161, ItemID.ADAMANT_HERALDIC_HELM_22163,
-                    ItemID.ADAMANT_HERALDIC_HELM_22165, ItemID.ADAMANT_HERALDIC_HELM_22167,
-                    ItemID.ADAMANT_HERALDIC_HELM_22169, ItemID.ADAMANT_HERALDIC_HELM_22171,
-                    ItemID.ADAMANT_HERALDIC_HELM_22173, ItemID.ADAMANT_HERALDIC_HELM_22175,
-                    ItemID.ADAMANT_HERALDIC_HELM_22177, ItemID.ADAMANT_HERALDIC_HELM_22179,
-                    ItemID.ADAMANT_HERALDIC_HELM_22181, ItemID.ADAMANT_HERALDIC_HELM_22183,
-                    ItemID.ADAMANT_HERALDIC_HELM_22185, ItemID.ADAMANT_HERALDIC_HELM_22187,
-                    ItemID.ADAMANT_HERALDIC_HELM_22189
+                    ItemID.ADAMANT_HERALDIC_KITESHIELD1, ItemID.ADAMANT_HERALDIC_KITESHIELD2, ItemID.ADAMANT_HERALDIC_KITESHIELD3,
+                    ItemID.ADAMANT_HERALDIC_KITESHIELD4,ItemID.ADAMANT_HERALDIC_KITESHIELD5,
+                    ItemID.POH_SHIELD_ARRAV_ADAMANT, ItemID.POH_SHIELD_ASGARNIA_ADAMANT, ItemID.POH_SHIELD_DORGESHUUN_ADAMANT,
+                    ItemID.POH_SHIELD_DRAGON_ADAMANT, ItemID.POH_SHIELD_FAIRY_ADAMANT, ItemID.POH_SHIELD_GUTHIX_ADAMANT,
+                    ItemID.POH_SHIELD_HAM_ADAMANT, ItemID.POH_SHIELD_HORSE_ADAMANT, ItemID.POH_SHIELD_JOGRE_ADAMANT,
+                    ItemID.POH_SHIELD_KANDARIN_ADAMANT, ItemID.POH_SHIELD_MISTHALIN_ADAMANT, ItemID.POH_SHIELD_MONEY_ADAMANT,
+                    ItemID.POH_SHIELD_SARADOMIN_ADAMANT, ItemID.POH_SHIELD_SKULL_ADAMANT, ItemID.POH_SHIELD_VARROCK_ADAMANT,
+                    ItemID.POH_SHIELD_ZAMORAK_ADAMANT,
+                    ItemID.POH_HELMET_ARRAV_ADAMANT, ItemID.POH_HELMET_ASGARNIA_ADAMANT, ItemID.POH_HELMET_DORGESHUUN_ADAMANT,
+                    ItemID.POH_HELMET_DRAGON_ADAMANT, ItemID.POH_HELMET_FAIRY_ADAMANT, ItemID.POH_HELMET_GUTHIX_ADAMANT,
+                    ItemID.POH_HELMET_HAM_ADAMANT, ItemID.POH_HELMET_HORSE_ADAMANT, ItemID.POH_HELMET_JOGRE_ADAMANT,
+                    ItemID.POH_HELMET_KANDARIN_ADAMANT, ItemID.POH_HELMET_MISTHALIN_ADAMANT, ItemID.POH_HELMET_MONEY_ADAMANT,
+                    ItemID.POH_HELMET_SARADOMIN_ADAMANT, ItemID.POH_HELMET_SKULL_ADAMANT, ItemID.POH_HELMET_VARROCK_ADAMANT,
+                    ItemID.POH_HELMET_ZAMORAK_ADAMANT,
             });
             put(6, new Integer[]{
-                    ItemID.RUNE_BOOTS, ItemID.RUNE_CHAINBODY, ItemID.RUNE_GLOVES, ItemID.RUNE_MED_HELM,
-                    ItemID.RUNE_FULL_HELM, ItemID.RUNE_FULL_HELM_T, ItemID.RUNE_FULL_HELM_G,
-                    ItemID.RUNE_KITESHIELD, ItemID.RUNE_KITESHIELD_T, ItemID.RUNE_KITESHIELD_G,
-                    ItemID.RUNE_PLATEBODY, ItemID.RUNE_PLATEBODY_T, ItemID.RUNE_PLATEBODY_G,
-                    ItemID.RUNE_PLATELEGS, ItemID.RUNE_PLATELEGS_T, ItemID.RUNE_PLATELEGS_G,
-                    ItemID.RUNE_PLATESKIRT, ItemID.RUNE_PLATESKIRT_T, ItemID.RUNE_PLATESKIRT_G,
+                    ItemID.RUNE_ARMOURED_BOOTS, ItemID.RUNE_CHAINBODY, ItemID.HUNDRED_GAUNTLETS_LEVEL_8, ItemID.RUNE_MED_HELM,
+                    ItemID.RUNE_FULL_HELM, ItemID.RUNE_FULL_HELM_TRIM, ItemID.RUNE_FULL_HELM_GOLD,
+                    ItemID.RUNE_KITESHIELD, ItemID.RUNE_KITESHIELD_TRIM, ItemID.RUNE_KITESHIELD_GOLD,
+                    ItemID.RUNE_PLATEBODY, ItemID.RUNE_PLATEBODY_TRIM, ItemID.RUNE_PLATEBODY_GOLD,
+                    ItemID.RUNE_PLATELEGS, ItemID.RUNE_PLATELEGS_TRIM, ItemID.RUNE_PLATELEGS_GOLD,
+                    ItemID.RUNE_PLATESKIRT, ItemID.RUNE_PLATESKIRT_TRIM, ItemID.RUNE_PLATESKIRT_GOLD,
                     ItemID.RUNE_SQ_SHIELD,
-                    ItemID.RUNE_HELM_H1, ItemID.RUNE_HELM_H2, ItemID.RUNE_HELM_H3, ItemID.RUNE_HELM_H4,
+                    ItemID.TRAIL_HERALDIC_HELM_1_RUNE, ItemID.TRAIL_HERALDIC_HELM_2_RUNE,
+                    ItemID.TRAIL_HERALDIC_HELM_3_RUNE, ItemID.TRAIL_HERALDIC_HELM_4_RUNE,
                     ItemID.RUNE_PLATEBODY_H1, ItemID.RUNE_PLATEBODY_H2, ItemID.RUNE_PLATEBODY_H3,
                     ItemID.RUNE_PLATEBODY_H4, ItemID.RUNE_PLATEBODY_H5,
-                    ItemID.RUNE_SHIELD_H1, ItemID.RUNE_SHIELD_H2, ItemID.RUNE_SHIELD_H3,
-                    ItemID.RUNE_SHIELD_H4,ItemID.RUNE_SHIELD_H5,
-                    ItemID.RUNE_HERALDIC_HELM, ItemID.RUNE_HERALDIC_HELM_8466, ItemID.RUNE_HERALDIC_HELM_8468,
-                    ItemID.RUNE_HERALDIC_HELM_8470, ItemID.RUNE_HERALDIC_HELM_8472, ItemID.RUNE_HERALDIC_HELM_8474,
-                    ItemID.RUNE_HERALDIC_HELM_8476, ItemID.RUNE_HERALDIC_HELM_8478, ItemID.RUNE_HERALDIC_HELM_8480,
-                    ItemID.RUNE_HERALDIC_HELM_8482, ItemID.RUNE_HERALDIC_HELM_8484, ItemID.RUNE_HERALDIC_HELM_8486,
-                    ItemID.RUNE_HERALDIC_HELM_8488, ItemID.RUNE_HERALDIC_HELM_8490, ItemID.RUNE_HERALDIC_HELM_8492,
-                    ItemID.RUNE_HERALDIC_HELM_8494, ItemID.RUNE_KITESHIELD_8714, ItemID.RUNE_KITESHIELD_8716,
-                    ItemID.RUNE_KITESHIELD_8718, ItemID.RUNE_KITESHIELD_8720, ItemID.RUNE_KITESHIELD_8722,
-                    ItemID.RUNE_KITESHIELD_8724, ItemID.RUNE_KITESHIELD_8726, ItemID.RUNE_KITESHIELD_8728,
-                    ItemID.RUNE_KITESHIELD_8730, ItemID.RUNE_KITESHIELD_8732, ItemID.RUNE_KITESHIELD_8734,
-                    ItemID.RUNE_KITESHIELD_8736, ItemID.RUNE_KITESHIELD_8738, ItemID.RUNE_KITESHIELD_8740,
-                    ItemID.RUNE_KITESHIELD_8742, ItemID.RUNE_KITESHIELD_8744
+                    ItemID.RUNE_HERALDIC_KITESHIELD1, ItemID.RUNE_HERALDIC_KITESHIELD2, ItemID.RUNE_HERALDIC_KITESHIELD3,
+                    ItemID.RUNE_HERALDIC_KITESHIELD4,ItemID.RUNE_HERALDIC_KITESHIELD5,
+                    ItemID.POH_SHIELD_ARRAV_RUNE, ItemID.POH_SHIELD_ASGARNIA_RUNE, ItemID.POH_SHIELD_DORGESHUUN_RUNE,
+                    ItemID.POH_SHIELD_DRAGON_RUNE, ItemID.POH_SHIELD_FAIRY_RUNE, ItemID.POH_SHIELD_GUTHIX_RUNE,
+                    ItemID.POH_SHIELD_HAM_RUNE, ItemID.POH_SHIELD_HORSE_RUNE, ItemID.POH_SHIELD_JOGRE_RUNE,
+                    ItemID.POH_SHIELD_KANDARIN_RUNE, ItemID.POH_SHIELD_MISTHALIN_RUNE, ItemID.POH_SHIELD_MONEY_RUNE,
+                    ItemID.POH_SHIELD_SARADOMIN_RUNE, ItemID.POH_SHIELD_SKULL_RUNE, ItemID.POH_SHIELD_VARROCK_RUNE,
+                    ItemID.POH_SHIELD_ZAMORAK_RUNE,
+                    ItemID.POH_HELMET_ARRAV_RUNE, ItemID.POH_HELMET_ASGARNIA_RUNE, ItemID.POH_HELMET_DORGESHUUN_RUNE,
+                    ItemID.POH_HELMET_DRAGON_RUNE, ItemID.POH_HELMET_FAIRY_RUNE, ItemID.POH_HELMET_GUTHIX_RUNE,
+                    ItemID.POH_HELMET_HAM_RUNE, ItemID.POH_HELMET_HORSE_RUNE, ItemID.POH_HELMET_JOGRE_RUNE,
+                    ItemID.POH_HELMET_KANDARIN_RUNE, ItemID.POH_HELMET_MISTHALIN_RUNE, ItemID.POH_HELMET_MONEY_RUNE,
+                    ItemID.POH_HELMET_SARADOMIN_RUNE, ItemID.POH_HELMET_SKULL_RUNE, ItemID.POH_HELMET_VARROCK_RUNE,
+                    ItemID.POH_HELMET_ZAMORAK_RUNE,
             });
         }
     };
 
-    public static final List<Integer> MetalArmorItemIds = new ArrayList<Integer>(){{
+    public static final List<Integer> MetalArmorItemIds = new ArrayList<>(){{
         for (int i=0;i<MetalArmorPermittedByTier.size();i++){
             Collections.addAll(this,MetalArmorPermittedByTier.get(i));
         }
@@ -479,23 +481,23 @@ public class ItemHandler {
             put(0, new Integer[]{ });
             put(1, new Integer[] {
                     ItemID.LEATHER_GLOVES, ItemID.LEATHER_BOOTS, ItemID.LEATHER_COWL,
-                    ItemID.LEATHER_BODY, ItemID.LEATHER_BODY_G,
-                    ItemID.LEATHER_CHAPS, ItemID.LEATHER_CHAPS_G
+                    ItemID.LEATHER_ARMOUR, ItemID.LEATHER_ARMOUR_TRIM_GOLD,
+                    ItemID.LEATHER_CHAPS, ItemID.LEATHER_CHAPS_TRIM_GOLD
             });
             put(2, new Integer[] {
-                    ItemID.STUDDED_BODY, ItemID.STUDDED_BODY_T, ItemID.STUDDED_BODY_G,
-                    ItemID.STUDDED_CHAPS, ItemID.STUDDED_CHAPS_T, ItemID.STUDDED_CHAPS_G,
-                    ItemID.COIF, ItemID.LEATHER_VAMBRACES, ItemID.STUDDED_BODY_26264,
+                    ItemID.STUDDED_BODY, ItemID.STUDDED_BODY_TRIM_FUR, ItemID.STUDDED_BODY_TRIM_GOLD,
+                    ItemID.STUDDED_CHAPS, ItemID.STUDDED_CHAPS_TRIM_FUR, ItemID.STUDDED_CHAPS_TRIM_GOLD,
+                    ItemID.COIF, ItemID.LEATHER_VAMBRACES, ItemID.HW21_STUDDED_BODY,
             });
             put(3, new Integer[] {
-                    ItemID.GREEN_DHIDE_BODY, ItemID.GREEN_DHIDE_BODY_T, ItemID.GREEN_DHIDE_BODY_G,
-                    ItemID.GREEN_DHIDE_CHAPS, ItemID.GREEN_DHIDE_CHAPS_T, ItemID.GREEN_DHIDE_CHAPS_G,
-                    ItemID.GREEN_DHIDE_SHIELD, ItemID.GREEN_DHIDE_VAMBRACES
+                    ItemID.DRAGONHIDE_BODY, ItemID.DRAGONHIDE_BODY_TRIM, ItemID.DRAGONHIDE_BODY_TRIM_GOLD,
+                    ItemID.DRAGONHIDE_CHAPS, ItemID.DRAGONHIDE_CHAPS_TRIM, ItemID.DRAGONHIDE_CHAPS_TRIM_GOLD,
+                    ItemID.GREEN_DHIDE_SHIELD, ItemID.DRAGON_VAMBRACES
             });
         }
     };
 
-    public static final List<Integer> RangeArmorItemIds = new ArrayList<Integer>(){{
+    public static final List<Integer> RangeArmorItemIds = new ArrayList<>(){{
         for (int i=0;i<RangeArmorPermittedByTier.size();i++){
             Collections.addAll(this,RangeArmorPermittedByTier.get(i));
         }
@@ -504,28 +506,28 @@ public class ItemHandler {
     public static Map<Integer, Integer[]> RangeWeaponsPermittedByTier = new Hashtable<>() {
         {
             put(0, new Integer[] {
-                    ItemID.BOW_AND_ARROW, ItemID.SHORTBOW, ItemID.LONGBOW,
-                    ItemID.BRONZE_ARROW, ItemID.BRONZE_ARROW_11700, ItemID.BRONZE_ARROWP, ItemID.BRONZE_ARROWP_5616, ItemID.BRONZE_ARROWP_5622,
-                    ItemID.IRON_ARROW, ItemID.IRON_ARROW_11701, ItemID.IRON_ARROWP, ItemID.IRON_ARROWP_5617, ItemID.IRON_ARROWP_5623
+                    ItemID.SHORTBOW, ItemID.LONGBOW,
+                    ItemID.BRONZE_ARROW, ItemID.BRONZE_ARROW_P, ItemID.BRONZE_ARROW_P_, ItemID.BRONZE_ARROW_P__,
+                    ItemID.IRON_ARROW, ItemID.IRON_ARROW_P, ItemID.IRON_ARROW_P_, ItemID.IRON_ARROW_P__
             });
             put(1, new Integer[] {
                     ItemID.OAK_SHORTBOW, ItemID.OAK_LONGBOW,
-                    ItemID.STEEL_ARROW, ItemID.STEEL_ARROW_11702,
-                    ItemID.STEEL_ARROWP, ItemID.STEEL_ARROWP_5618, ItemID.STEEL_ARROWP_5624
+                    ItemID.STEEL_ARROW,
+                    ItemID.STEEL_ARROW_P, ItemID.STEEL_ARROW_P_, ItemID.STEEL_ARROW_P__
             });
             put(2, new Integer[] {
                     ItemID.WILLOW_SHORTBOW, ItemID.WILLOW_LONGBOW,
-                    ItemID.MITHRIL_ARROW, ItemID.MITHRIL_ARROW_7552, ItemID.MITHRIL_ARROW_11703,
-                    ItemID.MITHRIL_ARROWP, ItemID.MITHRIL_ARROWP_5619, ItemID.MITHRIL_ARROWP_5625
+                    ItemID.MITHRIL_ARROW,
+                    ItemID.MITHRIL_ARROW_P, ItemID.MITHRIL_ARROW_P_, ItemID.MITHRIL_ARROW_P__
             });
             put(3, new Integer[] {
                     ItemID.MAPLE_SHORTBOW, ItemID.MAPLE_LONGBOW,
-                    ItemID.ADAMANT_ARROW, ItemID.ADAMANT_ARROW_20388,
-                    ItemID.ADAMANT_ARROWP, ItemID.ADAMANT_ARROWP_5620, ItemID.ADAMANT_ARROWP_5626
+                    ItemID.ADAMANT_ARROW,
+                    ItemID.ADAMANT_ARROW_P, ItemID.ADAMANT_ARROW_P_, ItemID.ADAMANT_ARROW_P__
             });
         }};
 
-    public static final List<Integer> RangeWeaponItemIds = new ArrayList<Integer>(){{
+    public static final List<Integer> RangeWeaponItemIds = new ArrayList<>(){{
         for (int i=0;i<RangeWeaponsPermittedByTier.size();i++){
             Collections.addAll(this,RangeWeaponsPermittedByTier.get(i));
         }
