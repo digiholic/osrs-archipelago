@@ -5,7 +5,10 @@ import gg.archipelago.Tasks.EdgevilleMonasteryTask;
 import gg.archipelago.Tasks.OpenLockboxTask;
 import gg.archipelago.data.LocationData;
 import gg.archipelago.data.NameOrIDDataSource;
-import net.runelite.api.*;
+import net.runelite.api.Prayer;
+import net.runelite.api.Quest;
+import net.runelite.api.SpriteID;
+import net.runelite.api.gameval.ItemID;
 import net.runelite.client.game.SpriteManager;
 
 import java.awt.image.BufferedImage;
@@ -140,9 +143,9 @@ public class TaskLists {
             new CastSpellTask(base_id + taskCount++, "Varrock Teleport", "magic"),
             new CastSpellTask(base_id + taskCount++, "Lumbridge Teleport", "magic"),
             new CastSpellTask(base_id + taskCount++, "Falador Teleport", "magic"),
-            new CraftRunesTask(base_id + taskCount++, "Craft some Air Runes", "runecraft", ItemID.AIR_RUNE, -1),
-            new CraftRunesTask(base_id + taskCount++, "Craft some runes with a Mind Core", "runecraft", ItemID.MIND_RUNE, ItemID.MIND_CORE),
-            new CraftRunesTask(base_id + taskCount++, "Craft some runes with a Body Core", "runecraft", ItemID.BODY_RUNE, ItemID.BODY_CORE),
+            new CraftRunesTask(base_id + taskCount++, "Craft some Air Runes", "runecraft", ItemID.AIRRUNE, -1),
+            new CraftRunesTask(base_id + taskCount++, "Craft some runes with a Mind Core", "runecraft", ItemID.MINDRUNE, ItemID.CAMDOZAAL_GOLEM_CORE_MIND),
+            new CraftRunesTask(base_id + taskCount++, "Craft some runes with a Body Core", "runecraft", ItemID.BODYRUNE, ItemID.CAMDOZAAL_GOLEM_CORE_BODY),
             new ChatMessageTask(base_id + taskCount++,"Craft an Unblessed Holy Symbol", "crafting", new NameOrIDDataSource(SpriteID.SKILL_CRAFTING), "You put some string on your holy symbol."),
             new ChatMessageTask(base_id + taskCount++,"Cut a Sapphire","crafting", new NameOrIDDataSource(SpriteID.SKILL_CRAFTING),"You cut the sapphire."),
             new ChatMessageTask(base_id + taskCount++,"Cut an Emerald","crafting", new NameOrIDDataSource(SpriteID.SKILL_CRAFTING), "You cut the emerald."),
@@ -207,8 +210,8 @@ public class TaskLists {
             new TotalXPTask(base_id + taskCount++, "stats", 150000),
             new TotalLevelTask(base_id + taskCount++, "stats", 300),
             new CombatLevelTask(base_id + taskCount++, "stats", 40),
-            new OpenLockboxTask(base_id + taskCount++, "other", ItemID.SIMPLE_LOCKBOX),
-            new OpenLockboxTask(base_id + taskCount++, "other", ItemID.ELABORATE_LOCKBOX),
-            new OpenLockboxTask(base_id + taskCount++, "other", ItemID.ORNATE_LOCKBOX)
+            new OpenLockboxTask(base_id + taskCount++, "other", ItemID.CAMDOZAAL_VAULT_CHEST_LOW),
+            new OpenLockboxTask(base_id + taskCount++, "other", ItemID.CAMDOZAAL_VAULT_CHEST_MID),
+            new OpenLockboxTask(base_id + taskCount++, "other", ItemID.CAMDOZAAL_VAULT_CHEST_HIGH)
     );
 }

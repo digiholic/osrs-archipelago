@@ -624,7 +624,8 @@ public class ArchipelagoPlugin extends Plugin
 			if (!save.getAbsolutePath().endsWith(".save")) continue;
 			try {
 				FileInputStream fileInput = new FileInputStream(save.getAbsolutePath());
-				DataPackage dataPackage = gson.fromJson(new InputStreamReader(fileInput, StandardCharsets.UTF_8), DataPackage.class);
+				InputStreamReader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
+				DataPackage dataPackage = gson.fromJson(reader, DataPackage.class);
 				//Since the account hash wasn't always stored, we should set it here so it can be found by file name
 				if (dataPackage.accountHash == 0){
 					String hashString = save.getName().replaceFirst("[.][^.]+$", "");
@@ -633,7 +634,7 @@ public class ArchipelagoPlugin extends Plugin
 				dataPackages.add(dataPackage);
 				fileInput.close();
 
-			} catch (IOException e) {
+			} catch (Exception e) {
 				log.info("Could not load DataPackage File "+save.getName());
 			}
 		}

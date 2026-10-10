@@ -136,10 +136,11 @@ public abstract class Client {
     protected void loadDataPackage() {
         try {
             FileInputStream fileInput = new FileInputStream(dataPackageLocation);
-            dataPackage = gson.fromJson(new InputStreamReader(fileInput, StandardCharsets.UTF_8), dev.koifysh.archipelago.parts.DataPackage.class);
+            InputStreamReader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
+            dataPackage = gson.fromJson(reader, dev.koifysh.archipelago.parts.DataPackage.class);
             fileInput.close();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.info("no dataPackage found creating a new one.");
             dataPackage = new DataPackage();
             saveDataPackage();
@@ -161,7 +162,7 @@ public abstract class Client {
             gson.toJson(dataPackage, writer);
             writer.flush();
             writer.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.warning("unable to save DataPackage.");
         }
     }
@@ -449,6 +450,7 @@ public abstract class Client {
      */
     public void disconnect() {
         APWebSocket.close(1000, "User initiated Disconnect");
+        APWebSocket = null;
     }
 
     /**
