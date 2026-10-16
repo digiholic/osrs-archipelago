@@ -40,6 +40,7 @@ class APWebSocket extends WebSocketListener {
     private final Gson gson;
 
     private boolean authenticated = false;
+    private volatile boolean disconnectRequested = false;
 
     private int reconnectAttempt = 0;
 
@@ -79,6 +80,7 @@ class APWebSocket extends WebSocketListener {
     }
     @Override
     public void onClosed(WebSocket webSocket, int code, String wsReason) {
+        if (disconnectRequested) return;
         LOGGER.fine(String.format("Connection closed, Code: %s Reason: %s", code, wsReason));
         String reason = (wsReason.isEmpty()) ? "Connection refused by the Archipelago server." : wsReason;
         if (code == -1) {
@@ -99,7 +101,9 @@ class APWebSocket extends WebSocketListener {
         }
         if (code == 1000) {
             reconnectTimer.cancel();
+            this.webSocket = null;
             client.onClose("(AP-284) Disconnected.", 0);
+            return;
         }
 
         if (code == 1006) {
@@ -129,6 +133,7 @@ class APWebSocket extends WebSocketListener {
 
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response){
+        if (disconnectRequested) return;
         if (t instanceof SSLException) {
             LOGGER.info(String.format("SSL Error: %s", t.getMessage()));
             reconnectTimer.cancel();
@@ -362,6 +367,17 @@ class APWebSocket extends WebSocketListener {
 
     public boolean isOpen(){
         return webSocket != null;
+    }
+
+    void disconnect() {
+        // Local cleanup is already handled by Client and must not run again in a late callback.
+        disconnectRequested = true;
+        reconnectTimer.cancel();
+        WebSocket socket = webSocket;
+        webSocket = null;
+        if (socket != null) {
+            socket.close(1000, "User initiated Disconnect");
+        }
     }
 
     public void close(int code, String reason){

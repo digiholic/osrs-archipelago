@@ -448,9 +448,12 @@ public abstract class Client {
     /**
      * disconnects from a connected Archipelago server.
      */
-    public void disconnect() {
-        APWebSocket.close(1000, "User initiated Disconnect");
+    public synchronized void disconnect() {
+        APWebSocket socket = APWebSocket;
         APWebSocket = null;
+        if (socket != null) {
+            socket.disconnect();
+        }
     }
 
     /**
